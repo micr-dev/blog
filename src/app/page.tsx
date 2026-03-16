@@ -7,7 +7,7 @@ import { getPostSummaries } from "@/lib/posts";
 import { siteConfig } from "@/lib/site-config";
 
 export const metadata: Metadata = {
-  title: siteConfig.name,
+  title: "blog",
   description: siteConfig.description,
   alternates: {
     canonical: `https://${siteConfig.domain}/`,
