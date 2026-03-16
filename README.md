@@ -1,36 +1,53 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# blog.micr.dev
 
-## Getting Started
+Static Next.js writeup blog based on the provided reference layout, rebuilt around local MDX content.
 
-First, run the development server:
+## Commands
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run lint
+npm run test
+npm run build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Writing posts
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Published posts live in `content/posts/*.mdx`.
+- Use `content/templates/post-template.mdx` as the starting point for new posts.
+- Slugs come from filenames.
+- Tags are generated from frontmatter.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Local editor
 
-## Learn More
+- Run `npm run dev`.
+- Open `http://localhost:3000/mdx-editor`.
+- This route is development-only and intended for Chromium browsers.
+- It can open, edit, and save local `.mdx` files directly through the File System Access API.
 
-To learn more about Next.js, take a look at the following resources:
+## Per-post themes
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Each post can override:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- page colors
+- body / heading / mono fonts
+- code block colors
+- Mermaid colors
 
-## Deploy on Vercel
+Supported font sources in v1:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Google Fonts
+- local files served from `public/fonts`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Agentation
+
+The app mounts Agentation only in development.
+
+Recommended MCP setup:
+
+```bash
+npx add-mcp "npx -y agentation-mcp server"
+npx agentation-mcp doctor
+```
+
+If you want to remove Agentation later, delete `src/components/agentation-root.tsx` and the dev-only import block in `src/app/layout.tsx`.
