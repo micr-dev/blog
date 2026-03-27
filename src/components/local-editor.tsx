@@ -15,7 +15,8 @@ published: true
 theme:
   colors:
     background: "#030712"
-    foreground: "#f3f4f6"
+    body: "#f3f4f6"
+    heading: "#f3f4f6"
     accent: "#22d3ee"
     muted: "#9ca3af"
     border: "#1f2937"
@@ -279,7 +280,7 @@ function EditorPreview({
     <PostShell theme={result.theme} className="rounded-[1.25rem]">
       {fontCss ? <style>{fontCss}</style> : null}
       <article className="mx-auto max-w-5xl px-4 sm:px-6 xl:px-0" style={style}>
-        <div className="py-10 text-[color:var(--post-foreground)]">
+        <div className="py-10 text-[color:var(--post-body)]">
           <div className="mb-10 flex items-center justify-between border-b border-[color:var(--post-border)] pb-6">
             <div className="text-2xl font-semibold">micr.dev</div>
             <div className="text-sm uppercase tracking-[0.25em] text-[color:var(--post-accent)]">
@@ -287,7 +288,7 @@ function EditorPreview({
             </div>
           </div>
           <header className="border-b border-[color:var(--post-border)] pb-8 text-center">
-            <h1 className="mt-4 text-4xl font-extrabold text-[color:var(--post-foreground)]">
+            <h1 className="mt-4 text-4xl font-extrabold text-[color:var(--post-heading)]">
               {result.title}
             </h1>
             <p className="mx-auto mt-4 max-w-2xl text-[color:var(--post-muted)]">

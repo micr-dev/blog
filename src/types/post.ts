@@ -8,7 +8,8 @@ export interface FontDefinition {
 
 export interface PostThemeColors {
   background: string;
-  foreground: string;
+  body: string;
+  heading: string;
   accent: string;
   muted: string;
   border: string;

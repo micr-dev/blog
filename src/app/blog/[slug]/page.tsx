@@ -74,7 +74,13 @@ export default async function BlogPostPage({
                   </div>
                 </dl>
                 <div>
-                  <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-[color:var(--post-foreground)] sm:text-4xl sm:leading-10 md:text-5xl md:leading-[3.5rem]">
+                  <h1
+                    className="text-3xl leading-[1.1] tracking-normal text-[color:var(--post-heading)] sm:text-4xl md:text-5xl"
+                    style={{
+                      fontFamily: "var(--font-post-heading)",
+                      fontWeight: 320,
+                    }}
+                  >
                     {post.title}
                   </h1>
                 </div>
