@@ -301,12 +301,24 @@ textarea {
   text-align: center;
 }
 
-.nb-term {
+.nb-term-wrap {
   position: relative;
-  display: inline-block;
-  color: var(--post-accent);
+  display: inline-flex;
+  align-items: baseline;
+  vertical-align: baseline;
+}
+
+.nb-term {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  margin: 0;
+  padding: 0;
+  color: var(--post-body);
   cursor: help;
+  font: inherit;
   font-style: italic;
+  line-height: inherit;
   text-decoration-line: underline;
   text-decoration-style: solid;
   text-decoration-color: color-mix(in srgb, var(--post-accent) 82%, transparent);
@@ -314,38 +326,90 @@ textarea {
   text-underline-offset: 0.18em;
 }
 
-.nb-term::after {
-  content: attr(data-term-tooltip);
-  position: absolute;
-  left: 0;
-  bottom: calc(100% + 0.55rem);
-  z-index: 20;
-  width: max-content;
-  max-width: min(22rem, calc(100vw - 2rem));
-  border: 1px solid var(--post-border);
-  border-radius: 0.6rem;
-  background: color-mix(in srgb, var(--post-code-bg) 94%, black 6%);
-  color: var(--post-body);
-  box-shadow: 0 16px 40px rgb(0 0 0 / 0.26);
-  font-family: var(--font-post-body), var(--font-space-grotesk), sans-serif;
-  font-size: 0.85rem;
+.nb-term--code {
+  color: color-mix(in srgb, var(--post-accent) 82%, var(--post-code-fg) 18%);
+  font-style: normal;
+}
+
+.nb-term--code .nb-term__code {
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  font-family: var(--font-post-mono), ui-monospace, monospace;
+  font-size: 0.875em;
   font-style: normal;
   font-weight: 400;
-  line-height: 1.5;
+  padding: 0;
+  text-decoration: inherit;
+}
+
+.post-body.prose :where(.nb-term--code .nb-term__code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  font-family: var(--font-post-mono), ui-monospace, monospace;
+  font-size: 0.875em;
+  font-style: normal;
+  font-weight: 400;
+  padding: 0;
+  text-decoration: inherit;
+}
+
+.nb-term--code .nb-term__code::before,
+.nb-term--code .nb-term__code::after,
+.post-body.prose :where(.nb-term--code .nb-term__code):not(:where([class~="not-prose"], [class~="not-prose"] *))::before,
+.post-body.prose :where(.nb-term--code .nb-term__code):not(:where([class~="not-prose"], [class~="not-prose"] *))::after {
+  content: none;
+}
+
+.nb-term__tooltip {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 0.7rem);
+  z-index: 30;
+  width: max-content;
+  max-width: min(22rem, calc(100vw - 2rem));
+  border: 1px solid color-mix(in srgb, var(--post-accent) 26%, var(--post-border));
+  border-radius: 0.85rem;
+  background: color-mix(in srgb, var(--post-code-bg) 88%, black 12%);
+  box-shadow:
+    0 18px 38px rgb(0 0 0 / 0.26),
+    inset 0 1px 0 rgb(255 255 255 / 0.03);
+  color: var(--post-heading);
+  font-family: var(--font-post-body), var(--font-space-grotesk), sans-serif;
+  font-size: 0.82rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.45;
   opacity: 0;
-  padding: 0.6rem 0.75rem;
+  padding: 0.55rem 0.75rem;
   pointer-events: none;
-  transform: translateY(0.3rem);
+  transform: translate(-50%, 0.35rem) scale(0.98);
+  transform-origin: bottom center;
   transition:
     opacity 140ms ease,
     transform 140ms ease;
   white-space: normal;
 }
 
-.nb-term:hover::after,
-.nb-term:focus-visible::after {
+.nb-term-wrap:hover .nb-term__tooltip,
+.nb-term-wrap:focus-within .nb-term__tooltip {
   opacity: 1;
-  transform: translateY(0);
+  transform: translate(-50%, 0) scale(1);
+}
+
+.nb-term__arrow {
+  position: absolute;
+  left: 50%;
+  top: calc(100% - 0.38rem);
+  width: 0.8rem;
+  height: 0.8rem;
+  border-right: 1px solid color-mix(in srgb, var(--post-accent) 26%, var(--post-border));
+  border-bottom: 1px solid color-mix(in srgb, var(--post-accent) 26%, var(--post-border));
+  background: color-mix(in srgb, var(--post-code-bg) 88%, black 12%);
+  transform: translateX(-50%) rotate(45deg);
 }
 
 .post-body.prose :where(pre.astro-code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {

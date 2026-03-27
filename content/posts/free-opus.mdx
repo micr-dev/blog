@@ -36,7 +36,7 @@ standard disclaimer: this writeup is for educational security research purposes 
 
 ## tl;dr
 
-*gitlab duo* is gitlab's ai assistant, backed by *anthropic*'s models. gitlab gives new accounts a 30-day ultimate trial. **the limit is per account, not per person, machine, or billing entity.** the end result was a pipeline that created accounts, verified them, created personal access tokens, activated trials, and rotated through a live pool.
+*gitlab duo* is gitlab's ai assistant, backed by *anthropic*'s models. gitlab gives new accounts a 30-day <Term tip="GitLab's time-limited premium trial tier that unlocks Ultimate features and Duo access.">ultimate trial</Term>. **the limit is per account, not per person, machine, or billing entity.** the end result was a pipeline that created accounts, verified them, created <Term tip="Account-scoped access tokens used to authenticate API and CLI requests without a password.">personal access tokens</Term>, activated trials, and rotated through a live pool.
 
 over the life of the pipeline, it produced at least **87 fully trial-activated accounts**. 83 were later exhausted in live use, 4 were still active, and **943 non-email-only accounts** were preserved for later recovery instead of being thrown away.
 
@@ -100,15 +100,15 @@ response = session.post("https://gitlab.com/users", data=signup_data)
 # 403 forbidden
 ```
 
-headers were not the issue. the proxy was not the whole issue either. the issue was the tls handshake itself. standard python `requests` had the wrong fingerprint and *cloudflare* treated it like exactly what it was: automation.
+headers were not the issue. the proxy was not the whole issue either. the issue was the <Term tip="The observable signature a client exposes during the TLS handshake, often used to distinguish browsers from automation.">tls fingerprint</Term> itself. standard python `requests` had the wrong fingerprint and <Term tip="A CDN and security platform that often sits in front of websites to rate-limit, inspect, and challenge suspicious traffic.">cloudflare</Term> treated it like exactly what it was: automation.
 
-the first real improvement was switching the signup path to `curl_cffi` with browser impersonation. that got the early pipeline past the tls wall often enough to be worth building on.
+the first real improvement was switching the signup path to <Term tip="A Python HTTP client built on curl/libcurl that can impersonate real browser TLS and HTTP behavior."><code>curl_cffi</code></Term> with browser impersonation. that got the early pipeline past the tls wall often enough to be worth building on.
 
 ## phase 2: captchas and the first real pipeline
 
 ![arkose match-key challenge shown on the signup path, representing the captcha layer that had to be solved before registration could continue](/media/free-opus/arkose-matchkey-challenge.png "some arkose captcha examples")
 
-once the raw signup post could make it through, <Term tip="Arkose Labs FunCaptcha, the interactive signup challenge embedded on the registration form.">arkose</Term> became the next problem.
+once the raw signup post could make it through, <Term tip="Arkose Labs FunCaptcha, an interactive anti-bot challenge used on signup and login flows.">arkose</Term> became the next problem.
 
 gitlab's signup page embeds the arkose challenge parameters directly in the html:
 
@@ -122,12 +122,12 @@ params = {
 }
 ```
 
-the first working captcha path used <Term tip="A paid captcha-solving service that handled the earliest successful Arkose solves.">anti-captcha</Term>. that was the primary solver on the legacy pipeline. <Term tip="A second paid captcha-solving service that replaced anti-captcha as the fallback lane.">2captcha</Term> came after that as fallback, not as the original main path. the problem was that *anti-captcha* was never that reliable operationally. funcaptcha worker availability kept disappearing, `ERROR_NO_SLOT_AVAILABLE` would stall runs for long stretches, and even the picked-up tasks were not always solvable.
+the first working captcha path used <Term tip="A paid captcha-solving service that supports challenge types such as FunCaptcha and reCAPTCHA.">anti-captcha</Term>. that was the primary solver on the legacy pipeline. <Term tip="A paid captcha-solving marketplace and API used to outsource captcha solves.">2captcha</Term> came after that as fallback, not as the original main path. the problem was that *anti-captcha* was never that reliable operationally. funcaptcha worker availability kept disappearing, `ERROR_NO_SLOT_AVAILABLE` would stall runs for long stretches, and even the picked-up tasks were not always solvable.
 
 the flow looked like this:
 
 1. fetch signup page
-2. extract csrf + arkose parameters
+2. extract <Term tip="A per-request anti-forgery token used to prevent forged form submissions.">csrf</Term> + arkose parameters
 3. send the challenge to *anti-captcha*
 4. fall back to *2captcha* when needed
 5. inject the returned token into the signup form
@@ -135,7 +135,7 @@ the flow looked like this:
 
 the early assumption was that solving the captcha was the hard part. in practice, it was only one part of the problem. the harder issue was getting stable throughput through *cloudflare* and bad proxy luck. across the big legacy runs, the http pipeline had roughly 5-8% yield from attempt to usable account.
 
-the email side was equally scrappy. the first inbox path used <Term tip="A disposable inbox provider i used before switching to owned domains and centralized mail routing.">gopretstudio</Term>, and i had to reverse-engineer its next.js server actions just to fetch mail reliably. once that path was understood, it worked fairly reliably, but it was still a dependency i did not control.
+the email side was equally scrappy. the first inbox path used <Term tip="A disposable email inbox provider.">gopretstudio</Term>, and i had to reverse-engineer its next.js server actions just to fetch mail reliably. once that path was understood, it worked fairly reliably, but it was still a dependency i did not control.
 
 ## phase 3: automating the part that actually mattered
 
@@ -143,8 +143,8 @@ account creation was only half the story. the real value was the ultimate trial.
 
 trial activation was a browser problem from the start. the working path ended up using two tools:
 
-- <Term tip="A Cloudflare-solving bridge that returns usable clearance cookies for a target page.">flaresolverr</Term> to get through *cloudflare* and harvest clearance cookies
-- <Term tip="An anti-detection Firefox fork i used for the mature browser signup and trial path.">camoufox</Term> to continue the session in a browser that looked real enough to survive the rest of the flow
+- <Term tip="A proxy service that solves Cloudflare browser challenges and returns usable cookies or page state.">flaresolverr</Term> to get through *cloudflare* and harvest clearance cookies
+- <Term tip="An anti-detection browser project built around Firefox.">camoufox</Term> to continue the session in a browser that looked real enough to survive the rest of the flow
 
 ```mermaid
 flowchart LR
@@ -156,7 +156,7 @@ flowchart LR
     F --> G[ultimate trial]
 ```
 
-the trial form itself was simple, but a little annoying. it wanted company details, country, and some dropdown selections. the annoying part was the timing. if i submitted the form and checked the namespace api immediately, the account still looked free. a short wait and a second check showed the trial had landed.
+the trial form itself was simple, but a little annoying. it wanted company details, country, and some dropdown selections. the annoying part was the timing. if i submitted the form and checked the <Term tip="An API endpoint used to read account or namespace state after a workflow step completes.">namespace api</Term> immediately, the account still looked free. a short wait and a second check showed the trial had landed.
 
 that sounds minor, but it changed the whole state machine. "submit form" was not success. "submit form, wait, verify through api" was success.
 
@@ -164,7 +164,7 @@ that sounds minor, but it changed the whole state machine. "submit form" was not
 
 once one account could be trialed end to end, the next problem showed up right away: one account was nowhere near enough.
 
-gitlab eventually returns `402 payment required` or one of several text variants when duo credits are gone. so i built an <Term tip="The agent harness where the rotation plugin lived and swapped PATs whenever an account exhausted its credits.">opencode</Term> plugin that listens for those failures, marks the current account dead, swaps in the next pat, and keeps the session moving.
+gitlab eventually returns `402 payment required` or one of several text variants when duo credits are gone. so i built an <Term tip="An AI coding harness and agent runtime for terminal-driven development workflows.">opencode</Term> plugin that listens for those failures, marks the current account dead, swaps in the next pat, and keeps the session moving.
 
 ```typescript
 function isPermanentCreditExhaustion(message: string): boolean {
@@ -223,7 +223,7 @@ the burned-session part stayed in the final design because it actually mattered 
 
 after that, the project shifted from "can this work at all?" to "what happens when i try to do it at volume?"
 
-the scale-up runs depended heavily on residential proxies across rotating gateway ports. this was not a minor implementation detail, but it also was not the whole story. the real gate was gitlab's risk scoring, and proxy quality was just one of several inputs feeding it alongside timing, browser behavior, signup path, and whatever internal signals gitlab was weighting. the point was never that one proxy port was magical. rotating ports were just a way to spread attempts across changing exits and keep batches moving.
+the scale-up runs depended heavily on <Term tip="Proxy traffic routed through consumer ISP IP addresses rather than datacenter IP space.">residential proxies</Term> across rotating gateway ports. this was not a minor implementation detail, but it also was not the whole story. the real gate was gitlab's risk scoring, and proxy quality was just one of several inputs feeding it alongside timing, browser behavior, signup path, and whatever internal signals gitlab was weighting. the point was never that one proxy port was magical. rotating ports were just a way to spread attempts across changing exits and keep batches moving.
 
 **the bigger surprise was risk scoring.**
 
@@ -244,7 +244,7 @@ on the bigger batch runs, most attempts did not land in the easy lane. depending
 
 ![gitlab phone-verification gate shown during signup when an account was pushed out of the email-only lane](/media/free-opus/gitlab-phone-verification.png "gitlab identity verification docs")
 
-this is where `smspva.py` stopped being a side branch and started becoming part of the real pipeline story. once scale-up runs showed non-email-only rates climbing as high as roughly 92%, **phone verification was no longer some weird edge case. it was the standard outcome the system had to be ready for.** email-only stayed the best lane, but the operational assumption at scale had to be "this account may need sms."
+this is where <Term tip="An SMS verification provider that rents temporary phone numbers and exposes incoming one-time codes through an API.">smspva</Term> stopped being a side branch and started becoming part of the real pipeline story. once scale-up runs showed non-email-only rates climbing as high as roughly 92%, **phone verification was no longer some weird edge case. it was the standard outcome the system had to be ready for.** email-only stayed the best lane, but the operational assumption at scale had to be "this account may need sms."
 
 nl numbers were the cheap primary choice and uk was fallback. at the same time, non-email-only accounts stopped getting thrown away. they were preserved in sqlite for later recovery instead of being lost between runs.
 
@@ -314,7 +314,7 @@ this phase also exposed another unpleasant truth: gitlab purges accounts that do
 
 the final jump came from cleaning up the two messiest dependencies in the whole project: email and signup submission.
 
-on the email side, *gopretstudio* stopped being the main path. i moved to owned domains routed through <Term tip="The mail host i used for catch-all forwarding from my own domains into one relay inbox.">purelymail</Term>, with catch-all forwarding into a central relay mailbox. that meant:
+on the email side, *gopretstudio* stopped being the main path. i moved to owned domains routed through <Term tip="An email hosting provider for custom domains.">purelymail</Term>, with catch-all forwarding into a central relay mailbox. that meant:
 
 - no third-party disposable inbox dependency on the primary path
 - stable imap polling
