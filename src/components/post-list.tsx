@@ -3,7 +3,17 @@ import { Link } from "next-view-transitions";
 import type { PostSummary } from "@/types/post";
 import { slugifyTag } from "@/lib/posts";
 
-export function PostList({ posts }: { posts: PostSummary[] }) {
+type PostListProps = {
+  posts: PostSummary[];
+  variant?: "default" | "home";
+};
+
+export function PostList({
+  posts,
+  variant = "default",
+}: PostListProps) {
+  const showMeta = variant === "default";
+
   if (posts.length === 0) {
     return (
       <div className="rounded-2xl border border-[color:var(--border)] bg-[color:var(--card)] p-6 text-[color:var(--muted)]">
@@ -24,7 +34,7 @@ export function PostList({ posts }: { posts: PostSummary[] }) {
                 <dd className="text-base font-medium leading-6 text-[color:var(--muted)]">
                   <time dateTime={post.datetime}>{post.date}</time>
                 </dd>
-                {post.cover ? (
+                {showMeta && post.cover ? (
                   <dd>
                     <Link href={`/blog/${post.slug}`} aria-label={`Open "${post.title}"`}>
                       <div className="relative aspect-video w-full overflow-hidden rounded-md border border-[color:var(--border)] bg-[color:var(--card)]">
@@ -52,31 +62,35 @@ export function PostList({ posts }: { posts: PostSummary[] }) {
                         {post.title}
                       </Link>
                     </h2>
-                    <div className="mt-2 flex flex-wrap">
-                      {post.tags.map((tag) => (
-                        <Link
-                          key={tag}
-                          href={`/tags/${slugifyTag(tag)}`}
-                          className="mr-3 text-sm font-medium uppercase text-[color:var(--accent)] transition-opacity hover:opacity-80"
-                          style={{ color: "var(--accent)" }}
-                        >
-                          {tag}
-                        </Link>
-                      ))}
-                    </div>
+                    {showMeta ? (
+                      <div className="mt-2 flex flex-wrap">
+                        {post.tags.map((tag) => (
+                          <Link
+                            key={tag}
+                            href={`/tags/${slugifyTag(tag)}`}
+                            className="mr-3 text-sm font-medium uppercase text-[color:var(--accent)] transition-opacity hover:opacity-80"
+                            style={{ color: "var(--accent)" }}
+                          >
+                            {tag}
+                          </Link>
+                        ))}
+                      </div>
+                    ) : null}
                   </div>
                   <div className="max-w-none text-[color:var(--muted)]">{post.excerpt}</div>
                 </div>
-                <div className="text-base font-medium leading-6">
-                  <Link
-                    href={`/blog/${post.slug}`}
-                    className="text-[color:var(--accent)] transition-opacity hover:opacity-80"
-                    aria-label={`Read "${post.title}"`}
-                    style={{ color: "var(--accent)" }}
-                  >
-                    Read more →
-                  </Link>
-                </div>
+                {showMeta ? (
+                  <div className="text-base font-medium leading-6">
+                    <Link
+                      href={`/blog/${post.slug}`}
+                      className="text-[color:var(--accent)] transition-opacity hover:opacity-80"
+                      aria-label={`Read "${post.title}"`}
+                      style={{ color: "var(--accent)" }}
+                    >
+                      Read more →
+                    </Link>
+                  </div>
+                ) : null}
               </div>
             </div>
           </article>

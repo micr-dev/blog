@@ -25,7 +25,7 @@ export default async function HomePage() {
       <div>
         <HomeAscii ascii={homeAscii} />
         <p className="mb-8 text-center text-[color:var(--muted)]">{siteConfig.tagline}</p>
-        <PostList posts={posts} />
+        <PostList posts={posts} variant="home" />
       </div>
     </Layout>
   );
