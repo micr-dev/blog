@@ -295,6 +295,53 @@ textarea {
   color: color-mix(in srgb, var(--post-foreground) 72%, transparent);
 }
 
+.nb-term {
+  position: relative;
+  display: inline-block;
+  color: var(--post-accent);
+  cursor: help;
+  font-style: italic;
+  text-decoration-line: underline;
+  text-decoration-style: solid;
+  text-decoration-color: color-mix(in srgb, var(--post-accent) 82%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+.nb-term::after {
+  content: attr(data-term-tooltip);
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 0.55rem);
+  z-index: 20;
+  width: max-content;
+  max-width: min(22rem, calc(100vw - 2rem));
+  border: 1px solid var(--post-border);
+  border-radius: 0.6rem;
+  background: color-mix(in srgb, var(--post-code-bg) 94%, black 6%);
+  color: var(--post-body);
+  box-shadow: 0 16px 40px rgb(0 0 0 / 0.26);
+  font-family: var(--font-post-body), var(--font-space-grotesk), sans-serif;
+  font-size: 0.85rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.5;
+  opacity: 0;
+  padding: 0.6rem 0.75rem;
+  pointer-events: none;
+  transform: translateY(0.3rem);
+  transition:
+    opacity 140ms ease,
+    transform 140ms ease;
+  white-space: normal;
+}
+
+.nb-term:hover::after,
+.nb-term:focus-visible::after {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .post-body.prose :where(pre.astro-code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   margin: 1.5rem 0;
   border: 0;
