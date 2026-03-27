@@ -32,7 +32,7 @@ export function LinkPreview({
         <div className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--post-muted)]">
           {hostname}
         </div>
-        <div className="text-lg font-semibold text-[color:var(--post-foreground)] transition-colors group-hover:text-[color:var(--post-accent)]">
+        <div className="text-lg font-semibold text-[color:var(--post-heading)] transition-colors group-hover:text-[color:var(--post-accent)]">
           {title}
         </div>
         {description ? (
@@ -71,7 +71,7 @@ export function ProgressBarV2({
   return (
     <div className="my-5 rounded-2xl border border-[color:var(--post-border)] bg-[color:var(--post-code-bg)]/40 p-4">
       <div className="mb-2 flex items-center justify-between gap-3 text-sm">
-        <span className="font-medium text-[color:var(--post-foreground)]">{label}</span>
+        <span className="font-medium text-[color:var(--post-heading)]">{label}</span>
         <span className="text-[color:var(--post-muted)]">
           {value}
           {suffix}

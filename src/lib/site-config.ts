@@ -17,7 +17,8 @@ export const siteConfig = {
 export const defaultPostTheme: PostTheme = {
   colors: {
     background: "#1e1e1e",
-    foreground: "#f3f4f6",
+    body: "#f3f4f6",
+    heading: "#f3f4f6",
     accent: "#f582db",
     muted: "#a1a1aa",
     border: "#27272a",

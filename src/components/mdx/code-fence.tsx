@@ -78,7 +78,7 @@ function createCodeTheme(theme: PostTheme): typeof githubDark {
     ["#2f363d", surface],
     ["#1f2428", mixHex(theme.colors.codeBackground, theme.colors.background, 0.72)],
     ["#e1e4e8", theme.colors.codeForeground],
-    ["#d1d5da", mixHex(theme.colors.codeForeground, theme.colors.foreground, 0.45)],
+    ["#d1d5da", mixHex(theme.colors.codeForeground, theme.colors.body, 0.45)],
     ["#6a737d", theme.colors.muted],
     ["#79b8ff", theme.colors.accent],
     ["#b392f0", accentSoft],

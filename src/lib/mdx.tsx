@@ -74,7 +74,8 @@ function guessFontFormat(value: string) {
 export function getThemeStyle(theme: PostTheme): CSSProperties {
   return {
     ["--post-background" as string]: theme.colors.background,
-    ["--post-foreground" as string]: theme.colors.foreground,
+    ["--post-body" as string]: theme.colors.body,
+    ["--post-heading" as string]: theme.colors.heading,
     ["--post-accent" as string]: theme.colors.accent,
     ["--post-muted" as string]: theme.colors.muted,
     ["--post-border" as string]: theme.colors.border,

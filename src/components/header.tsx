@@ -38,7 +38,7 @@ export function Header() {
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   return (
-    <header className="flex items-center justify-between py-10 text-[color:var(--post-foreground)]">
+    <header className="flex items-center justify-between py-10 text-[color:var(--post-heading)]">
       <Link href="/" aria-label={siteConfig.name}>
         <div className="text-2xl font-semibold transition-colors hover:text-[color:var(--post-accent)]">
           {siteConfig.name}
@@ -53,7 +53,7 @@ export function Header() {
             className={`hidden font-medium transition-colors sm:block ${
               isActive(link.href)
                 ? "text-[color:var(--post-accent)]"
-                : "text-[color:var(--post-foreground)]/85 hover:text-[color:var(--post-foreground)]"
+                : "text-[color:var(--post-heading)]/85 hover:text-[color:var(--post-heading)]"
             }`}
           >
             {link.label}
@@ -62,7 +62,7 @@ export function Header() {
 
         <button
           type="button"
-          className="text-[color:var(--post-foreground)] sm:hidden"
+          className="text-[color:var(--post-heading)] sm:hidden"
           aria-label="Toggle menu"
           onClick={() => setOpen((value) => !value)}
         >
@@ -80,7 +80,7 @@ export function Header() {
         >
           <div className="mx-auto flex max-w-3xl items-center justify-between px-6 py-10">
             <Link href="/" onClick={() => setOpen(false)}>
-              <div className="text-2xl font-semibold text-[color:var(--post-foreground)]">
+              <div className="text-2xl font-semibold text-[color:var(--post-heading)]">
                 {siteConfig.name}
               </div>
             </Link>
@@ -96,7 +96,7 @@ export function Header() {
             <Link
               href="/"
               className={`text-2xl font-bold tracking-widest ${
-                pathname === "/" ? "text-[color:var(--post-accent)]" : "text-[color:var(--post-foreground)]"
+                pathname === "/" ? "text-[color:var(--post-accent)]" : "text-[color:var(--post-heading)]"
               }`}
               onClick={() => setOpen(false)}
             >
@@ -109,7 +109,7 @@ export function Header() {
                 className={`text-2xl font-bold tracking-widest ${
                   isActive(link.href)
                     ? "text-[color:var(--post-accent)]"
-                    : "text-[color:var(--post-foreground)]"
+                    : "text-[color:var(--post-heading)]"
                 }`}
                 onClick={() => setOpen(false)}
               >
