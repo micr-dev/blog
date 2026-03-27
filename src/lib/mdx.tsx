@@ -19,6 +19,7 @@ import {
   LinkPreview,
   ProgressBarV2,
 } from "@/components/mdx/next-bricks";
+import { Term } from "@/components/mdx/term";
 import { MermaidFence } from "@/components/mdx/mermaid-fence";
 import type { PostTheme } from "@/types/post";
 
@@ -211,6 +212,7 @@ export function getMdxComponents(
     Media,
     LinkPreview,
     ProgressBarV2,
+    Term,
     code: ({ className, children, ...props }) => {
       if (className?.startsWith("language-")) {
         return <code className={className} {...props}>{children}</code>;

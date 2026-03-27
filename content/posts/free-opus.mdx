@@ -36,13 +36,13 @@ standard disclaimer: this writeup is for educational security research purposes 
 
 ## tl;dr
 
-gitlab duo is gitlab's ai assistant, backed by anthropic's models. gitlab gives new accounts a 30-day ultimate trial. **the limit is per account, not per person, machine, or billing entity.** the end result was a pipeline that created accounts, verified them, created personal access tokens, activated trials, and rotated through a live pool.
+*gitlab duo* is gitlab's ai assistant, backed by *anthropic*'s models. gitlab gives new accounts a 30-day <Term tip="GitLab's time-limited premium trial tier that unlocks Ultimate features and Duo access.">ultimate trial</Term>. **the limit is per account, not per person, machine, or billing entity.** the end result was a pipeline that created accounts, verified them, created <Term tip="Account-scoped access tokens used to authenticate API and CLI requests without a password.">personal access tokens</Term>, activated trials, and rotated through a live pool.
 
 over the life of the pipeline, it produced at least **87 fully trial-activated accounts**. 83 were later exhausted in live use, 4 were still active, and **943 non-email-only accounts** were preserved for later recovery instead of being thrown away.
 
 ## target overview
 
-gitlab duo provides:
+*gitlab duo* provides:
 
 - code suggestions in the ide
 - chat-based code explanation and generation
@@ -55,7 +55,7 @@ that is fine if you use it like a normal person.
 
 i do not use it like a normal person. i run multiple ai-assisted development sessions in parallel. one account's credits disappear fast. the question was simple: could i automate that into an account-pool problem?
 
-![gitlab ultimate trial documentation showing the trial path that made the rest of the pipeline worthwhile](/media/gitlab-duo-unlimited/gitlab-free-trial-docs.png "\"ultimate\" includes 24$ in gitlab credits")
+![gitlab ultimate trial documentation showing the trial path that made the rest of the pipeline worthwhile](/media/free-opus/gitlab-free-trial-docs.png "\"ultimate\" includes 24$ in gitlab credits")
 
 ### the defense stack
 
@@ -100,15 +100,15 @@ response = session.post("https://gitlab.com/users", data=signup_data)
 # 403 forbidden
 ```
 
-headers were not the issue. the proxy was not the whole issue either. the issue was the tls handshake itself. standard python `requests` had the wrong fingerprint and cloudflare treated it like exactly what it was: automation.
+headers were not the issue. the proxy was not the whole issue either. the issue was the <Term tip="The observable signature a client exposes during the TLS handshake, often used to distinguish browsers from automation.">tls fingerprint</Term> itself. standard python `requests` had the wrong fingerprint and <Term tip="A CDN and security platform that often sits in front of websites to rate-limit, inspect, and challenge suspicious traffic.">cloudflare</Term> treated it like exactly what it was: automation.
 
-the first real improvement was switching the signup path to `curl_cffi` with browser impersonation. that got the early pipeline past the tls wall often enough to be worth building on.
+the first real improvement was switching the signup path to <Term tip="A Python HTTP client built on curl/libcurl that can impersonate real browser TLS and HTTP behavior."><code>curl_cffi</code></Term> with browser impersonation. that got the early pipeline past the tls wall often enough to be worth building on.
 
 ## phase 2: captchas and the first real pipeline
 
-![arkose match-key challenge shown on the signup path, representing the captcha layer that had to be solved before registration could continue](/media/gitlab-duo-unlimited/arkose-matchkey-challenge.png "some arkose captcha examples")
+![arkose match-key challenge shown on the signup path, representing the captcha layer that had to be solved before registration could continue](/media/free-opus/arkose-matchkey-challenge.png "some arkose captcha examples")
 
-once the raw signup post could make it through, arkose became the next problem.
+once the raw signup post could make it through, <Term tip="Arkose Labs FunCaptcha, an interactive anti-bot challenge used on signup and login flows.">arkose</Term> became the next problem.
 
 gitlab's signup page embeds the arkose challenge parameters directly in the html:
 
@@ -122,20 +122,20 @@ params = {
 }
 ```
 
-the first working captcha path used anti-captcha. that was the primary solver on the legacy pipeline. 2captcha came after that as fallback, not as the original main path. the problem was that anti-captcha was never that reliable operationally. funcaptcha worker availability kept disappearing, `ERROR_NO_SLOT_AVAILABLE` would stall runs for long stretches, and even the picked-up tasks were not always solvable.
+the first working captcha path used <Term tip="A paid captcha-solving service that supports challenge types such as FunCaptcha and reCAPTCHA.">anti-captcha</Term>. that was the primary solver on the legacy pipeline. <Term tip="A paid captcha-solving marketplace and API used to outsource captcha solves.">2captcha</Term> came after that as fallback, not as the original main path. the problem was that *anti-captcha* was never that reliable operationally. funcaptcha worker availability kept disappearing, `ERROR_NO_SLOT_AVAILABLE` would stall runs for long stretches, and even the picked-up tasks were not always solvable.
 
 the flow looked like this:
 
 1. fetch signup page
-2. extract csrf + arkose parameters
-3. send the challenge to anti-captcha
-4. fall back to 2captcha when needed
+2. extract <Term tip="A per-request anti-forgery token used to prevent forged form submissions.">csrf</Term> + arkose parameters
+3. send the challenge to *anti-captcha*
+4. fall back to *2captcha* when needed
 5. inject the returned token into the signup form
 6. post the registration through the impersonated http client
 
-the early assumption was that solving the captcha was the hard part. in practice, it was only one part of the problem. the harder issue was getting stable throughput through cloudflare and bad proxy luck. across the big legacy runs, the http pipeline had roughly 5-8% yield from attempt to usable account.
+the early assumption was that solving the captcha was the hard part. in practice, it was only one part of the problem. the harder issue was getting stable throughput through *cloudflare* and bad proxy luck. across the big legacy runs, the http pipeline had roughly 5-8% yield from attempt to usable account.
 
-the email side was equally scrappy. the first inbox path used gopretstudio, and i had to reverse-engineer its next.js server actions just to fetch mail reliably. once that path was understood, it worked fairly reliably, but it was still a dependency i did not control.
+the email side was equally scrappy. the first inbox path used <Term tip="A disposable email inbox provider.">gopretstudio</Term>, and i had to reverse-engineer its next.js server actions just to fetch mail reliably. once that path was understood, it worked fairly reliably, but it was still a dependency i did not control.
 
 ## phase 3: automating the part that actually mattered
 
@@ -143,8 +143,8 @@ account creation was only half the story. the real value was the ultimate trial.
 
 trial activation was a browser problem from the start. the working path ended up using two tools:
 
-- flaresolverr to get through cloudflare and harvest clearance cookies
-- camoufox to continue the session in a browser that looked real enough to survive the rest of the flow
+- <Term tip="A proxy service that solves Cloudflare browser challenges and returns usable cookies or page state.">flaresolverr</Term> to get through *cloudflare* and harvest clearance cookies
+- <Term tip="An anti-detection browser project built around Firefox.">camoufox</Term> to continue the session in a browser that looked real enough to survive the rest of the flow
 
 ```mermaid
 flowchart LR
@@ -156,7 +156,7 @@ flowchart LR
     F --> G[ultimate trial]
 ```
 
-the trial form itself was simple, but a little annoying. it wanted company details, country, and some dropdown selections. the annoying part was the timing. if i submitted the form and checked the namespace api immediately, the account still looked free. a short wait and a second check showed the trial had landed.
+the trial form itself was simple, but a little annoying. it wanted company details, country, and some dropdown selections. the annoying part was the timing. if i submitted the form and checked the <Term tip="An API endpoint used to read account or namespace state after a workflow step completes.">namespace api</Term> immediately, the account still looked free. a short wait and a second check showed the trial had landed.
 
 that sounds minor, but it changed the whole state machine. "submit form" was not success. "submit form, wait, verify through api" was success.
 
@@ -164,7 +164,7 @@ that sounds minor, but it changed the whole state machine. "submit form" was not
 
 once one account could be trialed end to end, the next problem showed up right away: one account was nowhere near enough.
 
-gitlab eventually returns `402 payment required` or one of several text variants when duo credits are gone. so i built an opencode plugin that listens for those failures, marks the current account dead, swaps in the next pat, and keeps the session moving.
+gitlab eventually returns `402 payment required` or one of several text variants when duo credits are gone. so i built an <Term tip="An AI coding harness and agent runtime for terminal-driven development workflows.">opencode</Term> plugin that listens for those failures, marks the current account dead, swaps in the next pat, and keeps the session moving.
 
 ```typescript
 function isPermanentCreditExhaustion(message: string): boolean {
@@ -223,7 +223,7 @@ the burned-session part stayed in the final design because it actually mattered 
 
 after that, the project shifted from "can this work at all?" to "what happens when i try to do it at volume?"
 
-the scale-up runs depended heavily on residential proxies across rotating gateway ports. this was not a minor implementation detail, but it also was not the whole story. the real gate was gitlab's risk scoring, and proxy quality was just one of several inputs feeding it alongside timing, browser behavior, signup path, and whatever internal signals gitlab was weighting. the point was never that one proxy port was magical. rotating ports were just a way to spread attempts across changing exits and keep batches moving.
+the scale-up runs depended heavily on <Term tip="Proxy traffic routed through consumer ISP IP addresses rather than datacenter IP space.">residential proxies</Term> across rotating gateway ports. this was not a minor implementation detail, but it also was not the whole story. the real gate was gitlab's risk scoring, and proxy quality was just one of several inputs feeding it alongside timing, browser behavior, signup path, and whatever internal signals gitlab was weighting. the point was never that one proxy port was magical. rotating ports were just a way to spread attempts across changing exits and keep batches moving.
 
 **the bigger surprise was risk scoring.**
 
@@ -234,7 +234,7 @@ my early mental model was too simple: solve captcha, verify email, done. in prac
 - phone-only
 - phone + credit_card
 
-![local pending-account backlog grouped by required verification methods, showing the preserved risk buckets that built up once scale runs stopped landing in the email-only lane](/media/gitlab-duo-unlimited/risk-bucket-split.png "pending-account verification buckets")
+![local pending-account backlog grouped by required verification methods, showing the preserved risk buckets that built up once scale runs stopped landing in the email-only lane](/media/free-opus/risk-bucket-split.png "pending-account verification buckets")
 
 that changed the whole pipeline. email-only accounts were the gold path. phone-gated accounts became the normal operational branch once scale entered the picture. credit-card-gated accounts were mostly a dead end.
 
@@ -242,13 +242,13 @@ on the bigger batch runs, most attempts did not land in the easy lane. depending
 
 ## phase 7: phone verification becomes standard
 
-![gitlab phone-verification gate shown during signup when an account was pushed out of the email-only lane](/media/gitlab-duo-unlimited/gitlab-phone-verification.png "gitlab identity verification docs")
+![gitlab phone-verification gate shown during signup when an account was pushed out of the email-only lane](/media/free-opus/gitlab-phone-verification.png "gitlab identity verification docs")
 
-this is where `smspva.py` stopped being a side branch and started becoming part of the real pipeline story. once scale-up runs showed non-email-only rates climbing as high as roughly 92%, **phone verification was no longer some weird edge case. it was the standard outcome the system had to be ready for.** email-only stayed the best lane, but the operational assumption at scale had to be "this account may need sms."
+this is where <Term tip="An SMS verification provider that rents temporary phone numbers and exposes incoming one-time codes through an API.">smspva</Term> stopped being a side branch and started becoming part of the real pipeline story. once scale-up runs showed non-email-only rates climbing as high as roughly 92%, **phone verification was no longer some weird edge case. it was the standard outcome the system had to be ready for.** email-only stayed the best lane, but the operational assumption at scale had to be "this account may need sms."
 
 nl numbers were the cheap primary choice and uk was fallback. at the same time, non-email-only accounts stopped getting thrown away. they were preserved in sqlite for later recovery instead of being lost between runs.
 
-![smspva dashboard used to source numbers and receive codes for the phone-verification branch of the pipeline](/media/gitlab-duo-unlimited/smspva-dashboard.png "smspva dashboard")
+![smspva dashboard used to source numbers and receive codes for the phone-verification branch of the pipeline](/media/free-opus/smspva-dashboard.png "smspva dashboard")
 
 ## phase 8: making the browser path cheap enough
 
@@ -304,23 +304,23 @@ the stable pat path ended up with three important changes:
 2. capture the `glpat-*` token from the post response before redirect discards it
 3. try no-proxy first for pat creation, then fall back to proxy mode when needed
 
-the no-proxy part was especially ugly but real. after reboot, proxy-mode sign-in often wasted time or got stuck in cloudflare weirdness. no-proxy-first recovered accounts faster and with less nonsense.
+the no-proxy part was especially ugly but real. after reboot, proxy-mode sign-in often wasted time or got stuck in *cloudflare* weirdness. no-proxy-first recovered accounts faster and with less nonsense.
 
 this phase also exposed another unpleasant truth: gitlab purges accounts that do not complete the whole signup-to-pat flow quickly enough. that killed a bunch of earlier "create now, finish later" assumptions.
 
 ## phase 11: everything in its right place
 
-![gopretstudio inbox used in the earlier disposable-email phase before the final cleanup to owned domains and more stable verification](/media/gitlab-duo-unlimited/gopretstudio-inbox-page.png "gopretstudio inbox page")
+![gopretstudio inbox used in the earlier disposable-email phase before the final cleanup to owned domains and more stable verification](/media/free-opus/gopretstudio-inbox-page.png "gopretstudio inbox page")
 
 the final jump came from cleaning up the two messiest dependencies in the whole project: email and signup submission.
 
-on the email side, gopretstudio stopped being the main path. i moved to owned domains routed through purelymail, with catch-all forwarding into a central relay mailbox. that meant:
+on the email side, *gopretstudio* stopped being the main path. i moved to owned domains routed through <Term tip="An email hosting provider for custom domains.">purelymail</Term>, with catch-all forwarding into a central relay mailbox. that meant:
 
 - no third-party disposable inbox dependency on the primary path
 - stable imap polling
 - full control over the accepted mailbox domains
 
-on the signup side, the primary path moved into `browser_signup.py`. that browser pipeline used camoufox, human-like input behavior, and a three-tier submit strategy:
+on the signup side, the primary path moved into `browser_signup.py`. that browser pipeline used *camoufox*, human-like input behavior, and a three-tier submit strategy:
 
 1. normal click
 2. refill and try again if the page glitched
@@ -328,7 +328,7 @@ on the signup side, the primary path moved into `browser_signup.py`. that browse
 
 that last part mattered more than it sounds. the vue form handler was one of the reasons the browser path could look correct and still fail to advance. calling `form.submit()` directly cut through it.
 
-the other big change here was solver dependence. the mature browser path could handle arkose transparently for the primary signup flow, which meant the project no longer depended on paid captcha solving for most good runs. anti-captcha and 2captcha stayed in the history and in fallback logic, but they were no longer the star of the final path.
+the other big change here was solver dependence. the mature browser path could handle *arkose* transparently for the primary signup flow, which meant the project no longer depended on paid captcha solving for most good runs. *anti-captcha* and *2captcha* stayed in the history and in fallback logic, but they were no longer the star of the final path.
 
 this was also the phase where the path stopped feeling fragile. the custom-domain browser pipeline hit 7/7 full end-to-end success for email-only accounts at about 7 minutes per account.
 
@@ -398,7 +398,7 @@ at a proxy rate of $3.75/GB, the rough picture looks like this:
 | component | email-only fast lane | phone-standard operational lane |
 |-----------|----------------------|-------------------------------|
 | proxy bandwidth | ~$0.27/account | ~$0.27/account |
-| captcha | usually $0, but about +$0.0015 when 2captcha fallback fires | usually $0, but about +$0.0015 when 2captcha fallback fires |
+| captcha | usually $0, but about +$0.0015 when *2captcha* fallback fires | usually $0, but about +$0.0015 when *2captcha* fallback fires |
 | sms | $0 | $0.10 for uk primary or $0.22 for nl fallback |
 | direct variable cost | about **`$0.27/account`** on the cleanest path | about **`$0.37/account`** with uk sms or **`$0.49/account`** with nl sms, before fixed mailbox/domain overhead |
 
@@ -406,7 +406,7 @@ the important distinction is that the perfected pipeline had two different cost 
 
 without the ~60-70% asset-cache reduction, the proxy share would have been roughly 177-238 MB per account instead, or about $0.67-0.89 per created account at the same proxy rate.
 
-![anthropic pricing documentation used for the list-price comparison in the cost section](/media/gitlab-duo-unlimited/anthropic-pricing-docs.png "anthropic list pricing reference")
+![anthropic pricing documentation used for the list-price comparison in the cost section](/media/free-opus/anthropic-pricing-docs.png "anthropic list pricing reference")
 
 ### usage actually extracted
 
@@ -421,7 +421,7 @@ one live usage snapshot looked like this:
 | gitlab/duo-chat-sonnet-4-6 | 509 | 45.7M | 160.0K |
 | gitlab/duo-chat-opus-4-6 | 6,060 | 582.2M | 2.1M |
 
-using Anthropic's published base API pricing for Claude Sonnet 4.6 at $3 per million input tokens and $15 per million output tokens, and Claude Opus 4.6 at $5 and $25, here's what those totals would cost at list price. Anthropic also notes premium pricing can apply to some Opus 4.6 prompts over 200k tokens, so this is a base-rate estimate, not a guaranteed exact bill.
+using *anthropic*'s published base API pricing for Claude Sonnet 4.6 at $3 per million input tokens and $15 per million output tokens, and Claude Opus 4.6 at $5 and $25, here's what those totals would cost at list price. *anthropic* also notes premium pricing can apply to some Opus 4.6 prompts over 200k tokens, so this is a base-rate estimate, not a guaranteed exact bill.
 
 #### estimated anthropic api cost
 
@@ -433,16 +433,16 @@ using Anthropic's published base API pricing for Claude Sonnet 4.6 at $3 per mil
 
 either way, **the order of magnitude is the point**: the operational overhead was tiny compared with the amount of model usage the pool ended up delivering.
 
-![usage snapshot showing the amount of duo model traffic extracted from the account pool](/media/gitlab-duo-unlimited/usage-value-snapshot.png "duo usage snapshot")
+![usage snapshot showing the amount of duo model traffic extracted from the account pool](/media/free-opus/usage-value-snapshot.png "duo usage in opencode")
 
 ## conclusion
 
-**the important part was not one clever bypass.** it was that the whole chain from "new account" to "anthropic credits" eventually became reliable enough to operate as a pipeline.
+**the important part was not one clever bypass.** it was that the whole chain from "new account" to "*anthropic* credits" eventually became reliable enough to operate as a pipeline.
 
-the first versions were messy: low-yield http signup, paid captcha solves, disposable inboxes, and lots of proxy noise. the final versions were much cleaner. signup moved onto a real browser path with a vue bypass. email verification moved onto purelymail and owned domains. runtime rotation stopped collapsing under stale `402`s. pat recovery stopped depending on fragile login retries after reboot.
+the first versions were messy: low-yield http signup, paid captcha solves, disposable inboxes, and lots of proxy noise. the final versions were much cleaner. signup moved onto a real browser path with a *vue* bypass. email verification moved onto *purelymail* and owned domains. runtime rotation stopped collapsing under stale `402`s. pat recovery stopped depending on fragile login retries after reboot.
 
-an earlier stable milestone was the first mature snapshot with 17 fully verified trial accounts, 12 active, and 5 exhausted. after that point, the pipeline kept running. the later lifetime total went well past it: at least 87 fully trial-activated accounts overall, 83 archived after real live exhaustion, 4 still active in the pool, and 943 non-email-only accounts preserved for later recovery. i could have kept pushing it, but there is not much point now. codex is already enough for most of my workload, GPT-5.4 is effectively unlimited on my side too, and after moving away from opencode i do not have much reason to port the whole setup across harnesses.
+an earlier stable milestone was the first mature snapshot with 17 fully verified trial accounts, 12 active, and 5 exhausted. after that point, the pipeline kept running. the later lifetime total went well past it: at least 87 fully trial-activated accounts overall, 83 archived after real live exhaustion, 4 still active in the pool, and 943 non-email-only accounts preserved for later recovery. honestly, i spent more time making the pipeline than actually using it. what i mainly wanted to prove was that the whole thing was scalable and automatable; *opus* ended up being the secondary reward once that part worked. i could have kept pushing it, but there is not much point now. codex is already enough for most of my workload, GPT-5.4 is effectively unlimited on my side too, and after moving away from *opencode* i do not have much reason to port the whole setup across harnesses.
 
-![lightshot capture referenced in the closing note](/media/gitlab-duo-unlimited/prnt-oseVsRlIs1XV.png "bye opencode, been a good journey")
+![lightshot capture referenced in the closing note](/media/free-opus/prnt-oseVsRlIs1XV.png "bye opencode, been a good journey")
 
 if gitlab wanted to break this chain at the point that mattered most, **the best choke point would be trial activation, not the early signup friction.** stronger identity checks there would do more than making the captcha a little more annoying.

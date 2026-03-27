@@ -17,6 +17,10 @@ describe("mdx shortcodes", () => {
 
 <ProgressBarV2 label="Progress" value={72} />
 
+<Term tip="A temporary inbox provider used in the early email-verification path.">
+  gopretstudio
+</Term>
+
 <Media
   type="video"
   mode="fill"
@@ -41,6 +45,7 @@ describe("mdx shortcodes", () => {
 
     expect(html).toContain("Example write-up");
     expect(html).toContain("Progress");
+    expect(html).toContain("A temporary inbox provider used in the early email-verification path.");
     expect(html).toContain("/media/slippy-preview.mp4");
     expect(html).toContain("/media/oracle-sniper-writeup/console_victory.jpg");
     expect(html).toContain("nb-media--fill");
