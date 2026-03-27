@@ -10,7 +10,8 @@
   --accent: #f582db;
   --card: #1e1e1e;
   --post-background: var(--background);
-  --post-foreground: var(--foreground);
+  --post-body: var(--foreground);
+  --post-heading: var(--foreground);
   --post-accent: var(--accent);
   --post-muted: var(--muted);
   --post-border: var(--border);
@@ -142,6 +143,10 @@ textarea {
   background: color-mix(in srgb, var(--accent) 28%, transparent);
 }
 
+.post-theme-shell ::selection {
+  background: color-mix(in srgb, var(--post-accent) 28%, transparent);
+}
+
 .ascii-art {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
     "Liberation Mono", "Courier New", monospace;
@@ -157,7 +162,7 @@ textarea {
 .post-theme-shell {
   min-height: 100vh;
   background: var(--post-background);
-  color: var(--post-foreground);
+  color: var(--post-body);
   font-family: var(--font-post-body), var(--font-space-grotesk), sans-serif;
   transition:
     background-color var(--page-fade-ms) ease,
@@ -166,36 +171,36 @@ textarea {
 }
 
 .post-body {
-  color: var(--post-foreground);
+  color: var(--post-body);
   font-family: var(--font-post-body), var(--font-space-grotesk), sans-serif;
-  --tw-prose-body: var(--post-foreground);
-  --tw-prose-headings: var(--post-foreground);
+  --tw-prose-body: var(--post-body);
+  --tw-prose-headings: var(--post-heading);
   --tw-prose-lead: var(--post-muted);
   --tw-prose-links: var(--post-accent);
-  --tw-prose-bold: var(--post-foreground);
+  --tw-prose-bold: var(--post-body);
   --tw-prose-counters: var(--post-muted);
   --tw-prose-bullets: var(--post-muted);
   --tw-prose-hr: var(--post-border);
-  --tw-prose-quotes: var(--post-foreground);
+  --tw-prose-quotes: var(--post-body);
   --tw-prose-quote-borders: var(--post-border);
   --tw-prose-captions: var(--post-muted);
-  --tw-prose-code: var(--post-foreground);
+  --tw-prose-code: var(--post-heading);
   --tw-prose-pre-code: var(--post-code-fg);
   --tw-prose-pre-bg: var(--post-code-bg);
   --tw-prose-th-borders: var(--post-border);
   --tw-prose-td-borders: var(--post-border);
-  --tw-prose-invert-body: var(--post-foreground);
-  --tw-prose-invert-headings: var(--post-foreground);
+  --tw-prose-invert-body: var(--post-body);
+  --tw-prose-invert-headings: var(--post-heading);
   --tw-prose-invert-lead: var(--post-muted);
   --tw-prose-invert-links: var(--post-accent);
-  --tw-prose-invert-bold: var(--post-foreground);
+  --tw-prose-invert-bold: var(--post-body);
   --tw-prose-invert-counters: var(--post-muted);
   --tw-prose-invert-bullets: var(--post-muted);
   --tw-prose-invert-hr: var(--post-border);
-  --tw-prose-invert-quotes: var(--post-foreground);
+  --tw-prose-invert-quotes: var(--post-body);
   --tw-prose-invert-quote-borders: var(--post-border);
   --tw-prose-invert-captions: var(--post-muted);
-  --tw-prose-invert-code: var(--post-foreground);
+  --tw-prose-invert-code: var(--post-heading);
   --tw-prose-invert-pre-code: var(--post-code-fg);
   --tw-prose-invert-pre-bg: var(--post-code-bg);
   --tw-prose-invert-th-borders: var(--post-border);
@@ -292,7 +297,8 @@ textarea {
   padding: 0.75rem 0.25rem 0;
   font-size: 0.875rem;
   line-height: 1.6;
-  color: color-mix(in srgb, var(--post-foreground) 72%, transparent);
+  color: color-mix(in srgb, var(--post-body) 72%, transparent);
+  text-align: center;
 }
 
 .post-body.prose :where(pre.astro-code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
@@ -311,7 +317,12 @@ textarea {
 }
 
 .post-body :where(h1, h2, h3, h4, h5, h6) {
-  font-family: var(--font-post-heading), var(--font-space-grotesk), sans-serif;
+  letter-spacing: normal;
+}
+
+.post-body :where(h2, h3, h4, h5, h6) {
+  font-family: var(--font-post-body), var(--font-space-grotesk), sans-serif;
+  font-weight: 460;
 }
 
 .post-body.prose :where(:not(pre) > code.post-inline-code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
@@ -330,6 +341,10 @@ textarea {
   content: none;
 }
 
+.post-body.prose :where(strong, b):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  color: var(--post-body);
+}
+
 .editor-pane::-webkit-scrollbar,
 .post-scroll::-webkit-scrollbar {
   width: 10px;
@@ -340,4 +355,39 @@ textarea {
 .post-scroll::-webkit-scrollbar-thumb {
   background: rgb(63 63 70 / 0.8);
   border-radius: 999px;
+}
+
+/* mermaid diagram theme overrides */
+.post-body .mermaid rect:not([fill="transparent"]):not([fill="none"]) {
+  fill: var(--post-code-bg);
+}
+
+.post-body .mermaid .node rect,
+.post-body .mermaid .cluster rect {
+  fill: var(--post-code-bg);
+  stroke: var(--post-accent);
+}
+
+.post-body .mermaid text {
+  fill: var(--post-heading);
+}
+
+.post-body .mermaid .edgePath .path {
+  stroke: var(--post-muted);
+}
+
+.post-body .mermaid .arrowheadPath {
+  fill: var(--post-muted);
+}
+
+.post-body .mermaid .note,
+.post-body .mermaid rect.note,
+.post-body .mermaid polygon.note {
+  fill: #f0c28a !important;
+  stroke: var(--post-accent) !important;
+}
+
+.post-body .mermaid .noteText,
+.post-body .mermaid .noteText tspan {
+  fill: #141413 !important;
 }

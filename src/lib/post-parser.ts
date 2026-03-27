@@ -13,7 +13,8 @@ const themeSchema = z.object({
   colors: z
     .object({
       background: z.string().min(1).optional(),
-      foreground: z.string().min(1).optional(),
+      body: z.string().min(1).optional(),
+      heading: z.string().min(1).optional(),
       accent: z.string().min(1).optional(),
       muted: z.string().min(1).optional(),
       border: z.string().min(1).optional(),

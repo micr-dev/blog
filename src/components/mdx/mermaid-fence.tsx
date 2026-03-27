@@ -9,6 +9,9 @@ function slugifyId(value: string) {
   return value.replace(/[^a-z0-9]/gi, "-").toLowerCase();
 }
 
+const mermaidNoteBackground = "#f0c28a";
+const mermaidNoteText = "#141413";
+
 export function MermaidFence({
   code,
   theme,
@@ -29,7 +32,7 @@ export function MermaidFence({
         themeVariables: {
           background: "transparent",
           primaryColor: theme.colors.codeBackground,
-          primaryTextColor: theme.colors.foreground,
+          primaryTextColor: theme.colors.heading,
           primaryBorderColor: theme.colors.accent,
           lineColor: theme.colors.muted,
           secondaryColor: theme.colors.codeBackground,
@@ -37,6 +40,19 @@ export function MermaidFence({
           clusterBkg: theme.colors.codeBackground,
           clusterBorder: theme.colors.border,
           fontFamily: theme.fonts.body.family,
+          actorBkg: theme.colors.codeBackground,
+          actorBorder: theme.colors.accent,
+          actorTextColor: theme.colors.heading,
+          actorLine: theme.colors.muted,
+          signalColor: theme.colors.muted,
+          signalTextColor: theme.colors.heading,
+          labelBoxBkgColor: theme.colors.codeBackground,
+          labelBoxBorderColor: theme.colors.accent,
+          labelTextColor: theme.colors.heading,
+          loopTextColor: theme.colors.heading,
+          noteBkgColor: mermaidNoteBackground,
+          noteBorderColor: theme.colors.accent,
+          noteTextColor: mermaidNoteText,
         },
       });
 
