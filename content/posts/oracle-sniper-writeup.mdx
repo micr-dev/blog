@@ -12,7 +12,7 @@ cover: "/media/oracle-sniper-writeup/console_victory.jpg"
 
 ### subject
 
-oracle cloud's "out of host capacity" error (http 500) for free-tier arm instances (`vm.standard.a1.flex`) functions as a soft limit based on temporal resource contention rather than a hard account restriction. by implementing high-frequency, authenticated api polling coupled with identity-layer obfuscation (residential proxies and canvas fingerprint spoofing), users can exploit race conditions in the provisioning queue to secure maximum-spec instances (4 ocpus, 24gb ram) that are otherwise unavailable via the web console.
+oracle cloud's "out of host capacity" error (http 500) for free-tier arm instances (`vm.standard.a1.flex`) is a soft limit, not a hard one. capacity comes and goes as other tenancies get terminated or hardware gets added. by polling the api every 60 seconds with a residential proxy and a spoofed browser fingerprint, you can catch the brief window when a slot opens and grab instances (4 ocpus, 24gb ram) that the web console will never give you.
 
 ---
 
@@ -42,13 +42,13 @@ flowchart LR
 
 ### details
 
-the exploitation technique relies on three distinct phases: **identity engineering** (to create the account), **autonomous sniping** (to provision resources), and **stealth access** (to maintain the account).
+the approach breaks into three parts: getting a valid account past the fraud checks, automating the instance grab, and then accessing what you provisioned without getting banned.
 
 ---
 
 ### phase 1: identity engineering (the "clean room")
 
-before any automation can run, you must possess a valid oci account. this is the hardest step due to **oracle adaptive access manager (oaam)**.
+before any automation can run, you must possess a valid oci account. this is the hardest step. oracle's adaptive access manager (oaam) makes it painful.
 
 #### the threat model
 
@@ -267,7 +267,7 @@ to oracle's logs in ashburn, the connection comes from the paris ip, not your ho
 
 ### evidence of success
 
-retrieving logs from the nas confirms the methodology works.
+here is what the logs looked like when it finally worked:
 
 `instance_created`:
 ```text
@@ -278,19 +278,15 @@ shape: vm.standard.a1.flex
 state: provisioning
 ```
 
-the script successfully negotiated the race condition, provisioned the resource, and alerted the user via discord.
+the script grabbed the instance and sent a discord alert. done.
 
 ![oracle console login](/media/oracle-sniper-writeup/console_victory.jpg)
 
 ---
 
-### recommendations
+### what oracle could do about this
 
-to mitigate this exhaustion and evasion technique, cloud providers should:
-
-1. **implement proof-of-work (pow)**: require a computational puzzle (hashcash style) for `launch_instance` api calls on free-tier tenancies. this makes high-frequency polling computationally expensive for the attacker.
-2. **link billing to access**: correlate login/api ip addresses with billing geography post-creation, not just during signup.
-3. **waitlist queue**: replace "first-come-first-served" 500 errors with a verified waitlist system for high-demand shapes.
+there are obvious fixes. require a proof-of-work challenge (hashcash style) on the `launch_instance` endpoint so polling gets expensive. correlate login and api ip addresses with billing geography after signup, not just during it. or replace the first-come-first-served 500 errors with an actual waitlist.
 
 ---
 
