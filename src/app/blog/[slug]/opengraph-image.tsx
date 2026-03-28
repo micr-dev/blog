@@ -4,7 +4,6 @@ import path from "node:path";
 import { getPostBySlug, getAllPostSlugs } from "@/lib/posts";
 import {
   DEFAULT_SCYTHE_ROTATION,
-  DEFAULT_SCYTHE_SCALE,
   DEFAULT_TITLE_SCALE,
   getOgPreviewTheme,
   getOgTitleStyle,
@@ -12,6 +11,8 @@ import {
   ogLayout,
 } from "@/lib/og";
 import type { FontDefinition } from "@/types/post";
+
+const OG_SCYTHE_SCALE = 0.65;
 
 export const dynamic = "force-static";
 
@@ -76,7 +77,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
 
   const titleStyle = getOgTitleStyle(post.title, DEFAULT_TITLE_SCALE);
   const titleFontSize = typeof titleStyle.fontSize === "number" ? titleStyle.fontSize : 72;
-  const scytheFrame = getScytheFrame(DEFAULT_SCYTHE_SCALE);
+  const scytheFrame = getScytheFrame(OG_SCYTHE_SCALE);
   const logoSrc = svgToDataUri(tintSvg(logoSvg, theme.logo));
   const scytheSrc = svgToDataUri(tintSvg(cropScytheSvg(scytheSvg), theme.scythe));
 
