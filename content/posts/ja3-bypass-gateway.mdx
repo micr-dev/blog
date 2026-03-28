@@ -1,7 +1,7 @@
 ---
-title: "defeating ja3 fingerprinting with python and despair"
+title: "Defeating JA3 Fingerprinting with Python and Despair"
 date: "2025-12-07"
-excerpt: "Getting one Oracle VPS IP to front an upstream API turned into a mess involving dirty cloud ranges, header scrubbing, JA3, and broken streaming."
+excerpt: "Routing traffic through a Python bridge to bypass upstream JA3 fingerprinting"
 tags:
   - networking
   - reverse engineering
@@ -226,7 +226,7 @@ flowchart TD
 
 ## Security properties
 
-Despite being a hack, the setup is defensible:
+It is a hack, but it holds up reasonably well:
 
 - no public ingress ports on the VPS
 - traffic enters through an outbound-authenticated tunnel only
@@ -267,6 +267,6 @@ sudo netstat -tulpn | grep python
 
 ## Conclusion
 
-In the end, this was less about proxying and more about identity.
+The whole thing ended up being about identity, not proxying.
 
-The upstream did not care that the requests were authenticated and syntactically correct. It cared whether the network-level behavior matched the story told by the headers. The stack that worked was not the fanciest one. It was the one that made the last hop look ordinary.
+The upstream did not care that requests were authenticated and syntactically correct. It cared whether the network behavior matched the story told by the headers. The winning stack was the boring one: make the last hop look ordinary.
