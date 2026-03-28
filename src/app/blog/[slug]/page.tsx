@@ -36,6 +36,13 @@ export async function generateMetadata({
       description: post.excerpt,
       url: `https://blog.micr.dev/blog/${post.slug}`,
       type: "article",
+      images: [
+        {
+          url: `/blog/${post.slug}/opengraph-image`,
+          width: 1200,
+          height: 630,
+        },
+      ],
     },
   };
 }
