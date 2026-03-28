@@ -75,7 +75,8 @@ export default async function Image({ params }: { params: Promise<{ slug: string
   ]);
 
   const titleStyle = getOgTitleStyle(post.title, DEFAULT_TITLE_SCALE);
-  const scytheFrame = getScytheFrame(1);
+  const titleFontSize = typeof titleStyle.fontSize === "number" ? titleStyle.fontSize : 72;
+  const scytheFrame = getScytheFrame(DEFAULT_SCYTHE_SCALE);
   const logoSrc = svgToDataUri(tintSvg(logoSvg, theme.logo));
   const scytheSrc = svgToDataUri(tintSvg(cropScytheSvg(scytheSvg), theme.scythe));
 
@@ -124,7 +125,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
               top: "50%",
               width: scytheFrame.width,
               height: scytheFrame.height,
-              transform: `translate(-50%, -50%) rotate(${DEFAULT_SCYTHE_ROTATION}deg) scale(${DEFAULT_SCYTHE_SCALE})`,
+              transform: `translate(-50%, -50%) rotate(${DEFAULT_SCYTHE_ROTATION}deg)`,
               transformOrigin: "center",
               zIndex: 2,
             }}
@@ -145,10 +146,19 @@ export default async function Image({ params }: { params: Promise<{ slug: string
         />
         <h1
           style={{
-            ...titleStyle,
+            display: "flex",
+            position: "absolute",
+            left: ogLayout.title.left,
+            top: ogLayout.title.top,
+            width: ogLayout.title.width,
+            margin: 0,
             color: theme.title,
             fontFamily: headingFont.family,
             fontWeight: 400,
+            fontSize: titleFontSize,
+            lineHeight: 1.02,
+            letterSpacing: "-0.05em",
+            whiteSpace: "pre-wrap",
           }}
         >
           {post.title}
