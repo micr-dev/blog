@@ -10,6 +10,7 @@ import {
   getScytheFrame,
   ogLayout,
 } from "@/lib/og";
+import { getOgBrandAssetUris } from "@/lib/og-assets";
 import type { FontDefinition } from "@/types/post";
 
 const OG_SCYTHE_SCALE = 0.65;
@@ -19,23 +20,6 @@ export const dynamic = "force-static";
 export async function generateStaticParams() {
   const slugs = await getAllPostSlugs();
   return slugs.map((slug) => ({ slug }));
-}
-
-function tintSvg(svg: string, color: string) {
-  return svg
-    .replace(/<\?xml[\s\S]*?\?>/i, "")
-    .replace(/<!DOCTYPE[\s\S]*?>/gi, "")
-    .replace(/#000000/gi, color)
-    .replace(/#000\b/gi, color)
-    .replace(/\bblack\b/gi, color);
-}
-
-function cropScytheSvg(svg: string) {
-  return svg.replace(/viewBox="[^"]*"/i, 'viewBox="600 120 6938 2788"');
-}
-
-function svgToDataUri(svg: string) {
-  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
 }
 
 async function loadOgHeadingFont(font: FontDefinition) {
@@ -69,17 +53,14 @@ export default async function Image({ params }: { params: Promise<{ slug: string
 
   const theme = getOgPreviewTheme(post.theme);
   const headingFont = post.theme.fonts.heading;
-  const [fontData, logoSvg, scytheSvg] = await Promise.all([
+  const [fontData, brandAssets] = await Promise.all([
     loadOgHeadingFont(headingFont),
-    fs.readFile(path.join(process.cwd(), "public", "brand", "logo.svg"), "utf8"),
-    fs.readFile(path.join(process.cwd(), "public", "brand", "scythe.svg"), "utf8"),
+    getOgBrandAssetUris(theme),
   ]);
 
   const titleStyle = getOgTitleStyle(post.title, DEFAULT_TITLE_SCALE);
   const titleFontSize = typeof titleStyle.fontSize === "number" ? titleStyle.fontSize : 72;
   const scytheFrame = getScytheFrame(OG_SCYTHE_SCALE);
-  const logoSrc = svgToDataUri(tintSvg(logoSvg, theme.logo));
-  const scytheSrc = svgToDataUri(tintSvg(cropScytheSvg(scytheSvg), theme.scythe));
 
   return new ImageResponse(
     (
@@ -116,7 +97,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
           }}
         >
           <img
-            src={scytheSrc}
+            src={brandAssets.scythe}
             alt=""
             width={scytheFrame.width}
             height={scytheFrame.height}
@@ -133,7 +114,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
           />
         </div>
         <img
-          src={logoSrc}
+          src={brandAssets.logo}
           alt=""
           width={ogLayout.logo.width}
           height={ogLayout.logo.height}
