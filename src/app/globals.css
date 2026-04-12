@@ -468,6 +468,18 @@ textarea {
   border-radius: 999px;
 }
 
+@media (min-width: 1280px) {
+  html[data-post-progress-scrollbar="hidden"] {
+    scrollbar-width: none;
+  }
+
+  html[data-post-progress-scrollbar="hidden"]::-webkit-scrollbar,
+  html[data-post-progress-scrollbar="hidden"] body::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+}
+
 /* mermaid diagram theme overrides */
 .post-body .mermaid rect:not([fill="transparent"]):not([fill="none"]) {
   fill: var(--post-code-bg);
