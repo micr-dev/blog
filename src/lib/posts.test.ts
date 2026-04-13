@@ -52,7 +52,7 @@ describe("post parsing", () => {
     const parsed = parseEditablePost(source);
     const style = getThemeStyle(parsed.theme);
 
-    expect(style["--post-accent" as string]).toBe("#ff00aa");
-    expect(style["--font-post-mono" as string]).toContain("Spline Sans Mono");
+    expect((style as Record<string, string>)["--post-accent"]).toBe("#ff00aa");
+    expect((style as Record<string, string>)["--font-post-mono"]).toContain("Spline Sans Mono");
   });
 });
