@@ -16,6 +16,7 @@ const DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
   timeZone: "UTC",
 });
 
+/** Extract a slug from an MDX filename by stripping the extension. */
 function slugFromFilename(filename: string) {
   return filename.replace(/\.mdx$/, "");
 }
@@ -24,6 +25,10 @@ type PostIndexEntry = PostSummary & {
   published: boolean;
 };
 
+/**
+ * Read and parse a single MDX file into a post index entry.
+ * Returns metadata (title, excerpt, date, tags) without the full content.
+ */
 async function readPostIndexEntry(filename: string): Promise<PostIndexEntry> {
   const slug = slugFromFilename(filename);
   const fullPath = path.join(POSTS_DIR, filename);
@@ -42,14 +47,20 @@ async function readPostIndexEntry(filename: string): Promise<PostIndexEntry> {
   };
 }
 
+/** Format an ISO date string into a human-readable form (e.g. "Apr 22, 2026"). */
 function formatDate(value: string) {
   return DATE_FORMATTER.format(new Date(`${value}T00:00:00.000Z`));
 }
 
+/** Trim whitespace from a tag string. */
 function normalizeTag(tag: string) {
   return tag.trim();
 }
 
+/**
+ * Type guard checking whether an error was caused by a missing file (ENOENT).
+ * Used to distinguish "post not found" from unexpected IO errors.
+ */
 function isMissingFileError(cause: unknown) {
   return (
     typeof cause === "object"
@@ -59,10 +70,18 @@ function isMissingFileError(cause: unknown) {
   );
 }
 
+/**
+ * Convert a tag name into a URL-safe slug (lowercased, dashes for spaces).
+ * Example: `"Machine Learning"` → `"machine-learning"`
+ */
 export function slugifyTag(tag: string) {
   return normalizeTag(tag).toLowerCase().replace(/\s+/g, "-");
 }
 
+/**
+ * Cached reader for the post index. Scans the content/posts directory,
+ * parses all `.mdx` files, and returns published posts sorted newest-first.
+ */
 const getPostIndex = cache(async (): Promise<PostIndexEntry[]> => {
   let entries: string[] = [];
 
@@ -83,11 +102,13 @@ const getPostIndex = cache(async (): Promise<PostIndexEntry[]> => {
     .sort((left, right) => right.datetime.localeCompare(left.datetime));
 });
 
+/** Return slugs for all published posts (cached). */
 export const getAllPostSlugs = cache(async () => {
   const posts = await getPostIndex();
   return posts.map((post) => post.slug);
 });
 
+/** Return lightweight summaries for all published posts (cached). */
 export const getPostSummaries = cache(async (): Promise<PostSummary[]> => {
   const posts = await getPostIndex();
   return posts.map((post) => ({
@@ -101,6 +122,10 @@ export const getPostSummaries = cache(async (): Promise<PostSummary[]> => {
   }));
 });
 
+/**
+ * Load a full blog post by slug. Returns `null` if the post is
+ * unpublished or the file does not exist. Re-throws unexpected errors.
+ */
 export const getPostBySlug = cache(async (slug: string): Promise<BlogPost | null> => {
   try {
     const source = await fs.readFile(path.join(POSTS_DIR, `${slug}.mdx`), "utf8");
@@ -130,6 +155,10 @@ export const getPostBySlug = cache(async (slug: string): Promise<BlogPost | null
   }
 });
 
+/**
+ * Aggregate all unique tags across published posts with their post counts.
+ * Tags are sorted alphabetically by name.
+ */
 export const getTags = cache(async (): Promise<TagSummary[]> => {
   const posts = await getPostIndex();
   const counts = new Map<string, { name: string; count: number }>();
@@ -151,11 +180,13 @@ export const getTags = cache(async (): Promise<TagSummary[]> => {
     .sort((left, right) => left.name.localeCompare(right.name));
 });
 
+/** Look up a tag by its URL slug (cached). */
 export const getTagBySlug = cache(async (slug: string) => {
   const tags = await getTags();
   return tags.find((tag) => tag.slug === slug) ?? null;
 });
 
+/** Return all published posts that carry the given tag slug (cached). */
 export const getPostsByTag = cache(async (slug: string) => {
   const posts = await getPostIndex();
   return posts.filter((post) =>
@@ -163,6 +194,10 @@ export const getPostsByTag = cache(async (slug: string) => {
   );
 });
 
+/**
+ * Given an ordered list of posts and a target slug, return the
+ * chronologically previous and next post for navigation.
+ */
 export function getAdjacentPosts(posts: PostSummary[], slug: string) {
   const currentIndex = posts.findIndex((post) => post.slug === slug);
 

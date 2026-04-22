@@ -1,5 +1,9 @@
 export type SharePlatform = "x" | "bluesky" | "linkedin";
 
+/**
+ * Build a share URL for the given platform, pre-filled with the
+ * post title and URL. Supports X (Twitter), Bluesky, and LinkedIn.
+ */
 export function buildShareHref(
   platform: SharePlatform,
   title: string,

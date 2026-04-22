@@ -43,6 +43,11 @@ const frontmatterSchema = z.object({
   theme: themeSchema.optional(),
 });
 
+/**
+ * Parse a raw MDX string into validated frontmatter and body content.
+ * Expects YAML frontmatter delimited by `---` fences.
+ * @throws {Error} If frontmatter is missing or fails schema validation.
+ */
 export function parseDocument(source: string) {
   const match = source.match(/^---\n([\s\S]*?)\n---\n?/);
 
@@ -59,6 +64,10 @@ export function parseDocument(source: string) {
   };
 }
 
+/**
+ * Merge a font definition with a partial override, falling back to
+ * the base definition for any missing fields.
+ */
 function resolveFont(
   fallback: FontDefinition,
   override?: Partial<FontDefinition>,
@@ -70,6 +79,11 @@ function resolveFont(
   };
 }
 
+/**
+ * Merge per-post theme overrides with the site-wide default theme.
+ * Colors are shallow-merged; fonts are resolved individually so each
+ * retains a complete definition even when partially overridden.
+ */
 export function mergeTheme(frontmatter?: PostFrontmatter["theme"]): PostTheme {
   return {
     colors: {
@@ -87,6 +101,11 @@ export function mergeTheme(frontmatter?: PostFrontmatter["theme"]): PostTheme {
   };
 }
 
+/**
+ * Parse an MDX document and return its validated frontmatter, body
+ * content, and fully resolved theme. Convenience wrapper around
+ * `parseDocument` + `mergeTheme`.
+ */
 export function parseEditablePost(source: string) {
   const { frontmatter, content } = parseDocument(source);
   return {
