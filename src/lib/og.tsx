@@ -12,8 +12,11 @@ const SCYTHE_VIEWBOX = {
   height: 3015,
 } as const;
 
+/** Default multiplier applied to title font sizing in OG card previews. */
 export const DEFAULT_TITLE_SCALE = 0.75;
+/** Default multiplier applied to the cropped scythe asset dimensions. */
 export const DEFAULT_SCYTHE_SCALE = 1.51;
+/** Default rotation (degrees) applied to the scythe asset in OG cards. */
 export const DEFAULT_SCYTHE_ROTATION = -100;
 
 const titleStyleByLength = [
@@ -24,6 +27,7 @@ const titleStyleByLength = [
   { maxLength: Number.POSITIVE_INFINITY, fontSize: 68 },
 ] as const;
 
+/** Canonical OG card layout metrics used by rendering helpers and templates. */
 export const ogLayout = {
   width: OG_WIDTH,
   height: OG_HEIGHT,
