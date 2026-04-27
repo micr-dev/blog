@@ -8,7 +8,9 @@ import type {
   TagSummary,
 } from "@/types/post";
 
+/** Absolute path to the on-disk MDX posts directory. */
 const POSTS_DIR = path.join(process.cwd(), "content", "posts");
+/** Shared UTC date formatter for canonical post-date display. */
 const DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
   month: "short",
   day: "numeric",
