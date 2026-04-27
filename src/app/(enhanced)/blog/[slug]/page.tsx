@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Link } from "next-view-transitions";
 import { Layout } from "@/components/layout";
+import { PlainVersionCallout } from "@/components/plain-version-callout";
 import { PostProgressRail } from "@/components/post-progress-rail";
 import { PostShareButton } from "@/components/post-share-button";
 import { PostSignature } from "@/components/post-signature";
@@ -97,6 +98,12 @@ export default async function BlogPostPage({
                     >
                       {post.title}
                     </h1>
+                    <div className="mt-4 flex justify-center">
+                      <PlainVersionCallout
+                        href={`/read/${post.slug}`}
+                        compact
+                      />
+                    </div>
                   </div>
                 </div>
               </header>

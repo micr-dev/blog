@@ -1,10 +1,9 @@
-import { Link } from "next-view-transitions";
-import { Layout } from "@/components/layout";
+import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <Layout>
-      <section className="py-16">
+    <main className="mx-auto flex min-h-screen max-w-3xl flex-col justify-center px-4 py-16 sm:px-6 xl:max-w-5xl xl:px-0">
+      <section>
         <p className="text-sm uppercase tracking-[0.3em] text-[color:var(--accent)]">404</p>
         <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-[color:var(--foreground)] sm:text-5xl">
           Page not found
@@ -27,6 +26,6 @@ export default function NotFound() {
           </Link>
         </div>
       </section>
-    </Layout>
+    </main>
   );
 }
