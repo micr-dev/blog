@@ -1,6 +1,6 @@
 # blog.micr.dev
 
-A static writeup blog built with Next.js 16, MDX, and Tailwind CSS v4. Features per-post theming, a local MDX editor, Mermaid diagrams, code syntax highlighting, Open Graph image generation, and post/tag search.
+A static writeup blog built with Next.js 16, MDX, and Tailwind CSS v4. Features per-post theming, a development-only local MDX editor, Mermaid diagrams, code syntax highlighting, Open Graph image generation, and post/tag search.
 
 **Live site:** [blog.micr.dev](https://blog.micr.dev)
 
