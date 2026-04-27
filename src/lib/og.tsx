@@ -46,6 +46,7 @@ export const ogLayout = {
   },
 } as const;
 
+/** Theme token set consumed by OG preview rendering helpers and templates. */
 export interface OgPreviewTheme {
   leftPanel: string;
   rightPanel: string;

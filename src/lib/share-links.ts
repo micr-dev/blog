@@ -1,3 +1,4 @@
+/** Supported social destinations for generated share links. */
 export type SharePlatform = "x" | "bluesky" | "linkedin";
 
 /**

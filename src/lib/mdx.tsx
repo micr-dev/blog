@@ -33,6 +33,7 @@ function remarkUnwrapStandaloneMedia() {
   return (tree: {
     children?: Array<Record<string, unknown>>;
   }) => {
+    /** Recursively unwrap standalone image paragraphs from nested node trees. */
     const visit = (node: Record<string, unknown>) => {
       if (!Array.isArray(node.children)) {
         return;
