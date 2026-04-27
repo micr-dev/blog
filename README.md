@@ -1,6 +1,6 @@
 # blog.micr.dev
 
-A static writeup blog built with Next.js 16, MDX, and Tailwind CSS v4. Features per-post theming, a development-only local MDX editor, Mermaid diagrams, code syntax highlighting, Open Graph image generation, and post/tag search.
+A static writeup blog built with Next.js 16, MDX, and Tailwind CSS v4. Features per-post theming, a development-only local MDX editor, Mermaid diagrams, code syntax highlighting, Open Graph image generation, and client-side post/tag search.
 
 **Live site:** [blog.micr.dev](https://blog.micr.dev)
 
@@ -67,7 +67,7 @@ Supported font sources in v1:
 
 - **Security headers** — CSP, HSTS, X-Content-Type-Options, Referrer-Policy, Permissions-Policy configured in `next.config.ts`
 - **OG image generation** — Dynamic Open Graph images per post via `opengraph-image.tsx`
-- **Post and tag search** — Search post titles, excerpts, slugs, and tags at `/search`
+- **Post and tag search** — Client-side substring search across post titles, excerpts, slugs, and tags at `/search`
 - **Tag system** — Auto-generated tag pages at `/tags/[slug]`
 - **Plain reading mode** — Alternate low-friction reading experience at `/read`, `/read/[slug]`, `/read/tags`, and `/read/tags/[slug]`
 - **robots.txt & sitemap** — Auto-generated via `robots.ts` and `sitemap.ts`
