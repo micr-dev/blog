@@ -12,7 +12,7 @@ A writeup blog built with Next.js 16, MDX, and Tailwind CSS v4. Features per-pos
 | Content | Local MDX with frontmatter |
 | Styling | Tailwind CSS v4 |
 | Diagrams | Mermaid 11 |
-| Code Highlighting | Shiki + Prism React Renderer |
+| Code Highlighting | Shiki |
 | Animation | Motion + custom animate-ui components |
 | Testing | Vitest + Testing Library |
 | Linting | ESLint (next config) |
