@@ -69,9 +69,7 @@ Supported font sources in v1:
 - **OG image generation** — Dynamic Open Graph images per post via `opengraph-image.tsx`
 - **Full-text search** — Search across all posts at `/search`
 - **Tag system** — Auto-generated tag pages at `/tags/[slug]`
-- **Plain text mode** — Accessible plain version at `/read/[slug]`
 - **robots.txt & sitemap** — Auto-generated via `robots.ts` and `sitemap.ts`
-- **security.txt** — Available at `/.well-known/security.txt`
 
 ## Agentation
 
