@@ -8,7 +8,6 @@ import { evaluate } from "@mdx-js/mdx";
 import * as runtime from "react/jsx-runtime";
 import remarkGfm from "remark-gfm";
 import type { MDXComponents } from "mdx/types";
-import { AsciiFence } from "@/components/mdx/ascii-fence";
 import { CodeFence } from "@/components/mdx/code-fence";
 import {
   IframeEmbed,
@@ -22,7 +21,6 @@ import {
 } from "@/components/mdx/next-bricks";
 import { Term } from "@/components/mdx/term";
 import { MermaidFence } from "@/components/mdx/mermaid-fence";
-import { renderMermaidAscii } from "@/lib/mermaid-ascii";
 import type { PostTheme } from "@/types/post";
 
 function remarkUnwrapStandaloneMedia() {
@@ -172,22 +170,6 @@ function PreviewCodeFence({
   );
 }
 
-function renderStaticMermaidFallback(
-  code: string,
-  theme: PostTheme,
-  label = "ASCII Diagram Fallback",
-) {
-  const fallback = renderMermaidAscii(code) ?? code;
-
-  return (
-    <AsciiFence
-      code={fallback}
-      label={label}
-      theme={theme}
-    />
-  );
-}
-
 function isMediaBlock(child: ReactNode) {
   if (!isValidElement(child)) {
     return false;
@@ -262,36 +244,11 @@ export function getMdxComponents(
 
       const language = getLanguageName(resolved.className);
 
-      if (language === "mermaid" && !options?.clientSafeCodeBlocks) {
-        return (
-          <>
-            <MermaidFence code={resolved.code} theme={theme} />
-            <noscript>
-              {renderStaticMermaidFallback(resolved.code, theme)}
-            </noscript>
-          </>
-        );
-      }
-
-      if (language === "ascii" || language === "diagram") {
-        return (
-          <AsciiFence
-            code={resolved.code}
-            label="ASCII Diagram"
-            theme={theme}
-          />
-        );
+      if (language === "mermaid") {
+        return <MermaidFence code={resolved.code} theme={theme} />;
       }
 
       if (options?.clientSafeCodeBlocks) {
-        if (language === "mermaid") {
-          return renderStaticMermaidFallback(
-            resolved.code,
-            theme,
-            "ASCII Diagram Fallback",
-          );
-        }
-
         return <PreviewCodeFence code={resolved.code} theme={theme} />;
       }
 

@@ -5,7 +5,7 @@ import {
   ogLayout,
   type OgPreviewTheme,
 } from "@/lib/og";
-import { PreviewCard } from "./preview-card";
+import { PreviewCard } from "@/app/og-preview/preview-card";
 
 const GALLERY_SCALE = 0.28;
 
