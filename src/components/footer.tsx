@@ -25,13 +25,12 @@ export function Footer() {
           ))}
           <span aria-hidden="true">•</span>
           <a
-            className="inline-flex items-center gap-1.5 transition-opacity hover:opacity-80"
+            className="transition-opacity hover:opacity-80"
             href="https://ko-fi.com/microck"
             target="_blank"
             rel="noopener noreferrer"
           >
-            <img src="/kofi-symbol.svg" alt="" width={18} height={18} className="block" />
-            <span>Ko-fi</span>
+            ko-fi
           </a>
           <span aria-hidden="true">•</span>
           <span>© 2026</span>
