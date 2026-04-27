@@ -51,6 +51,9 @@ export interface OgPreviewTheme {
   fontFamily: string;
 }
 
+/**
+ * Map a post theme into OG-preview color/font tokens used by OG rendering.
+ */
 export function getOgPreviewTheme(theme: PostTheme): OgPreviewTheme {
   return {
     leftPanel: theme.colors.background,
@@ -62,6 +65,10 @@ export function getOgPreviewTheme(theme: PostTheme): OgPreviewTheme {
   };
 }
 
+/**
+ * Compute title typography for OG cards based on title length and scale.
+ * Longer titles automatically step down in size to preserve fit.
+ */
 export function getOgTitleStyle(title: string, titleScale = DEFAULT_TITLE_SCALE): CSSProperties {
   const baseFontSize = titleStyleByLength.find((entry) => title.length <= entry.maxLength)?.fontSize ?? 68;
   const fontSize = Math.round(baseFontSize * titleScale);
@@ -82,6 +89,10 @@ export function getOgTitleStyle(title: string, titleScale = DEFAULT_TITLE_SCALE)
   };
 }
 
+/**
+ * Calculate the rendered scythe dimensions so the asset always covers
+ * the right panel after rotation/cropping, scaled by the caller multiplier.
+ */
 export function getScytheFrame(scytheScale: number) {
   const scale = Math.max(
     ogLayout.rightPanelWidth / SCYTHE_VIEWBOX.height,
