@@ -52,5 +52,5 @@ No files found with zero importers that aren't convention/test/ambient files.
 ## Recommendations
 
 1. **website-checklist.md** could be removed if the site is considered "launched" (all 77 items checked off). Low priority — it's not shipped in the build output.
-2. Consider adding `robots: { index: false }` to the `og-preview` page metadata (currently missing, unlike `mdx-editor` which has it).
-3. No other actionable items — the codebase is clean.
+2. `og-preview` now has `robots: { index: false, follow: false }` metadata, matching the intended dev-only/noindex behavior.
+3. No other actionable items - the codebase is clean.
