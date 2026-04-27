@@ -154,10 +154,6 @@ export function PostPageSkeleton() {
                   <SkeletonBlock className="h-4 w-20" />
                   <SkeletonBlock className="h-4 w-24" />
                 </div>
-                <div className="space-y-3">
-                  <SkeletonBlock className="h-4 w-16" />
-                  <SkeletonBlock className="h-10 w-28" />
-                </div>
                 <div className="flex justify-between gap-6">
                   <SkeletonBlock className="h-10 w-52" />
                   <SkeletonBlock className="h-10 w-52" />
