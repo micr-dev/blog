@@ -74,6 +74,7 @@ function guessFontFormat(value: string) {
   return "woff2";
 }
 
+/** Convert a post theme object into CSS custom properties for MDX content. */
 export function getThemeStyle(theme: PostTheme): CSSProperties {
   return {
     ["--post-background" as string]: theme.colors.background,
@@ -90,6 +91,10 @@ export function getThemeStyle(theme: PostTheme): CSSProperties {
   };
 }
 
+/**
+ * Build the CSS needed to load the active theme fonts.
+ * Includes Google Font imports and local @font-face rules.
+ */
 export function getFontStyleSheet(theme: PostTheme) {
   const fonts = Object.values(theme.fonts);
   const googleFamilies = [...new Set(
@@ -210,6 +215,10 @@ function isMediaBlock(child: ReactNode) {
     || child.type === "iframe";
 }
 
+/**
+ * Return the MDX component mapping used to render blog content
+ * with themed media embeds, code fences, and diagram fallbacks.
+ */
 export function getMdxComponents(
   theme: PostTheme,
   options?: {
@@ -306,6 +315,10 @@ export function getMdxComponents(
   };
 }
 
+/**
+ * Compile and render MDX content to a React node using the
+ * post theme and optional client-safe code block behavior.
+ */
 export async function renderMdx(
   source: string,
   theme: PostTheme,
