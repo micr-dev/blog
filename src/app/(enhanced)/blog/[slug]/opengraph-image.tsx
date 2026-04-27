@@ -53,7 +53,8 @@ export default async function Image({ params }: { params: Promise<{ slug: string
 
   const theme = getOgPreviewTheme(post.theme);
   const headingFont = post.theme.fonts.heading;
-  const [fontData, brandAssets] = await Promise.all([
+  // Keep SVG tint/crop/data-URI handling centralized in og-assets.
+  const [fontData, brandAssetUris] = await Promise.all([
     loadOgHeadingFont(headingFont),
     getOgBrandAssetUris(theme),
   ]);
@@ -97,7 +98,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
           }}
         >
           <img
-            src={brandAssets.scythe}
+            src={brandAssetUris.scythe}
             alt=""
             width={scytheFrame.width}
             height={scytheFrame.height}
@@ -114,7 +115,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
           />
         </div>
         <img
-          src={brandAssets.logo}
+          src={brandAssetUris.logo}
           alt=""
           width={ogLayout.logo.width}
           height={ogLayout.logo.height}
