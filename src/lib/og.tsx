@@ -7,6 +7,7 @@ const OG_HEIGHT = 630;
 const LEFT_PANEL_RATIO = 0.6727;
 const RIGHT_PANEL_RATIO = 0.3273;
 
+/** Source SVG dimensions for the cropped scythe mark used in OG cards. */
 const SCYTHE_VIEWBOX = {
   width: 8276,
   height: 3015,
@@ -19,6 +20,7 @@ export const DEFAULT_SCYTHE_SCALE = 1.51;
 /** Default rotation (degrees) applied to the scythe asset in OG cards. */
 export const DEFAULT_SCYTHE_ROTATION = -100;
 
+/** Title length breakpoints used to pick a base OG title font size. */
 const titleStyleByLength = [
   { maxLength: 34, fontSize: 112 },
   { maxLength: 52, fontSize: 98 },
