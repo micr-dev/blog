@@ -133,31 +133,30 @@ export default async function BlogPostPage({
                       </div>
                     </div>
 
-                    <div className="flex flex-col gap-8 sm:flex-row sm:justify-between">
-                      <div className="space-y-3">
-                        <h2 className="text-xs uppercase tracking-wide text-[color:var(--post-muted)]">
-                          Share
-                        </h2>
+                    <div className="space-y-3">
+                      <h2 className="text-xs uppercase tracking-wide text-[color:var(--post-muted)]">
+                        Share
+                      </h2>
+                      <div className="flex items-start justify-between">
                         <PostShareButton title={post.title} url={canonicalUrl} />
+                        <a
+                          href="https://ko-fi.com/microck"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex flex-col items-start gap-2 transition-opacity hover:opacity-80"
+                        >
+                          <span className="text-xs uppercase tracking-wide text-[color:var(--post-muted)]">
+                            Want to support me?
+                          </span>
+                          <img
+                            src="/kofi-symbol.svg"
+                            alt="Ko-fi"
+                            width={80}
+                            height={64}
+                            className="block"
+                          />
+                        </a>
                       </div>
-
-                      <a
-                        href="https://ko-fi.com/microck"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex flex-col items-center gap-2 self-start transition-opacity hover:opacity-80"
-                      >
-                        <span className="text-xs uppercase tracking-wide text-[color:var(--post-muted)]">
-                          Want to support me?
-                        </span>
-                        <img
-                          src="/kofi-symbol.svg"
-                          alt="Ko-fi"
-                          width={80}
-                          height={64}
-                          className="block"
-                        />
-                      </a>
                     </div>
 
                     <div className="flex justify-between gap-6">
