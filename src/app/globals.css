@@ -159,6 +159,16 @@ textarea {
   margin: 0;
 }
 
+.ascii-diagram {
+  font-family: var(--font-post-mono), ui-monospace, SFMono-Regular, Menlo, Monaco,
+    Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  letter-spacing: 0;
+  margin: 0;
+  white-space: pre;
+}
+
 .post-theme-shell {
   min-height: 100vh;
   background: var(--post-background);
@@ -466,6 +476,18 @@ textarea {
 .post-scroll::-webkit-scrollbar-thumb {
   background: rgb(63 63 70 / 0.8);
   border-radius: 999px;
+}
+
+@media (min-width: 1280px) {
+  html[data-post-progress-scrollbar="hidden"] {
+    scrollbar-width: none;
+  }
+
+  html[data-post-progress-scrollbar="hidden"]::-webkit-scrollbar,
+  html[data-post-progress-scrollbar="hidden"] body::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
 }
 
 /* mermaid diagram theme overrides */

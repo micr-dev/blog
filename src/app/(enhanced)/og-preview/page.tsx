@@ -5,11 +5,11 @@ import {
 } from "@/lib/og";
 import { getOgBrandAssetUris } from "@/lib/og-assets";
 import { getAllPostSlugs, getPostBySlug } from "@/lib/posts";
-import { PreviewControls } from "@/app/og-preview/preview-controls";
+import { PreviewControls } from "./preview-controls";
 import {
   previewGalleryTitle,
   previewThemePresets,
-} from "@/app/og-preview/preview-presets";
+} from "./preview-presets";
 
 export const metadata = {
   title: "OG Preview",

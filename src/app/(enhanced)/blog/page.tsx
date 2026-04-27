@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Layout } from "@/components/layout";
 import { PostList } from "@/components/post-list";
+import { PlainVersionCallout } from "@/components/plain-version-callout";
 import { TagSidebar } from "@/components/tag-sidebar";
 import { getPostSummaries, getTags } from "@/lib/posts";
 import { siteConfig } from "@/lib/site-config";
@@ -23,6 +24,9 @@ export default async function BlogPage() {
           <h1 className="text-3xl font-extrabold leading-9 tracking-tight text-[color:var(--foreground)] sm:text-4xl md:text-6xl">
             Blog
           </h1>
+          <div className="mt-3">
+            <PlainVersionCallout href="/read" />
+          </div>
         </div>
 
         <div className="flex gap-8 sm:space-x-0">

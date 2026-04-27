@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Space_Grotesk } from "next/font/google";
-import { ViewTransitions } from "next-view-transitions";
 import "./globals.css";
 import { siteConfig } from "@/lib/site-config";
 
@@ -57,7 +56,7 @@ export default async function RootLayout({
         <a className="skip-link" href="#main-content">
           Skip to content
         </a>
-        <ViewTransitions>{children}</ViewTransitions>
+        {children}
         {devTools}
       </body>
     </html>

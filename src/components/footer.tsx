@@ -24,6 +24,15 @@ export function Footer() {
             </span>
           ))}
           <span aria-hidden="true">•</span>
+          <a
+            className="transition-opacity hover:opacity-80"
+            href="https://ko-fi.com/microck"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            ko-fi
+          </a>
+          <span aria-hidden="true">•</span>
           <span>© 2026</span>
         </div>
       </div>
