@@ -13,6 +13,10 @@ import {
 
 export const metadata = {
   title: "OG Preview",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 async function getPreviewPosts() {
