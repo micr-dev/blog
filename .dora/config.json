@@ -1,0 +1,9 @@
+{
+  "root": "/home/ubuntu/dayshift-workspace/blog",
+  "scip": ".dora/index.scip",
+  "db": ".dora/dora.db",
+  "commands": {
+    "index": "scip-typescript index --output .dora/index.scip"
+  },
+  "lastIndexed": "2026-04-28T03:10:53.058Z"
+}
