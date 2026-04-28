@@ -21,7 +21,7 @@ A writeup blog built with Next.js 16, MDX, and Tailwind CSS v4. Features per-pos
 
 ```bash
 npm install
-npm run dev        # Start dev server at http://localhost:3000
+npm run dev        # Start dev server at http://127.0.0.1:3000
 ```
 
 ### Available Commands
@@ -45,7 +45,7 @@ npm run dev        # Start dev server at http://localhost:3000
 ## Local Editor
 
 - Run `npm run dev`.
-- Open `http://localhost:3000/mdx-editor`.
+- Open `http://127.0.0.1:3000/mdx-editor`.
 - This route is development-only and intended for Chromium browsers.
 - It can open, edit, and save local `.mdx` files directly through the File System Access API.
 
