@@ -23,6 +23,7 @@ function slugFromFilename(filename: string) {
   return filename.replace(/\.mdx$/, "");
 }
 
+/** Internal shape used while building and filtering the cached post index. */
 type PostIndexEntry = PostSummary & {
   published: boolean;
 };

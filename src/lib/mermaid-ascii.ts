@@ -1,3 +1,4 @@
+/** Normalized flowchart edge between parsed Mermaid node identifiers. */
 type MermaidEdge = {
   from: string;
   to: string;
