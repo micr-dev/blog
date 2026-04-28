@@ -185,13 +185,19 @@ export const getTags = cache(async (): Promise<TagSummary[]> => {
     .sort((left, right) => left.name.localeCompare(right.name));
 });
 
-/** Look up a tag by its URL slug (cached). */
+/**
+ * Look up a tag by its URL slug (cached).
+ * @returns Matching tag metadata, or `null` when no tag uses this slug.
+ */
 export const getTagBySlug = cache(async (slug: string) => {
   const tags = await getTags();
   return tags.find((tag) => tag.slug === slug) ?? null;
 });
 
-/** Return all published posts that carry the given tag slug (cached). */
+/**
+ * Return all published posts that carry the given tag slug (cached).
+ * @returns Published posts whose normalized tags map to the requested slug.
+ */
 export const getPostsByTag = cache(async (slug: string) => {
   const posts = await getPostIndex();
   return posts.filter((post) =>
