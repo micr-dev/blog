@@ -61,12 +61,12 @@ Each post can override:
 Supported font sources in v1:
 
 - Google Fonts
-- Local files served from `public/fonts`
+- Local files served from `public` (typically under `public/fonts`)
 
 ## Features
 
 - **Security headers** — CSP, HSTS, X-Content-Type-Options, Referrer-Policy, Permissions-Policy configured in `next.config.ts`
-- **OG image generation** — Dynamic Open Graph images per post via `opengraph-image.tsx`
+- **OG image generation** — Dynamic Open Graph images per post via `src/app/(enhanced)/blog/[slug]/opengraph-image.tsx`
 - **Post and tag search** — Client-side substring search across post titles, excerpts, slugs, and tags at `/search`
 - **Tag system** — Auto-generated tag pages at `/tags/[slug]`
 - **Plain reading mode** — Alternate low-friction reading experience at `/read`, `/read/[slug]`, `/read/tags`, and `/read/tags/[slug]`
