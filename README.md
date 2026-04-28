@@ -28,6 +28,7 @@ npm run dev        # Start dev server at http://127.0.0.1:3000
 
 | Command | Description |
 |---------|-------------|
+| `npm install` | Install dependencies |
 | `npm run dev` | Start development server |
 | `npm run build` | Production build |
 | `npm run start` | Start production server |
