@@ -1,9 +1,9 @@
 # Nightshift Dead Code Analysis: micr-dev/blog
 
-**Date:** 2026-04-06
+**Date:** 2026-04-28
 **Task:** dead-code
 **Category:** PR
-**Result:** Codebase is clean — no actionable dead code found.
+**Result:** Codebase is clean - no actionable dead code found.
 
 ## Summary
 
@@ -52,5 +52,5 @@ No files found with zero importers that aren't convention/test/ambient files.
 ## Recommendations
 
 1. **website-checklist.md** can be revisited for removal only when it is no longer actively used. Low priority - it is documentation and not shipped in the build output.
-2. `og-preview` now has `robots: { index: false, follow: false }` metadata, matching the intended dev-only/noindex behavior.
-3. No other actionable items - the codebase is clean.
+2. `og-preview` has `robots: { index: false, follow: false }` metadata in `src/app/og-preview/page.tsx`, matching the intended dev-only/noindex behavior.
+3. Re-verified for PR #14: no additional dead code actions are required.
