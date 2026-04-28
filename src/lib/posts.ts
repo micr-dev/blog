@@ -213,6 +213,9 @@ export const getPostsByTag = cache(async (slug: string) => {
  */
 export function getAdjacentPosts(posts: PostSummary[], slug: string) {
   const currentIndex = posts.findIndex((post) => post.slug === slug);
+  if (currentIndex === -1) {
+    return { previous: null, next: null };
+  }
 
   return {
     previous: currentIndex < posts.length - 1 ? posts[currentIndex + 1] : null,
