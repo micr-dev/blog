@@ -8,14 +8,14 @@ A write-up-focused blog built with Next.js 16, MDX, and Tailwind CSS v4. Feature
 
 | Layer | Technology |
 |-------|-----------|
-| Framework | Next.js 16 (App Router) |
+| Framework | Next.js 16.1.6 (App Router) |
 | Content | Local MDX with frontmatter |
 | Styling | Tailwind CSS v4 |
 | Diagrams | Mermaid 11 |
 | Code Highlighting | Shiki |
 | Animation | Motion (`motion`) |
 | Testing | Vitest + Testing Library |
-| Linting | ESLint (next config) |
+| Linting | ESLint 9 + `eslint-config-next` |
 
 ## Getting Started
 
