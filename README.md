@@ -20,7 +20,7 @@ A write-up-focused blog built with Next.js 16, MDX, and Tailwind CSS v4. Feature
 ## Getting Started
 
 ```bash
-npm install
+npm ci
 npm run dev        # Start dev server at http://localhost:3000 (or http://127.0.0.1:3000)
 ```
 
@@ -28,7 +28,8 @@ npm run dev        # Start dev server at http://localhost:3000 (or http://127.0.
 
 | Command | Description |
 |---------|-------------|
-| `npm install` | Install dependencies |
+| `npm ci` | Install dependencies from `package-lock.json` |
+| `npm install` | Install/update dependencies |
 | `npm run dev` | Start development server |
 | `npm run build` | Production build |
 | `npm run start` | Start production server |
