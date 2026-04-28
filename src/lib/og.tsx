@@ -2,9 +2,13 @@ import type { CSSProperties } from "react";
 import { postHeadingStyle } from "@/lib/post-heading";
 import type { PostTheme } from "@/types/post";
 
+/** Fixed Open Graph canvas width in pixels. */
 const OG_WIDTH = 1200;
+/** Fixed Open Graph canvas height in pixels. */
 const OG_HEIGHT = 630;
+/** Fraction of OG canvas width reserved for the left content panel. */
 const LEFT_PANEL_RATIO = 0.6727;
+/** Fraction of OG canvas width reserved for the right visual panel. */
 const RIGHT_PANEL_RATIO = 0.3273;
 
 /** Source SVG dimensions for the cropped scythe mark used in OG cards. */
