@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation";
 import { getFontStyleSheet } from "@/lib/mdx";
 import {
   getOgPreviewTheme,
@@ -35,6 +36,10 @@ function getThemeKey(theme: OgPreviewTheme) {
 }
 
 export default async function OgPreviewPage() {
+  if (process.env.NODE_ENV !== "development") {
+    notFound();
+  }
+
   const posts = await getPreviewPosts();
   const fontCss = [...new Set(posts.map((post) => getFontStyleSheet(post.theme)).filter(Boolean))].join("\n");
   const uniquePosts = [...new Map(
