@@ -106,7 +106,7 @@ const getPostIndex = cache(async (): Promise<PostIndexEntry[]> => {
 });
 
 /** Return slugs for all published posts (cached). */
-export const getAllPostSlugs = cache(async () => {
+export const getAllPostSlugs = cache(async (): Promise<string[]> => {
   const posts = await getPostIndex();
   return posts.map((post) => post.slug);
 });
@@ -189,7 +189,7 @@ export const getTags = cache(async (): Promise<TagSummary[]> => {
  * Look up a tag by its URL slug (cached).
  * @returns Matching tag metadata, or `null` when no tag uses this slug.
  */
-export const getTagBySlug = cache(async (slug: string) => {
+export const getTagBySlug = cache(async (slug: string): Promise<TagSummary | null> => {
   const tags = await getTags();
   return tags.find((tag) => tag.slug === slug) ?? null;
 });
@@ -198,7 +198,7 @@ export const getTagBySlug = cache(async (slug: string) => {
  * Return all published posts that carry the given tag slug (cached).
  * @returns Published posts whose normalized tags map to the requested slug.
  */
-export const getPostsByTag = cache(async (slug: string) => {
+export const getPostsByTag = cache(async (slug: string): Promise<PostSummary[]> => {
   const posts = await getPostIndex();
   return posts.filter((post) =>
     post.tags.some((tag) => slugifyTag(tag) === slug),
