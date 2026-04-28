@@ -51,8 +51,7 @@ describe("post parsing", () => {
   it("exposes post theme CSS variables", () => {
     const parsed = parseEditablePost(source);
     const style = getThemeStyle(parsed.theme);
-    type ThemeCssVars = Record<`--${string}`, string>;
-    const cssVars = style as ThemeCssVars;
+    const cssVars = style as Record<string, string>;
 
     expect(cssVars["--post-accent"]).toBe("#ff00aa");
     expect(cssVars["--font-post-mono"]).toContain("Spline Sans Mono");
