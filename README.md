@@ -8,7 +8,7 @@ A writeup blog built with Next.js 16, MDX, and Tailwind CSS v4. Features per-pos
 
 | Layer | Technology |
 |-------|-----------|
-| Framework | Next.js 16 (App Router, Turbopack) |
+| Framework | Next.js 16 (App Router; Turbopack configured) |
 | Content | Local MDX with frontmatter |
 | Styling | Tailwind CSS v4 |
 | Diagrams | Mermaid 11 |
