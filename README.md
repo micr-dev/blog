@@ -29,7 +29,6 @@ npm run dev        # Start dev server at http://localhost:3000 (or http://127.0.
 | Command | Description |
 |---------|-------------|
 | `npm ci` | Install dependencies from `package-lock.json` |
-| `npm install` | Install/update dependencies |
 | `npm run dev` | Start development server |
 | `npm run build` | Production build |
 | `npm run start` | Start production server |
