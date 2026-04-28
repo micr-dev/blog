@@ -74,7 +74,7 @@ Supported font sources in v1:
 - **Plain reading mode** - Alternate low-friction reading experience at `/read`, `/read/[slug]`, `/read/tags`, and `/read/tags/[slug]`
 - **robots.txt & sitemap** - Auto-generated via `src/app/robots.ts` and `src/app/sitemap.ts`
 
-## Agentation
+## Agentation (Development Only)
 
 The app mounts Agentation only in development.
 
