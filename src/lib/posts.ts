@@ -205,6 +205,12 @@ export const getPostsByTag = cache(async (slug: string) => {
   );
 });
 
+/** Navigation neighbors around a current post in a sorted post list. */
+export type AdjacentPosts = {
+  previous: PostSummary | null;
+  next: PostSummary | null;
+};
+
 /**
  * Given an ordered list of posts and a target slug, return the
  * chronologically previous and next post for navigation.
@@ -212,7 +218,7 @@ export const getPostsByTag = cache(async (slug: string) => {
  * or `null` when no neighbor exists in that direction. If the slug is not
  * present in `posts`, both values are `null`.
  */
-export function getAdjacentPosts(posts: PostSummary[], slug: string) {
+export function getAdjacentPosts(posts: PostSummary[], slug: string): AdjacentPosts {
   const currentIndex = posts.findIndex((post) => post.slug === slug);
   if (currentIndex === -1) {
     return { previous: null, next: null };
