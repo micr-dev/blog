@@ -128,6 +128,8 @@ export const getPostSummaries = cache(async (): Promise<PostSummary[]> => {
 /**
  * Load a full blog post by slug. Returns `null` if the post is
  * unpublished or the file does not exist. Re-throws unexpected errors.
+ * @throws If file reads or frontmatter parsing fail for reasons other than
+ * a missing post file (`ENOENT`).
  */
 export const getPostBySlug = cache(async (slug: string): Promise<BlogPost | null> => {
   try {
