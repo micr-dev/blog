@@ -6,7 +6,7 @@ import { getPostBySlug } from "@/lib/posts";
  * Load a post by slug and return its rendered MDX content.
  * @param slug Post slug used to resolve frontmatter/content from the index.
  * @param options Rendering controls forwarded to the MDX renderer.
- * Returns null when the post does not exist or is unpublished.
+ * @returns Rendered MDX output, or `null` when the post does not exist or is unpublished.
  */
 export const getRenderedPostContent = cache(async (
   slug: string,
