@@ -8,7 +8,7 @@ A writeup blog built with Next.js 16, MDX, and Tailwind CSS v4. Features per-pos
 
 | Layer | Technology |
 |-------|-----------|
-| Framework | Next.js 16 (App Router; Turbopack configured) |
+| Framework | Next.js 16 (App Router) |
 | Content | Local MDX with frontmatter |
 | Styling | Tailwind CSS v4 |
 | Diagrams | Mermaid 11 |
@@ -61,7 +61,7 @@ Each post can override:
 Supported font sources in v1:
 
 - Google Fonts
-- Local files served from `public` (typically under `public/fonts`)
+- Local files served from `public` (for example `public/LastoriaBoldRegular.otf`)
 
 ## Features
 
