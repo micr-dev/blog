@@ -103,6 +103,7 @@ export function getOgTitleStyle(title: string, titleScale = DEFAULT_TITLE_SCALE)
 /**
  * Calculate the rendered scythe dimensions so the asset always covers
  * the right panel after rotation/cropping, scaled by the caller multiplier.
+ * @returns Pixel width/height used for the positioned OG scythe image.
  */
 export function getScytheFrame(scytheScale: number) {
   const scale = Math.max(
