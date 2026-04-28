@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { parseEditablePost } from "@/lib/post-parser";
-import { slugifyTag } from "@/lib/posts";
+import { getAdjacentPosts, slugifyTag } from "@/lib/posts";
 import { getFontStyleSheet, getThemeStyle } from "@/lib/mdx";
+import type { PostSummary } from "@/types/post";
 
 const source = `---
 title: "Test Post"
@@ -51,8 +52,35 @@ describe("post parsing", () => {
   it("exposes post theme CSS variables", () => {
     const parsed = parseEditablePost(source);
     const style = getThemeStyle(parsed.theme);
+    const cssVars = style as Record<"--post-accent" | "--font-post-mono", string>;
 
-    expect(style["--post-accent" as string]).toBe("#ff00aa");
-    expect(style["--font-post-mono" as string]).toContain("Spline Sans Mono");
+    expect(cssVars["--post-accent"]).toBe("#ff00aa");
+    expect(cssVars["--font-post-mono"]).toContain("Spline Sans Mono");
+  });
+
+  it("returns no adjacent posts when slug is missing", () => {
+    const posts: PostSummary[] = [
+      {
+        slug: "alpha",
+        title: "Alpha",
+        excerpt: "A",
+        date: "Apr 1, 2026",
+        datetime: "2026-04-01",
+        tags: [],
+      },
+      {
+        slug: "beta",
+        title: "Beta",
+        excerpt: "B",
+        date: "Apr 2, 2026",
+        datetime: "2026-04-02",
+        tags: [],
+      },
+    ];
+
+    expect(getAdjacentPosts(posts, "missing")).toEqual({
+      previous: null,
+      next: null,
+    });
   });
 });

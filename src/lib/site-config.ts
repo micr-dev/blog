@@ -1,5 +1,6 @@
 import type { PostTheme } from "@/types/post";
 
+/** Canonical site metadata and nav labels consumed by layouts and SEO helpers. */
 export const siteConfig = {
   name: "micr.dev",
   author: "Microck",
@@ -14,6 +15,7 @@ export const siteConfig = {
   ],
 } as const;
 
+/** Default theme applied to posts that do not provide per-post theme overrides. */
 export const defaultPostTheme: PostTheme = {
   colors: {
     background: "#1e1e1e",

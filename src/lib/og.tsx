@@ -2,20 +2,29 @@ import type { CSSProperties } from "react";
 import { postHeadingStyle } from "@/lib/post-heading";
 import type { PostTheme } from "@/types/post";
 
+/** Fixed Open Graph canvas width in pixels. */
 const OG_WIDTH = 1200;
+/** Fixed Open Graph canvas height in pixels. */
 const OG_HEIGHT = 630;
+/** Fraction of OG canvas width reserved for the left content panel. */
 const LEFT_PANEL_RATIO = 0.6727;
+/** Fraction of OG canvas width reserved for the right visual panel. */
 const RIGHT_PANEL_RATIO = 0.3273;
 
+/** Source SVG dimensions for the cropped scythe mark used in OG cards. */
 const SCYTHE_VIEWBOX = {
   width: 8276,
   height: 3015,
 } as const;
 
+/** Default multiplier applied to title font sizing in OG card previews. */
 export const DEFAULT_TITLE_SCALE = 0.75;
+/** Default multiplier applied to the cropped scythe asset dimensions. */
 export const DEFAULT_SCYTHE_SCALE = 1.51;
+/** Default rotation (degrees) applied to the scythe asset in OG cards. */
 export const DEFAULT_SCYTHE_ROTATION = -100;
 
+/** Title length breakpoints used to pick a base OG title font size. */
 const titleStyleByLength = [
   { maxLength: 34, fontSize: 112 },
   { maxLength: 52, fontSize: 98 },
@@ -24,6 +33,7 @@ const titleStyleByLength = [
   { maxLength: Number.POSITIVE_INFINITY, fontSize: 68 },
 ] as const;
 
+/** Canonical OG card layout metrics used by rendering helpers and templates. */
 export const ogLayout = {
   width: OG_WIDTH,
   height: OG_HEIGHT,
@@ -42,6 +52,7 @@ export const ogLayout = {
   },
 } as const;
 
+/** Theme token set consumed by OG preview rendering helpers and templates. */
 export interface OgPreviewTheme {
   leftPanel: string;
   rightPanel: string;
@@ -51,6 +62,9 @@ export interface OgPreviewTheme {
   fontFamily: string;
 }
 
+/**
+ * Map a post theme into OG-preview color/font tokens used by OG rendering.
+ */
 export function getOgPreviewTheme(theme: PostTheme): OgPreviewTheme {
   return {
     leftPanel: theme.colors.background,
@@ -62,6 +76,10 @@ export function getOgPreviewTheme(theme: PostTheme): OgPreviewTheme {
   };
 }
 
+/**
+ * Compute title typography for OG cards based on title length and scale.
+ * Longer titles automatically step down in size to preserve fit.
+ */
 export function getOgTitleStyle(title: string, titleScale = DEFAULT_TITLE_SCALE): CSSProperties {
   const baseFontSize = titleStyleByLength.find((entry) => title.length <= entry.maxLength)?.fontSize ?? 68;
   const fontSize = Math.round(baseFontSize * titleScale);
@@ -82,6 +100,11 @@ export function getOgTitleStyle(title: string, titleScale = DEFAULT_TITLE_SCALE)
   };
 }
 
+/**
+ * Calculate the rendered scythe dimensions so the asset always covers
+ * the right panel after rotation/cropping, scaled by the caller multiplier.
+ * @returns Pixel width/height used for the positioned OG scythe image.
+ */
 export function getScytheFrame(scytheScale: number) {
   const scale = Math.max(
     ogLayout.rightPanelWidth / SCYTHE_VIEWBOX.height,

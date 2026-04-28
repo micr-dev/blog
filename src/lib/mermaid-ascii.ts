@@ -1,9 +1,11 @@
+/** Normalized flowchart edge between parsed Mermaid node identifiers. */
 type MermaidEdge = {
   from: string;
   to: string;
   label?: string;
 };
 
+/** Clean a label by stripping surrounding quotes and normalizing whitespace. */
 function cleanLabel(value: string) {
   return value
     .trim()
@@ -12,6 +14,10 @@ function cleanLabel(value: string) {
     .replace(/\s+/g, " ");
 }
 
+/**
+ * Parse a single flowchart node token (e.g. `A["Label"]`, `B(Circle)`)
+ * into its ID and display label. Returns `null` for unrecognized tokens.
+ */
 function parseFlowNode(token: string) {
   const trimmed = token.trim();
   const patterns = [
@@ -41,6 +47,11 @@ function parseFlowNode(token: string) {
   return null;
 }
 
+/**
+ * Render a Mermaid flowchart diagram as an ASCII text representation.
+ * Parses node declarations and edge definitions, then formats edges
+ * as `[Label A] -> [Label B]` (with optional edge labels).
+ */
 function renderFlowchartAscii(code: string) {
   const lines = code
     .split(/\r?\n/)
@@ -103,6 +114,10 @@ function renderFlowchartAscii(code: string) {
   ].join("\n");
 }
 
+/**
+ * Render a Mermaid sequence diagram as an ASCII text representation.
+ * Extracts participants, messages, and notes into a flat text format.
+ */
 function renderSequenceAscii(code: string) {
   const lines = code
     .split(/\r?\n/)
@@ -151,6 +166,10 @@ function renderSequenceAscii(code: string) {
   return output.length > 1 ? output.join("\n") : null;
 }
 
+/**
+ * Auto-detect a Mermaid diagram type (flowchart or sequence) and render
+ * it as a plain-text ASCII representation. Returns `null` for unsupported types.
+ */
 export function renderMermaidAscii(code: string) {
   const trimmed = code.trim();
 

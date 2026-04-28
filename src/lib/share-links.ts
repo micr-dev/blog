@@ -1,5 +1,11 @@
+/** Supported social destinations for generated share links. */
 export type SharePlatform = "x" | "bluesky" | "linkedin";
 
+/**
+ * Build a share URL for the given platform, pre-filled with the
+ * post title and URL. Supports X (Twitter), Bluesky, and LinkedIn.
+ * @returns Absolute share-intent URL for the selected social platform.
+ */
 export function buildShareHref(
   platform: SharePlatform,
   title: string,

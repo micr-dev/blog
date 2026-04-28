@@ -25,10 +25,16 @@ import { MermaidFence } from "@/components/mdx/mermaid-fence";
 import { renderMermaidAscii } from "@/lib/mermaid-ascii";
 import type { PostTheme } from "@/types/post";
 
+/**
+ * Remark plugin that unwraps paragraph nodes containing only an image so
+ * standalone media does not inherit paragraph spacing in rendered output.
+ */
 function remarkUnwrapStandaloneMedia() {
+  /** Transform mdast trees by lifting standalone image nodes out of paragraphs. */
   return (tree: {
     children?: Array<Record<string, unknown>>;
   }) => {
+    /** Recursively unwrap standalone image paragraphs from nested node trees. */
     const visit = (node: Record<string, unknown>) => {
       if (!Array.isArray(node.children)) {
         return;
@@ -66,6 +72,7 @@ function remarkUnwrapStandaloneMedia() {
   };
 }
 
+/** Infer CSS @font-face format from a local font file extension. */
 function guessFontFormat(value: string) {
   if (value.endsWith(".woff2")) return "woff2";
   if (value.endsWith(".woff")) return "woff";
@@ -74,6 +81,7 @@ function guessFontFormat(value: string) {
   return "woff2";
 }
 
+/** Convert a post theme object into CSS custom properties for MDX content. */
 export function getThemeStyle(theme: PostTheme): CSSProperties {
   return {
     ["--post-background" as string]: theme.colors.background,
@@ -90,6 +98,10 @@ export function getThemeStyle(theme: PostTheme): CSSProperties {
   };
 }
 
+/**
+ * Build the CSS needed to load the active theme fonts.
+ * Includes Google Font imports and local @font-face rules.
+ */
 export function getFontStyleSheet(theme: PostTheme) {
   const fonts = Object.values(theme.fonts);
   const googleFamilies = [...new Set(
@@ -123,12 +135,17 @@ export function getFontStyleSheet(theme: PostTheme) {
   return `${imports}\n${fontFaces}`.trim();
 }
 
+/** Parse a fenced code className like `language-ts` into `ts`. */
 function getLanguageName(className?: string) {
   if (!className) return "";
   const match = className.match(/language-([\w-]+)/);
   return match?.[1] ?? "";
 }
 
+/**
+ * Extract normalized code-block props from a `<pre>` child rendered by MDX.
+ * Returns null when the child is not a supported shape.
+ */
 function getPreProps(children: ReactNode) {
   if (
     !children ||
@@ -151,6 +168,7 @@ function getPreProps(children: ReactNode) {
   };
 }
 
+/** Lightweight code-fence renderer used for client-safe fallbacks. */
 function PreviewCodeFence({
   code,
   theme,
@@ -172,6 +190,10 @@ function PreviewCodeFence({
   );
 }
 
+/**
+ * Render a deterministic ASCII fallback for Mermaid blocks so code can still
+ * be presented when interactive rendering is unavailable.
+ */
 function renderStaticMermaidFallback(
   code: string,
   theme: PostTheme,
@@ -188,6 +210,10 @@ function renderStaticMermaidFallback(
   );
 }
 
+/**
+ * Detect whether a paragraph child should be treated as media-only content
+ * and unwrapped from the surrounding `<p>` element.
+ */
 function isMediaBlock(child: ReactNode) {
   if (!isValidElement(child)) {
     return false;
@@ -210,9 +236,14 @@ function isMediaBlock(child: ReactNode) {
     || child.type === "iframe";
 }
 
+/**
+ * Return the MDX component mapping used to render blog content
+ * with themed media embeds, code fences, and diagram fallbacks.
+ */
 export function getMdxComponents(
   theme: PostTheme,
   options?: {
+    /** Render deterministic fallback code blocks that avoid interactive-only components. */
     clientSafeCodeBlocks?: boolean;
   },
 ): MDXComponents {
@@ -306,10 +337,15 @@ export function getMdxComponents(
   };
 }
 
+/**
+ * Compile and render MDX content to a React node using the
+ * post theme and optional client-safe code block behavior.
+ */
 export async function renderMdx(
   source: string,
   theme: PostTheme,
   options?: {
+    /** Render deterministic fallback code blocks that avoid interactive-only components. */
     clientSafeCodeBlocks?: boolean;
   },
 ) {
