@@ -10,7 +10,10 @@ const HOME_ASCII_PATH = path.join(
   "ascii.txt",
 );
 
-/** Read and cache the ASCII art displayed on the home page. */
+/**
+ * Read and cache the ASCII art displayed on the home page.
+ * @returns UTF-8 text content rendered in the home hero block.
+ */
 export const getHomeAscii = cache(async () => {
   return fs.readFile(HOME_ASCII_PATH, "utf8");
 });
