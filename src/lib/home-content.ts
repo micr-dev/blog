@@ -2,6 +2,7 @@ import { cache } from "react";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 
+/** Absolute path to the home-page ASCII art source file. */
 const HOME_ASCII_PATH = path.join(
   process.cwd(),
   "content",

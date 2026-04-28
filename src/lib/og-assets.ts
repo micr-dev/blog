@@ -4,11 +4,13 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import type { OgPreviewTheme } from "@/lib/og";
 
+/** Absolute file-system paths to source SVG assets used in OG composition. */
 const BRAND_ASSET_PATHS = {
   logo: path.join(process.cwd(), "public", "brand", "logo.svg"),
   scythe: path.join(process.cwd(), "public", "brand", "scythe.svg"),
 } as const;
 
+/** Cropped scythe viewBox that isolates the detail used in OG previews. */
 const SCYTHE_CROP_VIEWBOX = "600 120 6938 2788";
 
 /** Read and cache a brand SVG asset (logo or scythe) from disk. */

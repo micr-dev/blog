@@ -3,12 +3,14 @@ import { z } from "zod";
 import { defaultPostTheme } from "@/lib/site-config";
 import type { FontDefinition, PostFrontmatter, PostTheme } from "@/types/post";
 
+/** Runtime schema for validating a fully specified font definition. */
 const fontSchema = z.object({
   family: z.string().min(1),
   source: z.enum(["google", "local"]),
   value: z.string().min(1),
 });
 
+/** Runtime schema for validating optional per-post theme overrides. */
 const themeSchema = z.object({
   colors: z
     .object({
@@ -33,6 +35,7 @@ const themeSchema = z.object({
     .optional(),
 });
 
+/** Runtime schema for validating required and optional post frontmatter keys. */
 const frontmatterSchema = z.object({
   title: z.string().min(1),
   date: z.string().min(1),
