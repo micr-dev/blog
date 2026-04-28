@@ -9,6 +9,7 @@ import { getPostBySlug } from "@/lib/posts";
 export const getRenderedPostContent = cache(async (
   slug: string,
   options?: {
+    /** Render deterministic fallback code blocks that avoid interactive-only components. */
     clientSafeCodeBlocks?: boolean;
   },
 ) => {

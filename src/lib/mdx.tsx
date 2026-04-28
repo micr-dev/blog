@@ -243,6 +243,7 @@ function isMediaBlock(child: ReactNode) {
 export function getMdxComponents(
   theme: PostTheme,
   options?: {
+    /** Render deterministic fallback code blocks that avoid interactive-only components. */
     clientSafeCodeBlocks?: boolean;
   },
 ): MDXComponents {
@@ -344,6 +345,7 @@ export async function renderMdx(
   source: string,
   theme: PostTheme,
   options?: {
+    /** Render deterministic fallback code blocks that avoid interactive-only components. */
     clientSafeCodeBlocks?: boolean;
   },
 ) {
