@@ -62,7 +62,7 @@ Each post can override:
 Supported font sources in v1:
 
 - Google Fonts
-- Local files served from `public` (for example `public/LastoriaBoldRegular.otf`)
+- Local files served from `public` (for example `public/fonts/anthropic-sans-regular.woff2`)
 
 ## Features
 
