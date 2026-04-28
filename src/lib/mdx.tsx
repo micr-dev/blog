@@ -30,6 +30,7 @@ import type { PostTheme } from "@/types/post";
  * standalone media does not inherit paragraph spacing in rendered output.
  */
 function remarkUnwrapStandaloneMedia() {
+  /** Transform mdast trees by lifting standalone image nodes out of paragraphs. */
   return (tree: {
     children?: Array<Record<string, unknown>>;
   }) => {
