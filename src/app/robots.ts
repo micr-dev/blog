@@ -7,7 +7,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/mdx-editor"],
+        disallow: ["/mdx-editor", "/og-preview"],
       },
     ],
     sitemap: `https://${siteConfig.domain}/sitemap.xml`,
