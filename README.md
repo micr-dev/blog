@@ -13,7 +13,7 @@ A write-up blog built with Next.js 16, MDX, and Tailwind CSS v4. Features per-po
 | Styling | Tailwind CSS v4 |
 | Diagrams | Mermaid 11 |
 | Code Highlighting | Shiki |
-| Animation | Motion + custom animate-ui components |
+| Animation | Motion (`motion`) |
 | Testing | Vitest + Testing Library |
 | Linting | ESLint (next config) |
 
