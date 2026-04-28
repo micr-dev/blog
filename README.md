@@ -70,7 +70,7 @@ Supported font sources in v1:
 - **Security headers** - CSP, HSTS, X-Content-Type-Options, Referrer-Policy, Permissions-Policy configured in `next.config.ts`
 - **OG image generation** - Dynamic Open Graph images per post via `src/app/(enhanced)/blog/[slug]/opengraph-image.tsx`
 - **Post and tag search** - Client-side substring search across post titles, excerpts, slugs, and tags at `/search`
-- **Tag system** - Auto-generated tag pages at `/tags/[slug]`
+- **Tag system** - Auto-generated tag index and detail pages at `/tags` and `/tags/[slug]`
 - **Plain reading mode** - Alternate low-friction reading experience at `/read`, `/read/[slug]`, `/read/tags`, and `/read/tags/[slug]`
 - **robots.txt & sitemap** - Auto-generated via `src/app/robots.ts` and `src/app/sitemap.ts`
 
