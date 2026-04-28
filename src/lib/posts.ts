@@ -202,6 +202,8 @@ export const getPostsByTag = cache(async (slug: string) => {
 /**
  * Given an ordered list of posts and a target slug, return the
  * chronologically previous and next post for navigation.
+ * @returns Object containing `previous` (older) and `next` (newer) neighbors,
+ * or `null` when no neighbor exists in that direction.
  */
 export function getAdjacentPosts(posts: PostSummary[], slug: string) {
   const currentIndex = posts.findIndex((post) => post.slug === slug);
