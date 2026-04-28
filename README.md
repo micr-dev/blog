@@ -1,45 +1,79 @@
 # blog.micr.dev
 
-Static Next.js writeup blog based on the provided reference layout, rebuilt around local MDX content.
+A write-up-focused blog built with Next.js 16, MDX, and Tailwind CSS v4. Features per-post theming, a development-only local MDX editor, Mermaid diagrams, code syntax highlighting, Open Graph image generation, and client-side post/tag search.
 
-## Commands
+**Live site:** [blog.micr.dev](https://blog.micr.dev)
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Framework | Next.js 16.1.6 (App Router) |
+| Content | Local MDX with frontmatter |
+| Styling | Tailwind CSS v4 |
+| Diagrams | Mermaid 11 |
+| Code Highlighting | Shiki |
+| Animation | Motion (`motion`) |
+| Testing | Vitest + Testing Library |
+| Linting | ESLint 9 + `eslint-config-next` |
+
+## Getting Started
 
 ```bash
-npm run dev
-npm run lint
-npm run test
-npm run build
+npm ci
+npm run dev        # Start dev server at http://localhost:3000 (or http://127.0.0.1:3000)
 ```
 
-## Writing posts
+### Available Commands
+
+| Command | Description |
+|---------|-------------|
+| `npm ci` | Install dependencies from `package-lock.json` |
+| `npm run dev` | Start development server |
+| `npm run build` | Production build |
+| `npm run start` | Start production server |
+| `npm run lint` | Run ESLint |
+| `npm run test` | Run Vitest tests |
+
+## Writing Posts
 
 - Published posts live in `content/posts/*.mdx`.
 - Use `content/templates/post-template.mdx` as the starting point for new posts.
-- Slugs come from filenames.
+- Slugs are derived from filenames.
 - Tags are generated from frontmatter.
+- Posts support custom themes (see below).
 
-## Local editor
+## Local Editor
 
 - Run `npm run dev`.
-- Open `http://localhost:3000/mdx-editor`.
+- Open `http://localhost:3000/mdx-editor` (or `http://127.0.0.1:3000/mdx-editor`).
 - This route is development-only and intended for Chromium browsers.
 - It can open, edit, and save local `.mdx` files directly through the File System Access API.
 
-## Per-post themes
+## Per-Post Themes
 
 Each post can override:
 
-- page colors
-- body / heading / mono fonts
-- code block colors
-- Mermaid colors
+- Page colors
+- Body / heading / mono fonts
+- Code block colors
+- Mermaid diagram colors
 
 Supported font sources in v1:
 
 - Google Fonts
-- local files served from `public/fonts`
+- Local files served from `public/fonts` (reference them as URLs, for example `/fonts/anthropic-sans-regular.woff2`)
 
-## Agentation
+## Features
+
+- **Security headers** - CSP, HSTS, X-Content-Type-Options, Referrer-Policy, Permissions-Policy configured in `next.config.ts`
+- **OG image generation** - Dynamic Open Graph images per post via `src/app/(enhanced)/blog/[slug]/opengraph-image.tsx`
+- **Post and tag search** - Client-side substring search across post titles, excerpts, slugs, and tags at `/search`
+- **Tag system** - Auto-generated tag index and detail pages at `/tags` and `/tags/[slug]`
+- **Plain reading mode** - Alternate low-friction reading experience at `/read`, `/read/[slug]`, `/read/tags`, and `/read/tags/[slug]`
+- **robots.txt & sitemap** - Auto-generated via `src/app/robots.ts` and `src/app/sitemap.ts`
+
+## Agentation Integration (Development Only)
 
 The app mounts Agentation only in development.
 
@@ -51,3 +85,7 @@ npx agentation-mcp doctor
 ```
 
 If you want to remove Agentation later, delete `src/components/agentation-root.tsx` and the dev-only import block in `src/app/layout.tsx`.
+
+## License
+
+Private - all rights reserved.
