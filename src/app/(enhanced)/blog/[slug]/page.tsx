@@ -12,7 +12,6 @@ import { getAdjacentPosts, getAllPostSlugs, getPostBySlug, getPostSummaries, slu
 import { getRenderedPostContent } from "@/lib/rendered-post";
 
 export const dynamicParams = false;
-const OG_IMAGE_VERSION = "20260328-1";
 
 export async function generateStaticParams() {
   const slugs = await getAllPostSlugs();
@@ -42,13 +41,6 @@ export async function generateMetadata({
       description: post.excerpt,
       url: `https://blog.micr.dev/blog/${post.slug}`,
       type: "article",
-      images: [
-        {
-          url: `/blog/${post.slug}/opengraph-image?v=${OG_IMAGE_VERSION}`,
-          width: 1200,
-          height: 630,
-        },
-      ],
     },
   };
 }
