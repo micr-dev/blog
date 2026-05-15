@@ -101,6 +101,10 @@ flowchart LR
   tabs={["Codex v1", "Claude Code v1"]}
   bodyHeight={420}
 >
+  ### THREAD
+
+  Mission folder created at \`records/track_3_optimization/ai/\`.
+
   <MarkdownGrid columns={2}>
     <MarkdownMetric label="Runs" value="10k" detail="Agent attempts" />
     <MarkdownMetric label="Best" value="2930" tone="success" />
@@ -137,6 +141,9 @@ flowchart LR
     expect(html).toContain("Harness working memory snapshots");
     expect(html).toContain("Codex v1");
     expect(html).toContain("height:420px");
+    expect(html).toContain("THREAD");
+    expect(html).toContain("records/track_3_optimization/ai/");
+    expect(html).toContain("nb-markdown-panel__body");
     expect(html).toContain("rounded-2xl");
     expect(html).toContain("2930");
     expect(html).toContain("Observed frontier over time.");

@@ -75,18 +75,19 @@ export function MarkdownPanel({
                 const selected = index === activeTab;
 
                 return (
-                  <span
+                  <button
                     key={tab}
                     aria-pressed={selected}
+                    type="button"
                     className={cn(
                       "rounded-full border px-3 py-1.5 text-sm transition-colors",
                       selected
                         ? "border-white/70 bg-white text-black"
-                        : "border-white/15 bg-white/[0.02] text-white/60",
+                        : "border-white/15 bg-white/[0.02] text-white/60 hover:border-white/35 hover:text-white",
                     )}
                   >
                     {tab}
-                  </span>
+                  </button>
                 );
               })}
             </div>
@@ -95,7 +96,7 @@ export function MarkdownPanel({
       ) : null}
       <div
         className={cn(
-          "m-0 overflow-auto bg-black/25 p-4 text-sm leading-6 text-[color:var(--post-body)]/80 md:p-5",
+          "nb-markdown-panel__body m-0 overflow-auto bg-black/25 p-4 text-sm leading-6 text-[color:var(--post-body)]/80 [contain:layout_paint] md:p-5",
           bodyClassName,
         )}
         style={panelBodyStyle}

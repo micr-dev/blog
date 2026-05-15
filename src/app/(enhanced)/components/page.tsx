@@ -107,9 +107,24 @@ Use <Term tip="A tooltip-style annotation rendered inline from MDX.">annotated t
   activeTab={0}
   bodyHeight={420}
 >
-  <p className="mb-4 !text-sm !leading-6 text-[color:var(--post-body)]/80">
-    No thread selected.
-  </p>
+  ### THREAD
+
+  Append-only chronological log. One entry per significant moment - subagent return, decision, run launched, surprise finding, blocker. Capture *why* you chose X over Y.
+
+  A fresh orchestrator re-orients from the tail. Don't delete entries.
+
+  ---
+
+  #### 2026-04-29 - mission scoped
+
+  Mission folder created at \`records/track_3_optimization/ai/\`.
+
+  Goal: find an optimizer / HP / schedule / init combination that beats Muon at 3500 steps on the \`track_3_optimization\` benchmark. Open-ended; unlimited compute on 1 node.
+
+  Files in place: \`AGENTS.md\`, \`goal.md\`, \`plan.md\`, this \`THREAD.md\`.
+
+  - Current Muon best log hits target at step 3500 with final val loss 3.27673.
+  - AdamW baseline log hits target at step 5625 with final val loss 3.27903.
 </MarkdownPanel>
 
 ## MarkdownGrid, MarkdownMetric, and MarkdownCard

@@ -267,6 +267,67 @@ textarea {
   width: 100%;
 }
 
+.nb-markdown-panel__body :where(h3, h4) {
+  margin-bottom: 0.75rem;
+  margin-top: 1.5rem;
+  overflow-wrap: anywhere;
+  color: var(--post-heading);
+  font-family: var(--font-post-body), var(--font-space-grotesk), sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.5rem;
+}
+
+.nb-markdown-panel__body :where(h3, h4):first-child {
+  margin-top: 0;
+}
+
+.nb-markdown-panel__body :where(p) {
+  margin-bottom: 1rem;
+  color: color-mix(in srgb, var(--post-body) 78%, transparent);
+  font-size: 0.875rem;
+  line-height: 1.5rem;
+}
+
+.nb-markdown-panel__body :where(em) {
+  color: color-mix(in srgb, var(--post-body) 82%, transparent);
+}
+
+.nb-markdown-panel__body :where(hr) {
+  border: 0;
+  border-top: 1px solid var(--post-border);
+  margin: 1.25rem 0;
+}
+
+.nb-markdown-panel__body :where(ul) {
+  list-style: disc;
+  margin-bottom: 1rem;
+  padding-left: 1.25rem;
+}
+
+.nb-markdown-panel__body :where(li) {
+  color: color-mix(in srgb, var(--post-body) 78%, transparent);
+  font-size: 0.875rem;
+  line-height: 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.nb-markdown-panel__body :where(code) {
+  border-radius: 0.25rem;
+  background: rgb(255 255 255 / 0.1);
+  color: color-mix(in srgb, var(--post-body) 85%, transparent);
+  font-family: var(--font-post-mono), ui-monospace, monospace;
+  font-size: 0.875rem;
+  line-height: 1.5rem;
+  overflow-wrap: anywhere;
+  padding: 0.125rem 0.25rem;
+}
+
+.nb-markdown-panel__body :where(code)::before,
+.nb-markdown-panel__body :where(code)::after {
+  content: none;
+}
+
 .nb-media {
   margin: 2rem 0;
 }
