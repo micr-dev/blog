@@ -90,6 +90,59 @@ flowchart LR
     expect(html).toContain("ascii-diagram");
     expect(html).toContain("[client] -&gt; [proxy] -&gt; [api]");
   });
+
+  it("renders reusable markdown layout components", async () => {
+    const rendered = await renderMdx(
+      `
+<MarkdownPanel
+  title="Harness working memory snapshots"
+  description="Browse durable logs from autonomous runs."
+  action={<a href="https://example.com/thread">Open thread</a>}
+  tabs={["Codex v1", "Claude Code v1"]}
+  bodyHeight={420}
+>
+  <MarkdownGrid columns={2}>
+    <MarkdownMetric label="Runs" value="10k" detail="Agent attempts" />
+    <MarkdownMetric label="Best" value="2930" tone="success" />
+  </MarkdownGrid>
+</MarkdownPanel>
+
+<MarkdownGrid columns={2}>
+  <MarkdownCard title="Claude v3" badge="2930" tone="success">
+    Contra-Muon with SOAP and radial damping.
+  </MarkdownCard>
+  <MarkdownQuoteCard author="Codex" meta="gpt 5.5 xhigh">
+    Thank you to everyone in the speedrun track.
+  </MarkdownQuoteCard>
+</MarkdownGrid>
+
+<MarkdownFigure
+  src="/media/oracle-sniper-writeup/console_victory.jpg"
+  alt="Console victory"
+  caption="Observed frontier over time."
+  fullWidth
+/>
+
+<MarkdownCodeBlock
+  label="BibTeX"
+  copyLabel="Copy BibTeX"
+  text={"@article{example,\\n  title = {Example}\\n}"}
+/>
+      `,
+      defaultPostTheme,
+    );
+
+    const html = renderToStaticMarkup(createElement("div", null, rendered));
+
+    expect(html).toContain("Harness working memory snapshots");
+    expect(html).toContain("Codex v1");
+    expect(html).toContain("height:420px");
+    expect(html).toContain("rounded-2xl");
+    expect(html).toContain("2930");
+    expect(html).toContain("Observed frontier over time.");
+    expect(html).toContain("Copy BibTeX");
+    expect(html).toContain("@article{example");
+  });
 });
 
 describe("renderMermaidAscii", () => {

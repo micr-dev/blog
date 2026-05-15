@@ -20,6 +20,15 @@ import {
   LinkPreview,
   ProgressBarV2,
 } from "@/components/mdx/next-bricks";
+import {
+  MarkdownCard,
+  MarkdownCodeBlock,
+  MarkdownFigure,
+  MarkdownGrid,
+  MarkdownMetric,
+  MarkdownPanel,
+  MarkdownQuoteCard,
+} from "@/components/mdx/markdown";
 import { Term } from "@/components/mdx/term";
 import { MermaidFence } from "@/components/mdx/mermaid-fence";
 import { renderMermaidAscii } from "@/lib/mermaid-ascii";
@@ -261,6 +270,13 @@ export function getMdxComponents(
     Media,
     LinkPreview,
     ProgressBarV2,
+    MarkdownPanel,
+    MarkdownGrid,
+    MarkdownCard,
+    MarkdownMetric,
+    MarkdownQuoteCard,
+    MarkdownFigure,
+    MarkdownCodeBlock,
     Term,
     code: ({ className, children, ...props }) => {
       if (className?.startsWith("language-")) {
