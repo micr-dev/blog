@@ -221,6 +221,19 @@ textarea {
     border-color var(--page-fade-ms) ease;
 }
 
+.post-body .post-link {
+  color: var(--post-accent);
+  text-decoration-line: underline;
+  text-decoration-color: color-mix(in srgb, var(--post-accent) 82%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  transition: opacity 140ms ease;
+}
+
+.post-body .post-link:hover {
+  opacity: 0.8;
+}
+
 .post-theme-shell :is(
   header,
   footer,

@@ -40,11 +40,12 @@ export function MarkdownPanel({
   const panelBodyStyle: CSSProperties | undefined = bodyHeight
     ? { height: typeof bodyHeight === "number" ? `${bodyHeight}px` : bodyHeight }
     : undefined;
+  const hasHeader = Boolean(title || description || action);
 
   return (
     <section
       className={cn(
-        "not-prose my-8 overflow-hidden rounded-2xl border border-[color:var(--post-border)] bg-white/[0.03]",
+        "not-prose my-8 overflow-visible rounded-2xl border border-[color:var(--post-border)] bg-white/[0.03]",
         className,
       )}
     >
@@ -96,7 +97,11 @@ export function MarkdownPanel({
       ) : null}
       <div
         className={cn(
-          "nb-markdown-panel__body m-0 overflow-auto bg-black/25 p-4 text-sm leading-6 text-[color:var(--post-body)]/80 [contain:layout_paint] md:p-5",
+          "nb-markdown-panel__body m-0 bg-black/25 p-4 text-sm leading-6 text-[color:var(--post-body)]/80 md:p-5",
+          bodyHeight
+            ? "overflow-auto [contain:layout_paint]"
+            : "overflow-visible",
+          hasHeader ? "rounded-b-2xl" : "rounded-2xl",
           bodyClassName,
         )}
         style={panelBodyStyle}

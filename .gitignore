@@ -42,3 +42,4 @@ next-env.d.ts
 
 # dora code context index
 .dora/
+.residue/
