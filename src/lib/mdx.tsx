@@ -32,6 +32,7 @@ import {
 import { Term } from "@/components/mdx/term";
 import { MermaidFence } from "@/components/mdx/mermaid-fence";
 import { LearningPhaseRadar } from "@/components/mdx/learning-phase-radar";
+import { PhaseHeading } from "@/components/mdx/phase-heading";
 import { renderMermaidAscii } from "@/lib/mermaid-ascii";
 import type { PostTheme } from "@/types/post";
 
@@ -279,6 +280,7 @@ export function getMdxComponents(
     MarkdownFigure,
     MarkdownCodeBlock,
     LearningPhaseRadar,
+    PhaseHeading,
     Term,
     code: ({ className, children, ...props }) => {
       if (className?.startsWith("language-")) {
