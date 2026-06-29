@@ -10,6 +10,8 @@ import type {
 
 /** Absolute path to the on-disk MDX posts directory. */
 const POSTS_DIR = path.join(process.cwd(), "content", "posts");
+/** Slug for the one post that owns the phase-specific MDX and rail treatment. */
+export const LEARNING_IS_A_SKILL_SLUG = "learning-is-a-skill";
 /** Shared UTC date formatter for canonical post-date display. */
 const DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
   month: "short",

@@ -11,6 +11,8 @@ export interface PostThemeColors {
   body: string;
   heading: string;
   accent: string;
+  accentSecondary: string;
+  accentTertiary: string;
   muted: string;
   border: string;
   codeBackground: string;

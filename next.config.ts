@@ -1,6 +1,10 @@
 import path from "node:path";
 import type { NextConfig } from "next";
 
+const scriptSrc = process.env.NODE_ENV === "development"
+  ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'"
+  : "script-src 'self' 'unsafe-inline'";
+
 const nextConfig: NextConfig = {
   pageExtensions: ["ts", "tsx"],
   async headers() {
@@ -16,7 +20,7 @@ const nextConfig: NextConfig = {
               "media-src 'self' blob: https:",
               "font-src 'self' data: https://fonts.gstatic.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-              "script-src 'self' 'unsafe-inline'",
+              scriptSrc,
               "connect-src 'self'",
               "frame-ancestors 'none'",
               "base-uri 'self'",

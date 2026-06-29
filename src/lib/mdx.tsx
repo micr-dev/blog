@@ -6,7 +6,9 @@ import {
 } from "react";
 import { evaluate } from "@mdx-js/mdx";
 import * as runtime from "react/jsx-runtime";
+import rehypeKatex from "rehype-katex";
 import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
 import type { MDXComponents } from "mdx/types";
 import { AsciiFence } from "@/components/mdx/ascii-fence";
 import { CodeFence } from "@/components/mdx/code-fence";
@@ -33,8 +35,17 @@ import { Term } from "@/components/mdx/term";
 import { MermaidFence } from "@/components/mdx/mermaid-fence";
 import { LearningPhaseRadar } from "@/components/mdx/learning-phase-radar";
 import { PhaseHeading } from "@/components/mdx/phase-heading";
+import { RefugioReplayPlayer } from "@/components/mdx/refugio-replay-player";
+import { RefugioScoreGraph } from "@/components/mdx/refugio-score-graph";
 import { renderMermaidAscii } from "@/lib/mermaid-ascii";
 import type { PostTheme } from "@/types/post";
+
+export type MdxRenderOptions = {
+  /** Render deterministic fallback code blocks that avoid interactive-only components. */
+  clientSafeCodeBlocks?: boolean;
+  /** Enable the bespoke phase heading shortcode used only by the learning-is-a-skill post. */
+  enablePhaseHeading?: boolean;
+};
 
 /**
  * Remark plugin that unwraps paragraph nodes containing only an image so
@@ -99,6 +110,8 @@ export function getThemeStyle(theme: PostTheme): CSSProperties {
     ["--post-body" as string]: theme.colors.body,
     ["--post-heading" as string]: theme.colors.heading,
     ["--post-accent" as string]: theme.colors.accent,
+    ["--post-accent-secondary" as string]: theme.colors.accentSecondary,
+    ["--post-accent-tertiary" as string]: theme.colors.accentTertiary,
     ["--post-muted" as string]: theme.colors.muted,
     ["--post-border" as string]: theme.colors.border,
     ["--post-code-bg" as string]: theme.colors.codeBackground,
@@ -253,12 +266,9 @@ function isMediaBlock(child: ReactNode) {
  */
 export function getMdxComponents(
   theme: PostTheme,
-  options?: {
-    /** Render deterministic fallback code blocks that avoid interactive-only components. */
-    clientSafeCodeBlocks?: boolean;
-  },
+  options?: MdxRenderOptions,
 ): MDXComponents {
-  return {
+  const components: MDXComponents = {
     a: (props) => (
       <a
         {...props}
@@ -280,7 +290,8 @@ export function getMdxComponents(
     MarkdownFigure,
     MarkdownCodeBlock,
     LearningPhaseRadar,
-    PhaseHeading,
+    RefugioReplayPlayer,
+    RefugioScoreGraph,
     Term,
     code: ({ className, children, ...props }) => {
       if (className?.startsWith("language-")) {
@@ -355,6 +366,12 @@ export function getMdxComponents(
       );
     },
   };
+
+  if (options?.enablePhaseHeading) {
+    components.PhaseHeading = PhaseHeading;
+  }
+
+  return components;
 }
 
 /**
@@ -364,14 +381,12 @@ export function getMdxComponents(
 export async function renderMdx(
   source: string,
   theme: PostTheme,
-  options?: {
-    /** Render deterministic fallback code blocks that avoid interactive-only components. */
-    clientSafeCodeBlocks?: boolean;
-  },
+  options?: MdxRenderOptions,
 ) {
   const mdxModule = await evaluate(source, {
     ...runtime,
-    remarkPlugins: [remarkGfm, remarkUnwrapStandaloneMedia],
+    remarkPlugins: [remarkMath, remarkGfm, remarkUnwrapStandaloneMedia],
+    rehypePlugins: [rehypeKatex],
     useMDXComponents: () => getMdxComponents(theme, options),
   });
 

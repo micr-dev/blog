@@ -22,6 +22,8 @@ export const defaultPostTheme: PostTheme = {
     body: "#f3f4f6",
     heading: "#f3f4f6",
     accent: "#f582db",
+    accentSecondary: "#f582db",
+    accentTertiary: "#f582db",
     muted: "#a1a1aa",
     border: "#27272a",
     codeBackground: "#141414",

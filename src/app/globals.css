@@ -13,6 +13,8 @@
   --post-body: var(--foreground);
   --post-heading: var(--foreground);
   --post-accent: var(--accent);
+  --post-accent-secondary: var(--accent);
+  --post-accent-tertiary: var(--accent);
   --post-muted: var(--muted);
   --post-border: var(--border);
   --post-code-bg: #141414;
@@ -186,7 +188,7 @@ textarea {
   --tw-prose-body: var(--post-body);
   --tw-prose-headings: var(--post-heading);
   --tw-prose-lead: var(--post-muted);
-  --tw-prose-links: var(--post-accent);
+  --tw-prose-links: var(--post-body);
   --tw-prose-bold: var(--post-body);
   --tw-prose-counters: var(--post-muted);
   --tw-prose-bullets: var(--post-muted);
@@ -202,7 +204,7 @@ textarea {
   --tw-prose-invert-body: var(--post-body);
   --tw-prose-invert-headings: var(--post-heading);
   --tw-prose-invert-lead: var(--post-muted);
-  --tw-prose-invert-links: var(--post-accent);
+  --tw-prose-invert-links: var(--post-body);
   --tw-prose-invert-bold: var(--post-body);
   --tw-prose-invert-counters: var(--post-muted);
   --tw-prose-invert-bullets: var(--post-muted);
@@ -222,9 +224,9 @@ textarea {
 }
 
 .post-body .post-link {
-  color: var(--post-accent);
+  color: inherit;
   text-decoration-line: underline;
-  text-decoration-color: color-mix(in srgb, var(--post-accent) 82%, transparent);
+  text-decoration-color: currentColor;
   text-decoration-thickness: 1px;
   text-underline-offset: 0.18em;
   transition: opacity 140ms ease;
@@ -232,6 +234,131 @@ textarea {
 
 .post-body .post-link:hover {
   opacity: 0.8;
+}
+
+.post-body .post-link-underline {
+  color: inherit;
+  text-decoration-color: currentColor;
+}
+
+.post-theme-shell[data-post-slug="my-first-hackathon-experience"] {
+  background:
+    linear-gradient(
+      90deg,
+      var(--post-accent) 0 33.333%,
+      var(--post-accent-secondary) 33.333% 66.666%,
+      var(--post-accent-tertiary) 66.666% 100%
+    )
+    top / 100% 0.25rem no-repeat,
+    var(--post-background);
+}
+
+.post-theme-shell[data-post-slug="my-first-hackathon-experience"] .post-body :where(h2) {
+  text-decoration-line: underline;
+  text-decoration-thickness: 0.08em;
+  text-decoration-color: var(--post-accent-secondary);
+  text-underline-offset: 0.18em;
+}
+
+.post-theme-shell[data-post-slug="my-first-hackathon-experience"] .post-body :where(h2:nth-of-type(3n + 1)) {
+  text-decoration-color: var(--post-accent);
+}
+
+.post-theme-shell[data-post-slug="my-first-hackathon-experience"] .post-body :where(h2:nth-of-type(3n)) {
+  text-decoration-color: var(--post-accent-tertiary);
+}
+
+.post-theme-shell[data-post-slug="my-first-hackathon-experience"] .post-body.prose :where(pre.astro-code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  background: #0e0e0e !important;
+  color: var(--post-accent-secondary) !important;
+}
+
+.post-theme-shell[data-post-slug="my-first-hackathon-experience"] .post-body.prose :where(pre.astro-code code, pre.astro-code span):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  color: var(--post-accent-secondary) !important;
+}
+
+.post-theme-shell[data-post-slug="my-first-hackathon-experience"] .post-body.prose :where(:not(pre) > code.post-inline-code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  background: #0e0e0e;
+  color: var(--post-accent-secondary);
+}
+
+.post-theme-shell[data-post-slug="my-first-hackathon-experience"] .refugio-conclusion-image {
+  width: min(100%, 34rem);
+  margin-inline: auto;
+}
+
+.post-theme-shell[data-post-slug="my-first-hackathon-experience"] .refugio-matched-screenshot {
+  display: block;
+  width: min(100%, 44rem);
+  height: auto;
+  margin-inline: auto;
+}
+
+.post-theme-shell[data-post-slug="my-first-hackathon-experience"] .refugio-ending-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 0.375rem;
+  margin-top: 2rem;
+  margin-inline: auto;
+}
+
+.post-theme-shell[data-post-slug="my-first-hackathon-experience"] .post-body .refugio-final-opinion {
+  margin-top: 4rem;
+}
+
+.post-theme-shell[data-post-slug="my-first-hackathon-experience"] .refugio-replay-slider {
+  height: 0.5rem;
+  cursor: pointer;
+  appearance: none;
+  border-radius: 999px;
+  background:
+    linear-gradient(
+      to right,
+      var(--post-accent) 0 var(--replay-progress, 0%),
+      color-mix(in srgb, var(--post-muted) 30%, var(--post-background)) var(--replay-progress, 0%) 100%
+    );
+}
+
+.post-theme-shell[data-post-slug="my-first-hackathon-experience"] .refugio-replay-slider:disabled {
+  cursor: not-allowed;
+}
+
+.post-theme-shell[data-post-slug="my-first-hackathon-experience"] .refugio-replay-slider::-webkit-slider-runnable-track {
+  height: 0.5rem;
+  border-radius: 999px;
+  background: transparent;
+}
+
+.post-theme-shell[data-post-slug="my-first-hackathon-experience"] .refugio-replay-slider::-webkit-slider-thumb {
+  width: 1rem;
+  height: 1rem;
+  margin-top: -0.25rem;
+  appearance: none;
+  border: 2px solid var(--post-background);
+  border-radius: 999px;
+  background: var(--post-accent);
+  box-shadow: 0 1px 4px rgb(14 14 14 / 0.22);
+}
+
+.post-theme-shell[data-post-slug="my-first-hackathon-experience"] .refugio-replay-slider::-moz-range-track {
+  height: 0.5rem;
+  border-radius: 999px;
+  background:
+    linear-gradient(
+      to right,
+      var(--post-accent) 0 var(--replay-progress, 0%),
+      color-mix(in srgb, var(--post-muted) 30%, var(--post-background)) var(--replay-progress, 0%) 100%
+    );
+}
+
+.post-theme-shell[data-post-slug="my-first-hackathon-experience"] .refugio-replay-slider::-moz-range-thumb {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid var(--post-background);
+  border-radius: 999px;
+  background: var(--post-accent);
+  box-shadow: 0 1px 4px rgb(14 14 14 / 0.22);
 }
 
 .post-theme-shell :is(
@@ -284,7 +411,7 @@ textarea {
   margin-bottom: 0.75rem;
   margin-top: 1.5rem;
   overflow-wrap: anywhere;
-  color: var(--post-heading);
+  color: var(--post-code-fg);
   font-family: var(--font-post-body), var(--font-space-grotesk), sans-serif;
   font-size: 0.875rem;
   font-weight: 600;
@@ -461,7 +588,7 @@ textarea {
   box-shadow:
     0 18px 38px rgb(0 0 0 / 0.26),
     inset 0 1px 0 rgb(255 255 255 / 0.03);
-  color: var(--post-heading);
+  color: var(--post-code-fg);
   font-family: var(--font-post-body), var(--font-space-grotesk), sans-serif;
   font-size: 0.82rem;
   font-style: normal;
@@ -585,6 +712,26 @@ textarea {
   fill: var(--post-heading);
 }
 
+.post-body .mermaid .edgeLabel,
+.post-body .mermaid .edgeLabel p,
+.post-body .mermaid .edgeLabel span {
+  color: var(--post-heading) !important;
+  background: var(--post-background) !important;
+}
+
+.post-body svg .edgeLabel .labelBkg,
+.post-body svg .edgeLabel span.edgeLabel,
+.post-body svg .edgeLabel p {
+  color: var(--post-heading) !important;
+  background: var(--post-background) !important;
+}
+
+.post-body .mermaid .edgeLabel rect,
+.post-body .mermaid .edgeLabel .labelBkg {
+  fill: var(--post-background) !important;
+  stroke: var(--post-background) !important;
+}
+
 .post-body .mermaid .edgePath .path {
   stroke: var(--post-muted);
 }
@@ -603,4 +750,11 @@ textarea {
 .post-body .mermaid .noteText,
 .post-body .mermaid .noteText tspan {
   fill: #141413 !important;
+}
+
+.post-body .katex-display {
+  color: var(--post-heading);
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-block: 0.35rem;
 }

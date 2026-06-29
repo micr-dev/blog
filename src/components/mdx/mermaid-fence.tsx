@@ -46,7 +46,7 @@ export function MermaidFence({
           actorLine: theme.colors.muted,
           signalColor: theme.colors.muted,
           signalTextColor: theme.colors.heading,
-          labelBoxBkgColor: theme.colors.codeBackground,
+          labelBoxBkgColor: theme.colors.background,
           labelBoxBorderColor: theme.colors.accent,
           labelTextColor: theme.colors.heading,
           loopTextColor: theme.colors.heading,

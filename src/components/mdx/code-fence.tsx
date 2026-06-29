@@ -67,9 +67,20 @@ export async function CodeFence({
 }
 
 function createCodeTheme(theme: PostTheme): typeof githubDark {
-  const accentSoft = mixHex(theme.colors.accent, theme.colors.codeForeground, 0.25);
-  const accentWarm = mixHex(theme.colors.accent, "#ffb86b", 0.4);
-  const accentCool = mixHex(theme.colors.accent, theme.colors.codeForeground, 0.55);
+  const accentPrimary = mixHex(theme.colors.accent, theme.colors.codeForeground, 0.18);
+  const accentSecondary = mixHex(
+    theme.colors.accentSecondary,
+    theme.colors.codeForeground,
+    0.12,
+  );
+  const accentTertiary = mixHex(
+    theme.colors.accentSecondary,
+    theme.colors.codeForeground,
+    0.18,
+  );
+  const accentSoft = mixHex(theme.colors.accentSecondary, theme.colors.codeForeground, 0.35);
+  const accentWarm = mixHex(theme.colors.accent, theme.colors.accentSecondary, 0.32);
+  const accentCool = mixHex(theme.colors.accentSecondary, theme.colors.codeForeground, 0.42);
   const surface = mixHex(theme.colors.codeBackground, theme.colors.background, 0.5);
   const tokenColors = githubDark.tokenColors ?? [];
 
@@ -80,9 +91,9 @@ function createCodeTheme(theme: PostTheme): typeof githubDark {
     ["#e1e4e8", theme.colors.codeForeground],
     ["#d1d5da", mixHex(theme.colors.codeForeground, theme.colors.body, 0.45)],
     ["#6a737d", theme.colors.muted],
-    ["#79b8ff", theme.colors.accent],
-    ["#b392f0", accentSoft],
-    ["#f97583", accentWarm],
+    ["#79b8ff", accentTertiary],
+    ["#b392f0", accentSecondary],
+    ["#f97583", accentPrimary],
     ["#9ecbff", accentCool],
     ["#ffab70", accentWarm],
     ["#85e89d", accentSoft],

@@ -5,6 +5,7 @@ import { PlainLayout } from "@/components/plain-layout";
 import { PostShell } from "@/components/post-shell";
 import { buildShareHref } from "@/lib/share-links";
 import {
+  LEARNING_IS_A_SKILL_SLUG,
   getAdjacentPosts,
   getAllPostSlugs,
   getPostBySlug,
@@ -57,14 +58,16 @@ export default async function ReadPostPage({
     notFound();
   }
 
+  const showLearningPhases = slug === LEARNING_IS_A_SKILL_SLUG;
   const article = await getRenderedPostContent(slug, {
     clientSafeCodeBlocks: true,
+    enablePhaseHeading: showLearningPhases,
   });
   const adjacent = getAdjacentPosts(summaries, slug);
   const canonicalUrl = `https://${siteConfig.domain}/blog/${post.slug}`;
 
   return (
-    <PostShell theme={post.theme}>
+    <PostShell theme={post.theme} slug={post.slug}>
       <PlainLayout>
         <article className="pb-16 pt-6">
           <header className="border-b border-[color:var(--post-border)] pb-8">

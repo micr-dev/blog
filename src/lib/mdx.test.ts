@@ -54,6 +54,30 @@ describe("mdx shortcodes", () => {
     expect(html).not.toContain("<p><figure");
   });
 
+  it("does not expose the phase heading shortcode by default", async () => {
+    await expect(async () => {
+      const rendered = await renderMdx(
+        `<PhaseHeading phase={1} title="Unknowledgement" />`,
+        defaultPostTheme,
+      );
+
+      renderToStaticMarkup(createElement("div", null, rendered));
+    }).rejects.toThrow("PhaseHeading");
+  });
+
+  it("renders the phase heading shortcode when explicitly enabled", async () => {
+    const rendered = await renderMdx(
+      `<PhaseHeading phase={1} title="Unknowledgement" />`,
+      defaultPostTheme,
+      { enablePhaseHeading: true },
+    );
+
+    const html = renderToStaticMarkup(createElement("div", null, rendered));
+
+    expect(html).toContain("Phase 1: Unknowledgement");
+    expect(html).toContain("border-left-color:#1f77b4");
+  });
+
   it("renders mermaid blocks as ascii fallbacks in client-safe mode", async () => {
     const rendered = await renderMdx(
       `

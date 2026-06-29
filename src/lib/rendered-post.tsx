@@ -1,5 +1,5 @@
 import { cache } from "react";
-import { renderMdx } from "@/lib/mdx";
+import { renderMdx, type MdxRenderOptions } from "@/lib/mdx";
 import { getPostBySlug } from "@/lib/posts";
 
 /**
@@ -10,10 +10,7 @@ import { getPostBySlug } from "@/lib/posts";
  */
 export const getRenderedPostContent = cache(async (
   slug: string,
-  options?: {
-    /** Render deterministic fallback code blocks that avoid interactive-only components. */
-    clientSafeCodeBlocks?: boolean;
-  },
+  options?: MdxRenderOptions,
 ) => {
   const post = await getPostBySlug(slug);
 

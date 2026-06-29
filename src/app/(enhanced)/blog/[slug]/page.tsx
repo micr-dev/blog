@@ -8,7 +8,14 @@ import { PostShareButton } from "@/components/post-share-button";
 import { PostSignature } from "@/components/post-signature";
 import { PostShell } from "@/components/post-shell";
 import { siteConfig } from "@/lib/site-config";
-import { getAdjacentPosts, getAllPostSlugs, getPostBySlug, getPostSummaries, slugifyTag } from "@/lib/posts";
+import {
+  LEARNING_IS_A_SKILL_SLUG,
+  getAdjacentPosts,
+  getAllPostSlugs,
+  getPostBySlug,
+  getPostSummaries,
+  slugifyTag,
+} from "@/lib/posts";
 import { getRenderedPostContent } from "@/lib/rendered-post";
 
 export const dynamicParams = false;
@@ -60,14 +67,17 @@ export default async function BlogPostPage({
     notFound();
   }
 
-  const article = await getRenderedPostContent(slug);
+  const showLearningPhases = slug === LEARNING_IS_A_SKILL_SLUG;
+  const article = await getRenderedPostContent(slug, {
+    enablePhaseHeading: showLearningPhases,
+  });
   const adjacent = getAdjacentPosts(summaries, slug);
   const canonicalUrl = `https://${siteConfig.domain}/blog/${post.slug}`;
 
   return (
-    <PostShell theme={post.theme}>
+    <PostShell theme={post.theme} slug={post.slug}>
       <Layout>
-        <PostProgressRail>
+        <PostProgressRail showPhaseSegments={showLearningPhases}>
           <article>
             <div className="xl:divide-y xl:divide-[color:var(--post-border)]">
               <header className="pt-6 xl:pb-6">
