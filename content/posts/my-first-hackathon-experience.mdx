@@ -154,6 +154,23 @@ I felt, and still feel, really bad for Team 10. After all of that effort and fig
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | gpt-5.5 | 8,460,318 | 198,140,416 | 718,237 | 207,318,971 | $141.37 | $21.55 | $162.92 |
 
+I also went back through the public submitted `policy.py` files after the event to see what actually moved the frontier.
+
+| Milestone | Team / job | Score | Algorithm family | What changed |
+| --- | --- | ---: | --- | --- |
+| First points | Team 4, 15c4cc5a483b | 369 | Greedy cached BFS | A simple "go to the closest useful square" approach, with cached paths so it could answer quickly. |
+| Early follow-up | Team 10, ce08283218fa | 397 | BFS shortest-path policy | Same basic idea, but cleaner routing and more predictable movement choices. |
+| First anti-deadlock pass | Team 9, 8cb6baa8def4 | 398 | Anti-deadlock greedy | Tried harder to move around occupied cells instead of waiting when robots blocked each other. |
+| First big jump | Team 3, 9c8ddcffc4f3 | 610 | PIBT-style reservations | Robots started loosely "claiming" their next moves, which reduced collisions and traffic jams. |
+| Better yielding | Team 8, e8ad7754c58a | 759 | PIBT with rotational tie-breaks | Changed who got priority over time, so the same robots did not always win every conflict. |
+| Start of the plateau | Team 2, 1b294895f546 | 882 | Windowed cooperative A* | Planned several ticks ahead for all robots at once, instead of deciding each robot's next step in isolation. |
+| Plateau refinements | Teams 9, 2, 3, 16 | 883-895 | Tuned cooperative A* | Kept the same planner, but tuned the planning window, fallback moves, and shelf layout. |
+| Flow-biased routing | Team 16, 96f62c7fdaa8 | 897 | Cooperative A* with aisle flow | Nudged traffic into one-way-ish lanes so robots stopped fighting head-on as often. |
+| Seed-aware replay layer | Teams 6 and 3 | 898-924 | Cooperative A* plus replay fallback | Recognized known hidden-seed starts and reused precomputed good moves for those cases. |
+| Longer-window MAPF | Team 4, 7a4738c9956c | 907 | Centralized cooperative MAPF | Looked further ahead and coordinated the whole robot fleet with traffic-aware routing. |
+| Seed-tuned MAPF | Team 10 / Team 3 | 923-931 | Per-seed cooperative MAPF | Picked different planner settings depending on which hidden seed the run appeared to be using. |
+| Final leap | Team 10, c15da13c3eaa | 1008 | Seed-tuned MAPF with custom layout | Combined seed-specific tuning with a hand-shaped shelf layout that gave the robots better lanes. |
+
 <RefugioScoreGraph />
 
 ## Conclusion
