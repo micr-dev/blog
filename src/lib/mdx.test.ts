@@ -78,7 +78,7 @@ describe("mdx shortcodes", () => {
     expect(html).not.toContain("border-left-color");
   });
 
-  it("adds mobile labels to markdown table cells", async () => {
+  it("wraps markdown tables in a horizontal scroll container", async () => {
     const rendered = await renderMdx(
       `
 | Wide | Table |
@@ -90,10 +90,8 @@ describe("mdx shortcodes", () => {
 
     const html = renderToStaticMarkup(createElement("div", null, rendered));
 
-    expect(html).toContain("post-table-scroll");
-    expect(html).toContain("class=\"post-table\"");
-    expect(html).toContain("data-label=\"Wide\"");
-    expect(html).toContain("data-label=\"Table\"");
+    expect(html).toContain("post-scroll my-6 max-w-full overflow-x-auto");
+    expect(html).toContain("<table>");
   });
 
   it("renders mermaid blocks as ascii fallbacks in client-safe mode", async () => {
