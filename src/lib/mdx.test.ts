@@ -75,7 +75,25 @@ describe("mdx shortcodes", () => {
     const html = renderToStaticMarkup(createElement("div", null, rendered));
 
     expect(html).toContain("Phase 1: Unknowledgement");
-    expect(html).toContain("border-left-color:#1f77b4");
+    expect(html).not.toContain("border-left-color");
+  });
+
+  it("adds mobile labels to markdown table cells", async () => {
+    const rendered = await renderMdx(
+      `
+| Wide | Table |
+| --- | --- |
+| Some long cell | Another long cell |
+      `,
+      defaultPostTheme,
+    );
+
+    const html = renderToStaticMarkup(createElement("div", null, rendered));
+
+    expect(html).toContain("post-table-scroll");
+    expect(html).toContain("class=\"post-table\"");
+    expect(html).toContain("data-label=\"Wide\"");
+    expect(html).toContain("data-label=\"Table\"");
   });
 
   it("renders mermaid blocks as ascii fallbacks in client-safe mode", async () => {

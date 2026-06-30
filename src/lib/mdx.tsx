@@ -30,6 +30,7 @@ import {
   MarkdownMetric,
   MarkdownPanel,
   MarkdownQuoteCard,
+  ResponsiveTable,
 } from "@/components/mdx/markdown";
 import { Term } from "@/components/mdx/term";
 import { MermaidFence } from "@/components/mdx/mermaid-fence";
@@ -279,6 +280,7 @@ export function getMdxComponents(
     img: (props) => <ImageEmbed {...props} />,
     video: (props) => <VideoEmbed {...props} />,
     iframe: (props) => <IframeEmbed {...props} />,
+    table: ResponsiveTable,
     Media,
     LinkPreview,
     ProgressBarV2,

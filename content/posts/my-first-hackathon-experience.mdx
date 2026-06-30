@@ -56,7 +56,12 @@ After both of these, <a className="post-link post-link-underline" href="https://
 
 He gave us a brief introduction to the challenge and what it would consist of: a multi-agent warehouse optimization challenge. Each team submitted a single Python file that designed both the shelf layout and the movement policy for 96 robots in a 52 x 52 warehouse with 960 shelves. The evaluator ran each solution for 300 <Term tip="Discrete simulation time steps.">ticks</Term> across three hidden seeds, and the goal was to complete as many package deliveries as possible.
 
-![Warehouse challenge instructions shown during the hackathon](/media/my-first-hackathon-experience/image1.png)
+<img
+  className="refugio-matched-screenshot"
+  loading="eager"
+  src="/media/my-first-hackathon-experience/image1.png"
+  alt="Warehouse challenge instructions shown during the hackathon"
+/>
 
 He also explained how the scoring system would work: the raw score was just the number of deliveries completed across the hidden evaluation seeds, but hackathon points only came from moving the <Term tip="The current best public score that a new submission had to beat to earn points.">public frontier</Term>. Once a team set a new best delivery count, later teams had to beat it to earn anything; matching it was worth zero. Each new delivery above the 100-delivery starter baseline was worth more than the last, so big late improvements paid out heavily, but only to the first validated submission that claimed them. This sounded pretty good in theory, but I will explain my issue with this system later.
 
@@ -80,7 +85,12 @@ Now, we had a 30-minute cooldown, so we could chill out and dedicate it to itera
 
 This happened a few times during this first sprint. After our submission, our lead was short-lived. Within 20 minutes, the score advanced from `369 -> 397 -> 398 -> 610 -> 759 -> 882`. What the fuck.
 
-![Leaderboard after the first sprint](/media/my-first-hackathon-experience/image2.png)
+<img
+  className="refugio-matched-screenshot"
+  loading="eager"
+  src="/media/my-first-hackathon-experience/image2.png"
+  alt="Leaderboard after the first sprint"
+/>
 
 And the worst news was yet to come: 882 was the beginning of the plateau. We were now 4<sup>th</sup>, with 3 teams above us, each with ~80k points. And here comes the flaw with the scoring system: in an attempt to reward late iterations instead of the highest score, **you just made 66% of the teams instantly lose.**
 
@@ -114,7 +124,12 @@ All of our submissions until then matched up with what we got locally, so we did
 
 And to my surprise, it was. About 10 minutes later, we had gotten the seeds. But how? Well, the job detail pages rendered one official-run row per hidden seed. In the visible UI, those rows looked like Official run 1, Official run 2, Official run 3, but in the embedded React/Next payload, each <Term tip="An HTML table-row element. In the page source, each row carried metadata that was not visible in the UI."><code>&lt;tr&gt;</code></Term> had a key equal to the real seed. To verify these were truly the actual seeds used, I inspected multiple jobs' sources to find the same values in them, and just to triple check, I ran multiple already submitted jobs in order to see if the values matched the ones on the website. And match they did.
 
-![Hidden seeds exposed in the page payload](/media/my-first-hackathon-experience/image4.png)
+<img
+  className="refugio-matched-screenshot"
+  loading="eager"
+  src="/media/my-first-hackathon-experience/image4.png"
+  alt="Hidden seeds exposed in the page payload"
+/>
 
 After sending these newly acquired seeds to my teammates, now we could iterate and verify all of our solves locally in order to obtain their delivery amount that would be used by the website. By the time our cooldown had worn off, Alejandro had managed to break through the 900 barrier: `898 -> 901 -> 905 -> 907`, which we quickly sent to obtain our points. **7227 points.** That would be the last win we would obtain for the rest of the competition, though.
 

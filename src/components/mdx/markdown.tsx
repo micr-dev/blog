@@ -1,8 +1,13 @@
-import type { CSSProperties, ReactNode } from "react";
+import { Children, cloneElement, isValidElement } from "react";
+import type { ComponentPropsWithoutRef, CSSProperties, ReactNode } from "react";
 import { CopyButton } from "@/components/mdx/copy-button";
 import { cn } from "@/lib/utils";
 
 type Tone = "default" | "accent" | "success";
+type TableElementProps = {
+  children?: ReactNode;
+  className?: string;
+};
 
 function toneClass(tone: Tone) {
   if (tone === "success") {
@@ -14,6 +19,114 @@ function toneClass(tone: Tone) {
   }
 
   return "border-[color:var(--post-border)] bg-white/[0.035]";
+}
+
+function getElementTag(child: ReactNode) {
+  if (!isValidElement(child) || typeof child.type !== "string") {
+    return undefined;
+  }
+
+  return child.type;
+}
+
+function getChildElementsByTag(children: ReactNode, tag: string) {
+  return Children.toArray(children).filter((child) => {
+    return getElementTag(child) === tag;
+  });
+}
+
+function getPlainText(node: ReactNode): string {
+  if (typeof node === "string" || typeof node === "number") {
+    return String(node);
+  }
+
+  if (Array.isArray(node)) {
+    return node.map(getPlainText).join("").trim();
+  }
+
+  if (isValidElement<TableElementProps>(node)) {
+    return getPlainText(node.props.children);
+  }
+
+  return "";
+}
+
+function getTableHeaders(children: ReactNode) {
+  const thead = getChildElementsByTag(children, "thead")[0];
+
+  if (!isValidElement<TableElementProps>(thead)) {
+    return [];
+  }
+
+  const headerRow = getChildElementsByTag(thead.props.children, "tr")[0];
+
+  if (!isValidElement<TableElementProps>(headerRow)) {
+    return [];
+  }
+
+  return Children.toArray(headerRow.props.children)
+    .filter((cell) => getElementTag(cell) === "th" || getElementTag(cell) === "td")
+    .map(getPlainText);
+}
+
+function labelBodyRowCells(children: ReactNode, headers: string[]): ReactNode {
+  let cellIndex = 0;
+
+  return Children.map(children, (child) => {
+    if (!isValidElement<TableElementProps>(child) || getElementTag(child) !== "td") {
+      return child;
+    }
+
+    const label = headers[cellIndex] ?? "";
+    cellIndex += 1;
+
+    return cloneElement(child, {
+      "data-label": label,
+    } as TableElementProps & { "data-label"?: string });
+  });
+}
+
+function addMobileTableLabels(children: ReactNode, headers: string[]): ReactNode {
+  return Children.map(children, (child) => {
+    if (!isValidElement<TableElementProps>(child)) {
+      return child;
+    }
+
+    const tag = getElementTag(child);
+
+    if (tag === "tr") {
+      return cloneElement(child, {
+        children: labelBodyRowCells(child.props.children, headers),
+      } as TableElementProps);
+    }
+
+    if (tag === "tbody" || tag === "tfoot") {
+      return cloneElement(child, {
+        children: addMobileTableLabels(child.props.children, headers),
+      } as TableElementProps);
+    }
+
+    return child;
+  });
+}
+
+export function ResponsiveTable({
+  children,
+  className,
+  ...props
+}: ComponentPropsWithoutRef<"table">) {
+  const headers = getTableHeaders(children);
+
+  return (
+    <div className="post-scroll post-table-scroll my-6 max-w-full overflow-x-auto">
+      <table
+        {...props}
+        className={cn("post-table", className)}
+      >
+        {addMobileTableLabels(children, headers)}
+      </table>
+    </div>
+  );
 }
 
 export function MarkdownPanel({

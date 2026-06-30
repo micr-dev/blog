@@ -185,6 +185,7 @@ textarea {
 .post-body {
   color: var(--post-body);
   font-family: var(--font-post-body), var(--font-space-grotesk), sans-serif;
+  overflow-x: hidden;
   --tw-prose-body: var(--post-body);
   --tw-prose-headings: var(--post-heading);
   --tw-prose-lead: var(--post-muted);
@@ -239,6 +240,70 @@ textarea {
 .post-body .post-link-underline {
   color: inherit;
   text-decoration-color: currentColor;
+}
+
+.post-body.prose :where(.post-table-scroll):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  border: 1px solid var(--post-border);
+  border-radius: 0.375rem;
+}
+
+.post-body.prose :where(.post-table):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  margin: 0;
+  min-width: 100%;
+}
+
+@media (max-width: 640px) {
+  .post-body.prose :where(.post-table-scroll):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    border: 0;
+    overflow-x: visible;
+  }
+
+  .post-body.prose :where(.post-table):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  .post-body.prose :where(.post-table thead):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    display: none;
+  }
+
+  .post-body.prose :where(.post-table tbody, .post-table tfoot):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .post-body.prose :where(.post-table tr):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    display: grid;
+    gap: 0.625rem;
+    border: 1px solid var(--post-border);
+    border-radius: 0.5rem;
+    background: color-mix(in srgb, var(--post-body) 4%, transparent);
+    padding: 0.875rem;
+  }
+
+  .post-body.prose :where(.post-table td):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    display: grid;
+    grid-template-columns: minmax(6.5rem, 42%) minmax(0, 1fr);
+    gap: 0.75rem;
+    border: 0;
+    padding: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .post-body.prose .post-table td::before {
+    content: attr(data-label);
+    color: var(--post-muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1.45;
+  }
+
+  .post-body.prose .post-table td[data-label=""]::before {
+    content: none;
+  }
 }
 
 .post-theme-shell[data-post-slug="my-first-hackathon-experience"] {
@@ -679,6 +744,10 @@ textarea {
   height: 10px;
 }
 
+.post-scroll {
+  contain: inline-size;
+}
+
 .editor-pane::-webkit-scrollbar-thumb,
 .post-scroll::-webkit-scrollbar-thumb {
   background: rgb(63 63 70 / 0.8);
@@ -754,7 +823,15 @@ textarea {
 
 .post-body .katex-display {
   color: var(--post-heading);
+  max-width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
   padding-block: 0.35rem;
+}
+
+.post-body .katex-display > .katex {
+  display: inline-block;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
 }

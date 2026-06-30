@@ -306,7 +306,7 @@ export function RefugioScoreGraph() {
         })}
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="post-scroll w-full max-w-full overflow-x-auto">
         <svg
           aria-label="Interactive REFUGIO score graph"
           className="block min-w-[42rem]"
