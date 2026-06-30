@@ -686,8 +686,10 @@ textarea {
   overscroll-behavior-inline: contain;
 }
 
-.post-body.prose :where(.post-scroll > table):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  min-width: max-content;
+@media (max-width: 640px) {
+  .post-body.prose :where(.post-scroll > table):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    min-width: max-content;
+  }
 }
 
 .editor-pane::-webkit-scrollbar-thumb,
