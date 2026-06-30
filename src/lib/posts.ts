@@ -19,6 +19,7 @@ const DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
   year: "numeric",
   timeZone: "UTC",
 });
+const LOCALIZED_POST_FILENAME_PATTERN = /^(.+)\.([a-z]{2})\.mdx$/;
 
 /** Extract a slug from an MDX filename by stripping the extension. */
 function slugFromFilename(filename: string) {
@@ -28,6 +29,7 @@ function slugFromFilename(filename: string) {
 /** Internal shape used while building and filtering the cached post index. */
 type PostIndexEntry = PostSummary & {
   published: boolean;
+  listed: boolean;
 };
 
 /**
@@ -49,6 +51,7 @@ async function readPostIndexEntry(filename: string): Promise<PostIndexEntry> {
     tags: frontmatter.tags,
     cover: frontmatter.cover,
     published: frontmatter.published,
+    listed: frontmatter.listed,
   };
 }
 
@@ -103,7 +106,7 @@ const getPostIndex = cache(async (): Promise<PostIndexEntry[]> => {
   );
 
   return posts
-    .filter((post) => post.published)
+    .filter((post) => post.published && post.listed)
     .sort((left, right) => right.datetime.localeCompare(left.datetime));
 });
 
@@ -111,6 +114,53 @@ const getPostIndex = cache(async (): Promise<PostIndexEntry[]> => {
 export const getAllPostSlugs = cache(async (): Promise<string[]> => {
   const posts = await getPostIndex();
   return posts.map((post) => post.slug);
+});
+
+/** Return route params for published localized posts such as `post.es.mdx`. */
+export const getLocalizedPostParams = cache(async (): Promise<Array<{
+  slug: string;
+  locale: string;
+}>> => {
+  let entries: string[] = [];
+
+  try {
+    entries = await fs.readdir(POSTS_DIR);
+  } catch {
+    return [];
+  }
+
+  const params = await Promise.all(
+    entries
+      .map((entry) => {
+        const match = entry.match(LOCALIZED_POST_FILENAME_PATTERN);
+
+        if (!match) {
+          return null;
+        }
+
+        return {
+          filename: entry,
+          slug: match[1],
+          locale: match[2],
+        };
+      })
+      .filter((entry) => entry !== null)
+      .map(async (entry) => {
+        const source = await fs.readFile(path.join(POSTS_DIR, entry.filename), "utf8");
+        const { frontmatter } = parseDocument(source);
+
+        if (!frontmatter.published) {
+          return null;
+        }
+
+        return {
+          slug: entry.slug,
+          locale: entry.locale,
+        };
+      }),
+  );
+
+  return params.filter((entry) => entry !== null);
 });
 
 /** Return lightweight summaries for all published posts (cached). */

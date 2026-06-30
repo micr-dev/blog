@@ -41,6 +41,17 @@ describe("post parsing", () => {
     expect(slugifyTag("Reverse Engineering")).toBe("reverse-engineering");
   });
 
+  it("defaults posts to listed and allows unlisted posts", () => {
+    expect(parseEditablePost(source).frontmatter.listed).toBe(true);
+
+    const unlisted = parseEditablePost(source.replace(
+      "published: true",
+      "published: true\nlisted: false",
+    ));
+
+    expect(unlisted.frontmatter.listed).toBe(false);
+  });
+
   it("builds font stylesheets for google fonts", () => {
     const parsed = parseEditablePost(source);
     const css = getFontStyleSheet(parsed.theme);

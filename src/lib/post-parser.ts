@@ -44,6 +44,7 @@ const frontmatterSchema = z.object({
   excerpt: z.string().min(1),
   tags: z.array(z.string().min(1)).default([]),
   published: z.boolean().default(true),
+  listed: z.boolean().default(true),
   cover: z.string().min(1).optional(),
   theme: themeSchema.optional(),
 });

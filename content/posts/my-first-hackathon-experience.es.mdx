@@ -1,0 +1,231 @@
+---
+title: "Mi primer hackathon"
+date: "2026-06-29"
+excerpt: "Un repaso personal de REFUGIO, un hackathon de optimización de almacenes en Madrid, y lo que aprendí perdiendo."
+tags:
+  - hackathon
+  - ai
+  - reflections
+published: true
+listed: false
+theme:
+  colors:
+    background: "#f1e6c8"
+    body: "#0e0e0e"
+    heading: "#0e0e0e"
+    accent: "#cc3a2c"
+    accentSecondary: "#f1b91e"
+    accentTertiary: "#2362ab"
+    muted: "#0e0e0e99"
+    border: "#0e0e0e"
+    codeBackground: "#0e0e0e"
+    codeForeground: "#f1e6c8"
+  fonts:
+    body:
+      family: "Space Grotesk"
+      source: "google"
+      value: "Space+Grotesk:wght@400;500;700"
+    heading:
+      family: "Space Grotesk"
+      source: "google"
+      value: "Space+Grotesk:wght@400;500;700"
+    mono:
+      family: "JetBrains Mono"
+      source: "google"
+      value: "JetBrains+Mono:wght@400;500;700"
+---
+
+## Introducción
+
+Hace unas semanas vi un hilo sobre una convención/hackathon en Madrid sobre IA. Iba en el autobús con un 3% de batería y dije "¿por qué no?", sin esperar demasiado ni poner mucho esfuerzo en mi candidatura. Unos días después, me invitaron junto con **otras 44 personas, de entre 360+ propuestas**, a participar en el hackathon de <a className="post-link post-link-underline" href="https://refugiomadrid.com/">REFUGIO</a>: una competición de 4 horas con 15 equipos de 3. Poco después, reservé alojamiento en Madrid.
+
+La víspera del evento, nos enseñaron una vista previa de cada persona que iba a asistir: una foto junto a una breve descripción. Y vaya... decir que me sentí pequeño sería quedarse corto. Había muchísima gente inteligente de muchísimos campos distintos: ingeniería, astrofísica, medicina y, por supuesto, machine learning e inteligencia artificial. ¿Cómo he acabado yo aquí?
+
+No mucho después, también recibimos más información sobre el hackathon. Aún no sabíamos cuál sería el reto, pero sabíamos que sería una <Term tip="Un formato de competición donde los equipos envían soluciones y se ordenan por puntuación en una clasificación compartida.">competición al estilo Kaggle</Term>, y también supimos quiénes serían nuestros compañeros de equipo. Me emparejaron con <a className="post-link post-link-underline" href="https://x.com/afloresep">Alejandro</a>, un doctorando en <Term tip="Un campo que aplica métodos computacionales a datos químicos y moleculares.">quimioinformática</Term> que trabaja con IA y big data, y con <a className="post-link post-link-underline" href="https://x.com/fonsorivaya">Alfonso</a>, ingeniero industrial y de sistemas eléctricos. Compañeros increíbles y gente genial, pero más sobre eso luego.
+
+## 2 horas antes de la Hora 0
+
+Después de que llegaran todos los participantes, vinieron dos ponentes a dar charlas sobre lo que hacían en su trabajo y cómo estaban usando IA. Venían de dos empresas pequeñas, NVIDIA y Microsoft, bastante desconocidas, así que no te culpo si no te suenan... /s
+
+Primero, Guillermo García Cobo, un ingeniero de <Term tip="Machine learning: sistemas de IA que aprenden patrones a partir de datos en lugar de programarse directamente con cada regla.">ML</Term> centrado ahora mismo en crear <Term tip="Sistemas de IA diseñados para percibir, planificar y actuar en el mundo físico, como robots o vehículos autónomos.">IA física</Term>. Más concretamente, conducción autónoma, como Tesla y Waymo. Nos explicó el proceso que siguieron en NVIDIA en colaboración con Mercedes, qué hicieron y por qué lo hicieron. También habló de <a className="post-link post-link-underline" href="https://arxiv.org/abs/2606.03159">OmniDreams</a>, un modelo generativo de mundo en tiempo real hecho específicamente para simulación de vehículos autónomos, que es una de las herramientas que usaron y siguen usando para conseguir conducción totalmente autónoma mediante IA. Aunque antes de esto tenía 0 interés en la conducción autónoma, lo que enseñaron desde luego me despertó curiosidad y captó mi atención.
+
+Después vino Daniel Gallo, miembro del equipo técnico de Microsoft AI. Nos contó lo que estaban haciendo en ese momento: modelos de texto a voz, modelos de voz a texto, etc., y el último modelo al que había contribuido: MAI-Thinking-1, un modelo de razonamiento <Term tip="Una arquitectura de modelo donde solo se activan algunas subredes expertas por token en vez de ejecutar el modelo completo cada vez.">sparse Mixture-of-Experts</Term> de 35B activos y ~1T parámetros totales. Después, pasó a explicar el proceso de entrenamiento, preentrenamiento, mid-training y post-training, además de algunas otras áreas que ahora mismo no recuerdo. No sé mucho de machine learning, así que intenté seguirlo lo mejor que pude, pero pese a mi falta de experiencia con ML, también me pareció extremadamente interesante.
+
+Después de los dos, <a className="post-link post-link-underline" href="https://x.com/XMihura">Mihura</a>, el organizador del evento, habló de por qué hizo REFUGIO, qué quería conseguir con ello, y después... el hackathon.
+
+## 15 minutos hasta la Hora 0
+
+Nos dio una breve introducción al reto y en qué consistiría: un reto de optimización de almacenes multiagente. Cada equipo enviaba un único archivo de Python que diseñaba tanto la distribución de estanterías como la política de movimiento para 96 robots en un almacén de 52 x 52 con 960 estanterías. El evaluador ejecutaba cada solución durante 300 <Term tip="Pasos discretos de tiempo de simulación.">ticks</Term> con tres semillas ocultas, y el objetivo era completar tantas entregas de paquetes como fuera posible.
+
+![Instrucciones del reto del almacén mostradas durante el hackathon](/media/my-first-hackathon-experience/image1.png)
+
+También explicó cómo funcionaría el sistema de puntuación: la puntuación bruta era simplemente el número de entregas completadas en las semillas ocultas de evaluación, pero los puntos del hackathon solo llegaban al mover la <Term tip="La mejor puntuación pública actual que una nueva entrega tenía que superar para ganar puntos.">frontera pública</Term>. Una vez que un equipo marcaba un nuevo mejor número de entregas, los equipos posteriores tenían que superarlo para ganar algo; igualarlo valía cero. Cada nueva entrega por encima de la línea base inicial de 100 entregas valía más que la anterior, así que las grandes mejoras tardías pagaban muchísimo, pero solo al primer envío validado que las reclamara. Esto sonaba bastante bien en teoría, pero explicaré mi problema con este sistema más adelante.
+
+Total, a estas alturas nos dijeron que esperásemos 10-15 minutos para que se preparase toda la infraestructura y nos enviasen todos los archivos necesarios. Pero la <a className="post-link post-link-underline" href="https://web.archive.org/web/20260629190845/https://refugio-hackathon-nine.vercel.app/instructions">página de instrucciones</a> era pública. Vimos la URL. *Podríamos* haber empezado ya y haber sacado ventaja, y no hacerlo fue **mi mayor error de toda la competición**. En vez de eso, empecé un <Term tip="Un comando de agente para iniciar un objetivo de larga duración."><code>/goal</code></Term> para investigar información pública sobre algoritmos de ordenación que podrían ser útiles para este escenario exacto.
+
+Hablé con mis compañeros, y decidimos completar lo que faltaba de la pequeña preparación que habíamos dejado lista el día anterior: un `AGENTS.md` en condiciones, reglas, notas, etc.
+
+En retrospectiva, deberíamos haber empezado a iterar sobre el algoritmo real. No les culpo a ellos, por cierto; me culpo a mí porque debería haberlo pensado. ¿Por qué? Como mencioné antes, solo las entregas "nuevas" puntuadas contarían para el total de puntos. Por tanto, el plan que tenía todo el mundo era ser los primeros en aportar antes de que empezase la <Term tip="Una región de puntuación donde las mejoras se vuelven mucho más difíciles y las puntuaciones dejan de subir rápidamente.">meseta</Term>. Casi con total seguridad, **el ganador del "primer sprint" sería el ganador de la competición.**
+
+Otra restricción que teníamos era que solo podíamos enviar una solución cada 30 minutos, lo que permitía más estrategia y obligaba a pensar si merecía la pena enviar X para sumar puntos, o si debíamos esperar para conseguir Y y sumar aún más puntos, pero con el riesgo de que otro equipo los consiguiera antes que nosotros y perdiésemos esos posibles puntos.
+
+## Hora 0
+
+Mientras mis compañeros estaban experimentando, a mí me tocó hacer el primer envío. Y había que hacerlo RÁPIDO. Teníamos que ser los primeros en hacerlo, o no sacaríamos ningún punto; daba igual si el resultado real era malo.
+
+La primera iteración sacó 37 entregas a los 2 minutos de empezar, y aún nadie había enviado nada. Pensamos en enviarla al instante, pero insistí en esperar un pelín más porque era demasiado baja, y salió bien: **336 entregas**. Nos dieron **36315 puntos**. Buen comienzo.
+
+<RefugioReplayPlayer initialJobId="15c4cc5a483b" showJobControls={false} />
+
+Ahora teníamos un cooldown de 30 minutos, así que podíamos relajarnos y dedicarlo a iterar sobre nuestra mejor puntuación. Pero aquí está uno de los principales problemas que nosotros y otros equipos nos encontramos durante las 4 horas: si estabas trabajando/iterando sobre tu propio algoritmo, y otro equipo enviaba uno mejor que aquel sobre el que estabas iterando, lo más lógico era parar lo que estabas haciendo y volver a empezar desde la nueva mejor solución, partiendo de cero cada vez.
+
+Esto pasó unas cuantas veces durante este primer sprint. Después de nuestro envío, la ventaja nos duró poco. En 20 minutos, la puntuación avanzó de `336 -> 397 -> 398 -> 610 -> 759 -> 882`. Qué cojones.
+
+![Clasificación tras el primer sprint](/media/my-first-hackathon-experience/image2.png)
+
+Y la peor noticia aún estaba por llegar: 882 era el comienzo de la meseta. Ahora íbamos 4<sup>º</sup>, con 3 equipos por encima, cada uno con ~80k puntos. Y aquí viene el fallo del sistema de puntuación: intentando recompensar iteraciones tardías en lugar de la puntuación más alta, **has hecho que el 66% de los equipos pierdan al instante.**
+
+Nos dijeron que el máximo teórico rondaba las ~930 entregas. Si usas la lógica y haces unas cuentas mentales sencillas, quizá llegues a lo mismo que pensé yo en aquel momento: nadie que no hubiese puntuado aún podía ganar ya. La mejora de 882 a 930 eran ~50 puntos, lo que daría a quien lo consiguiera unos ~45k puntos, eso si consiguiese la puntuación perfecta y si ningún otro equipo sacase más de 882 entregas antes. Extremadamente improbable. Si el top 3 ya tenía 80k, NO PUEDES ganar. Pasó de ser una competición de 15 equipos a una competición de 3-5 equipos: principalmente el top 3 con 80k, nosotros en el top 4 con 36k, donde necesitaríamos conseguir la supuesta puntuación perfecta ahora mismo para siquiera tener una oportunidad de ganar, y el top 5 con unos 10k. Muchos equipos acabaron rindiéndose y usando el tiempo del hackathon para hacer networking o charlar con sus compañeros, pero ¿puedes culparles? ¿Por qué ibas a luchar una pelea imposible de ganar?
+
+## Primera hora
+
+A pesar del desastre anterior, no nos rendimos. A unos 40 minutos de empezar el reto, mi compañero Alejandro consiguió un archivo que compilaba y daba 1560 entregas. Sí, has leído bien: **1560 entregas**. Estábamos, comprensiblemente, confundidos. No solo habíamos superado el supuesto límite de 900, sino que lo habíamos reventado por completo. Así que fue a preguntarle al organizador, Mihura, que respondió: "If it compiles, it compiles."
+
+Pero claro, no iba a ser tan fácil. No íbamos a tener tanta suerte. Había montado un sistema de revisión en dos fases, algo que no sabíamos en ese momento: un comprobador <Term tip="Producir siempre el mismo resultado a partir de las mismas entradas.">determinista</Term> y una revisión con LLM, por GPT 5.5, ni más ni menos. Buena suerte intentando hacerle <Term tip="Crear una entrada que intenta hacer que un modelo de lenguaje ignore sus instrucciones o reglas de seguridad.">prompt injection</Term> o colársela. Y nuestros miedos se hicieron realidad: `safety_rejected`. Pues nada, ahora estamos jodidos. Pero recuerda este archivo, porque vuelve más adelante.
+
+<img className="refugio-matched-screenshot" alt="Rechazo de seguridad en la entrega de 1560 entregas" src="/media/my-first-hackathon-experience/image3.png" />
+
+Antes de que terminase la primera hora, vimos a los demás equipos intentar rascar lo que pudieran, como pudieran. Envío a envío, punto a punto. Daba igual lo pequeña que fuese la mejora, los puntos eran puntos, y tampoco es que precisamente abundasen.
+
+## Segunda hora
+
+Después de las malas noticias anteriores, seguíamos decididos a ganar la competición. Alfonso se encargó de iterar sobre las mejores puntuaciones actuales e intentar conseguir un número alto de entregas de forma normal. Su objetivo era >900. Mientras tanto, Alejandro y yo intentábamos encontrar una forma de explotar el sistema: él intentando arreglar el archivo para que fuera válido y pasase el revisor, y yo intentando encontrar una vulnerabilidad que pudiéramos aprovechar, ya fuese en la propia web de envíos o en el sistema de revisión.
+
+Después de no encontrar una forma de hacer que el archivo de 1.5k entregas pasara la validación, Alejandro volvió a trabajar en intentar conseguir una nueva puntuación alta por medios normales, y yo me uní poco después al descubrir que era un sistema de revisión en dos fases. Pensaba que era solo una revisión con LLM, no un sistema de doble fase.
+
+En ese momento, la clasificación pública ya iba por 888 entregas, y la barrera de 900 era la más difícil de romper de todo el evento: aguantó 1 hora y 52 minutos desde que se cruzó la de 800. Seguimos iterando, y conseguí una que puntuaba 909 en local. Bingo.
+
+La envié al instante. Todo el equipo se quedó mirando la etiqueta "Running..." en la página de envíos, esperando ver cuántos puntos sacábamos de ella... 0. 888 entregas, exactamente lo mismo que la mejor puntuación actual de aquel momento. ¿Pero cómo? Si en local daba 909...
+
+**Las semillas aleatorias.**
+
+Hasta entonces, todos nuestros envíos habían coincidido con lo que obteníamos en local, así que no habíamos pensado demasiado en las semillas. Pero ahora no solo aplastaron nuestra falsa esperanza, sino que también nos hicieron malgastar uno de nuestros envíos, lo que significaba que teníamos que esperar 30 minutos hasta el siguiente. Así que volvimos al plan anterior: Alfonso siguió iterando de forma normal, Alejandro siguió intentando hacer que el 1.5k anterior pasara la validación, y en vez de <Term tip="Probar muchas ideas poco precisas rápidamente, sin una teoría clara de cuál debería funcionar.">tirar a lo loco y rezar</Term> para encontrar una vulnerabilidad, decidí intentar hacer ingeniería inversa de las semillas ocultas. Seguro que, con todos los jobs y distintas soluciones de los otros equipos, eso sería posible.
+
+## Tercera hora
+
+Y, para mi sorpresa, lo fue. Unos 10 minutos después, ya teníamos las semillas. ¿Pero cómo? Pues las páginas de detalle de los jobs mostraban una fila de ejecución oficial por cada semilla oculta. En la interfaz visible, esas filas aparecían como Official run 1, Official run 2, Official run 3, pero en el payload incrustado de React/Next, cada <Term tip="Un elemento HTML de fila de tabla. En el código fuente de la página, cada fila llevaba metadatos que no eran visibles en la interfaz."><code>&lt;tr&gt;</code></Term> tenía una key igual a la semilla real. Para verificar que esas eran de verdad las semillas usadas, inspeccioné el código fuente de varios jobs para encontrar los mismos valores en ellos y, por si acaso, volví a ejecutar varios jobs ya enviados para ver si los valores coincidían con los de la web. Y vaya si coincidían.
+
+![Semillas ocultas expuestas en el payload de la página](/media/my-first-hackathon-experience/image4.png)
+
+Después de enviarles estas semillas recién adquiridas a mis compañeros, ya podíamos iterar y verificar todas nuestras soluciones en local para obtener la cantidad de entregas que usaría la web. Para cuando se nos acabó el cooldown, Alejandro había conseguido romper la barrera de 900: `898 -> 901 -> 905 -> 907`, que enviamos rápidamente para conseguir nuestros puntos. **7227 puntos.** Aunque esa sería la última victoria que conseguiríamos en el resto de la competición.
+
+<RefugioReplayPlayer initialJobId="7a4738c9956c" showJobControls={false} />
+
+A pesar de romper la barrera de 900, no sirvió de mucho. Seguíamos a **50k puntos de distancia** de estar entre los 3 primeros y tener una oportunidad de ganar. La meseta seguía ahí, y cada punto era más difícil de conseguir cuanto más nos acercábamos a la solución perfecta, que en aquel momento todavía pensábamos que era 930, aunque más tarde se reveló que era más alta.
+
+Para ganar, teníamos que sacarle más de ~55 puntos de ventaja al mejor resultado actual. Parecía imposible, y a pesar de nuestros mejores intentos ninguno consiguió acercarse ni remotamente a 55 puntos, y mucho menos superar la mejor puntuación actual de la clasificación, que iba creciendo lentamente de punto en punto.
+
+Así que, con algo más de una hora restante en la competición, intentamos ganar por <Term tip="Probar muchas posibilidades de forma sistemática o semisistemática porque no hay un atajo claro disponible.">fuerza bruta</Term>. Volvimos a intentar encontrar una forma de hacer válida la solución de 1.5k entregas, ya que era nuestra última esperanza, pero sin mucho éxito.
+
+## Cuarta y última hora
+
+La moral del equipo estaba por los suelos. Estábamos cansados y sin ideas, así que a esas alturas ya nos habíamos rendido casi sin darnos cuenta, pero yo seguí intentando encontrar una forma. Y la encontré... más o menos. Logré conseguir un archivo que, si sobrevivía al escrutinio del revisor, nos daría 3000 entregas y probablemente una patada fuera de la competición, pero tenía que intentarlo.
+
+<img className="refugio-matched-screenshot" alt="Aviso de manipulación del revisor" src="/media/my-first-hackathon-experience/image5.png" />
+
+Para sorpresa de nadie: no funcionó.
+
+Por el lado positivo, fuimos los primeros en activar un aviso de seguridad, y los únicos en recibir el aviso de arriba sobre manipular el evaluador. No nos dio ningún premio, pero fue bastante gracioso.
+
+Lo que quedaba de la última hora pasó sin mucho más que destacar. Para nuestro equipo. Mientras tanto, el Equipo 3 y el Equipo 10 seguían peleando por puntos. El Equipo 3 consiguió 924, luego el Equipo 10 consiguió 930, luego el Equipo 3 consiguió 931, y entonces...
+
+El Equipo 10 consiguió **1008**.
+
+<RefugioReplayPlayer initialJobId="c15da13c3eaa" showJobControls={false} />
+
+¿Cómo? ¿Cómo hicieron eso? Todo el mundo se quedó sin palabras. Pero a pesar de obtener la puntuación más alta de toda la competición, y de conseguir saltar del 5<sup>º</sup> al 2<sup>º</sup> puesto con 66990 puntos, no lograron quedar primeros. Perdieron por apenas **848 puntos** contra el Equipo 3.
+
+Me sentí, y todavía me siento, fatal por el Equipo 10. Después de todo ese esfuerzo y de pelear por la victoria a pesar de ser el equipo con menos puntos durante toda la competición, se quedaron a un solo paso de adelantar el sólido primer puesto del Equipo 3.
+
+<img className="refugio-conclusion-image" alt="Resultados finales de la clasificación" src="/media/my-first-hackathon-experience/image6.png" />
+
+## Final del hackathon
+
+| Modelo | Tokens de entrada | Entrada cacheada | Tokens de salida | Tokens totales | Coste de entrada | Coste de salida | Coste total |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| gpt-5.5 | 8,460,318 | 198,140,416 | 718,237 | 207,318,971 | $141.37 | $21.55 | $162.92 |
+
+<RefugioScoreGraph />
+
+## Conclusión
+
+A pesar de la derrota de mi equipo, me lo pasé muy bien durante todo el hackathon y el evento. No perdimos por <Term tip="Generación de números aleatorios, aquí referido a la variación de puntuación causada por semillas aleatorias ocultas.">RNG</Term> ni por factores externos, sino simplemente porque **nuestros competidores nos superaron en habilidad**. Para mí, ese fue uno de los mejores escenarios que podían pasar, solo por detrás de ganar, claro.
+
+Visto en retrospectiva, hubo jugadas que podría haber hecho y que, quizá, podrían haber permitido que el equipo y yo consiguiéramos el primer puesto. Me da un poco de rabia conmigo mismo no haberlas hecho, pero aun así lo hice decentemente.
+
+El reto del hackathon fue interesante, y a pesar de lo que voy a decir en los siguientes párrafos, creo que estuvo muy muy bien. Son solo pegas que tengo sobre la competición y que, si REFUGIO 2 o cualquier otro hackathon local llega a celebrarse, ojalá se puedan tener en cuenta.
+
+### 1. Cambiar el sistema de puntuación
+
+Se presentó como una forma de recompensar las mejoras tardías, y en teoría pintaba bien, pero no creo que se implementara correctamente. Lo que hizo fue recompensar a los primeros equipos que cubrieron fácilmente los primeros cientos de puntos, sin demasiada reflexión ni esfuerzo. Como mencioné antes, para cuando llegamos a la meseta, los equipos que aspiraban a ser los ganadores ya estaban decididos. Entiendo que hacer que el sistema de puntuación de un hackathon sea lo más justo posible no es una tarea fácil, así que esto no es un palo al esfuerzo de Mihura.
+
+Lo que creo que debería haberse cambiado es empezar a dar puntos mucho más adelante y dar más puntos en vez de sumar solo +1 por cada entrega. Durante la competición, la mayor meseta empezó a notarse en 850, así que los puntos deberían haber empezado a darse desde esa barrera, ya que todo el mundo podía alcanzarla fácilmente pero no superarla con la misma facilidad.
+
+La fórmula oficial ya intentaba hacer esto con puntuación triangular, pero la base era demasiado baja:
+
+$$
+C = 100,\quad F = \text{frontera pública antes del envío},\quad D = \text{entregas brutas}
+$$
+
+$$
+\text{anterior} = \max(F, C),\quad \text{actual} = \max(D, C)
+$$
+
+$$
+\text{puntos} =
+\begin{cases}
+T(\text{actual} - C) - T(\text{anterior} - C), & \text{si actual > anterior} \\
+0, & \text{en caso contrario}
+\end{cases}
+$$
+
+$$
+\text{puntos} =
+\sum_{k = \text{anterior} - C + 1}^{\text{actual} - C} k
+$$
+
+$$
+T(n) = \frac{n(n + 1)}{2}
+$$
+
+Mi versión arreglada mantendría esa misma fórmula, pero movería la base a la meseta en vez de a la puntuación inicial:
+
+$$
+C = \text{base de la meseta}
+$$
+
+Pero ¿cómo encuentras una meseta precisa? Fácil: pon a 5 o 10 agentes a iterar sobre el problema durante 30 minutos, y entonces la puntuación más alta obtenida de forma autónoma debería ser la base para todos los demás. Para una barrera más estricta, dale 2-3 prompts al agente o agentes y mira cuál es la puntuación máxima que pueden alcanzar con ayuda humana.
+
+Como todo lo que empieza a partir de ahí requiere instrucciones humanas específicas, recompensas el prompting y el pensamiento puesto en el problema en vez de la velocidad del agente de cada participante. Más adelante, reduces la brecha creada por cada "victoria", dando a los equipos con 0 puntos una oportunidad de subir si consiguen una puntuación alta cerca del final de la competición, y reduciendo así los equipos que se rinden pronto.
+
+### 2. Permitir que los participantes enseñen sus puntos fuertes
+
+REFUGIO se hizo para mostrar y agrupar el talento en España. Pero realmente no se mostró talento. No me malinterpretes, el reto era bueno e interesante, pero al hacer algo tan objetivo y determinista como un simple "mejora este sistema todo lo que puedas", no puedes pensar fuera de la caja de verdad.
+
+En su lugar, debería haberse hecho el formato clásico de hackathon: hacer una app/sistema/lo que sea en X cantidad de tiempo. Esto habría permitido que cada equipo y sus miembros enseñasen en qué eran buenos. Ya fuese diseño de sistemas, arquitectura, velocidad, <Term tip="La parte de una app que ve el usuario: pantallas, controles, interacciones y comportamiento en el navegador.">frontend</Term>, originalidad... todas esas cosas. También creo que esto es más atractivo para inversores y recruiters: ¿quieres ver cómo trabaja alguien en equipo? ¿Quieres ver en qué es bueno? Pues mira lo que ha construido. Joder, un equipo entero podría salir contratado en el momento si hiciera algo realmente bueno que llamase la atención de alguien. Si una de esas apps la escogiese un <Term tip="Inversor de capital riesgo.">VC</Term>, o si llegase a convertirse en una startup exitosa, ¿no habría cumplido eso el objetivo principal del evento?
+
+Soy plenamente consciente de que esto es más fácil decirlo que hacerlo. Necesitas tiempo para hacer las presentaciones, tiempo para juzgar, y está toda la subjetividad implicada en el proceso; puntuar y juzgar no es fácil. Quizá el hackathon podría ser por la mañana, y luego los vídeos/presentaciones mostrarse a los asistentes de la tarde, para que cualquier recruiter/VC también pueda verlos, y luego puedan ser juzgados.
+
+Después de ver el éxito de esta primera edición de REFUGIO y de poder tener algo que enseñar a patrocinadores y/o gente que podría ayudar en una futura edición, siento que esto es más que viable para REFUGIO 2.
+
+### 3. Traer a más gente técnica a hablar en el evento
+
+Los dos ponentes de la mañana fueron increíbles, ¡y los de la tarde también! Pero estos últimos estaban más centrados en "motivarnos" a crear nuestra propia startup y convertirnos en founders. Estuvieron bien, pero siento que hablo por una parte de los asistentes cuando digo que simplemente nos da un poco igual, no vamos a construir nuestra propia startup, y no vamos a convertirnos en founders. Algunos simplemente no queremos convertirnos en emprendedores. Quiero aprender de los ponentes, no que me metan a la fuerza la _startup-pill_.
+
+Habría preferido que hablasen y enseñasen lo que hacen, en vez de lo que quieren que hagamos nosotros. Por supuesto, sin faltar al respeto a los ponentes que asistieron; todos hicieron un trabajo increíble en sus respectivas presentaciones.
+
+<img className="refugio-ending-image" alt="Foto final del evento REFUGIO" src="/media/my-first-hackathon-experience/refugio-ending.jpg" />
+
+<p className="refugio-final-opinion">Todo esto es, por supuesto, mi propia opinión, y solo son pegas. El evento fue increíble, la gente fue extremadamente maja, y aprendí mucho de toda la experiencia. Si REFUGIO 2 llega a pasar, y consigo que me inviten, obvio, asistiría encantado y participaría en cualquier movida que preparen para nosotros en esa edición.</p>
+
+Muchas gracias a Mihura, Paula, todos los ponentes y todo el mundo que participó por hacerlo posible &lt;3.

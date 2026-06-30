@@ -36,6 +36,7 @@ export interface PostFrontmatter {
   excerpt: string;
   tags: string[];
   published: boolean;
+  listed: boolean;
   cover?: string;
   theme?: Partial<{
     colors: Partial<PostThemeColors>;
