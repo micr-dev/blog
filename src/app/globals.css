@@ -624,6 +624,30 @@ textarea {
   transform: translateX(-50%) rotate(45deg);
 }
 
+@media (max-width: 640px) {
+  .nb-term__tooltip {
+    position: fixed;
+    inset-inline: 1rem;
+    bottom: calc(1rem + env(safe-area-inset-bottom));
+    width: auto;
+    max-width: none;
+    max-height: min(18rem, calc(100dvh - 2rem));
+    overflow-y: auto;
+    z-index: 80;
+    transform: translateY(0.35rem) scale(0.98);
+    transform-origin: bottom center;
+  }
+
+  .nb-term-wrap:hover .nb-term__tooltip,
+  .nb-term-wrap:focus-within .nb-term__tooltip {
+    transform: translateY(0) scale(1);
+  }
+
+  .nb-term__arrow {
+    display: none;
+  }
+}
+
 .post-body.prose :where(pre.astro-code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   margin: 1.5rem 0;
   border: 1px solid var(--post-border);
