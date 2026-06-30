@@ -4,8 +4,9 @@ date: "2025-12-07"
 excerpt: "Routing traffic through a Python bridge to bypass upstream JA3 fingerprinting"
 tags:
   - networking
-  - reverse engineering
+  - security
   - infrastructure
+  - tls
 published: true
 ---
 I wanted to reach an upstream AI API from any device through a single allowlisted VPS IP. What looked like a basic reverse-proxy task turned into a fight with cloud IP reputation, WAF header heuristics, JA3 TLS fingerprinting, IPv6 weirdness, and chunking failures.
