@@ -445,10 +445,14 @@ textarea {
   margin: 1.25rem 0;
 }
 
-.nb-markdown-panel__body :where(ul) {
+.nb-markdown-panel__body :where(ul, ol) {
   list-style: disc;
   margin-bottom: 1rem;
   padding-left: 1.25rem;
+}
+
+.nb-markdown-panel__body :where(ol) {
+  list-style: decimal;
 }
 
 .nb-markdown-panel__body :where(li) {
@@ -458,7 +462,7 @@ textarea {
   margin-top: 0.5rem;
 }
 
-.nb-markdown-panel__body :where(code) {
+.nb-markdown-panel__body :where(:not(pre) > code) {
   border-radius: 0.25rem;
   background: rgb(255 255 255 / 0.1);
   color: color-mix(in srgb, var(--post-body) 85%, transparent);
@@ -469,9 +473,78 @@ textarea {
   padding: 0.125rem 0.25rem;
 }
 
-.nb-markdown-panel__body :where(code)::before,
-.nb-markdown-panel__body :where(code)::after {
+.nb-markdown-panel__body :where(:not(pre) > code)::before,
+.nb-markdown-panel__body :where(:not(pre) > code)::after {
   content: none;
+}
+
+/*
+ * Disclosures opt out of Tailwind Typography so their container chrome stays
+ * predictable. Restore the Markdown structure the embedded SKILL.md needs
+ * without leaking article-level prose rules into other custom components.
+ */
+.nb-markdown-disclosure__body :where(h3) {
+  color: var(--post-heading);
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+.nb-markdown-disclosure__body :where(strong) {
+  color: var(--post-heading);
+}
+
+.nb-markdown-disclosure__body :where(pre.astro-code) {
+  border: 1px solid var(--post-border);
+  border-radius: 0.375rem;
+  background: var(--post-code-bg) !important;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.03);
+  padding: 0.75rem 1rem;
+}
+
+.nb-markdown-disclosure__body > :where(pre.astro-code) {
+  margin: 1.5rem 0;
+}
+
+.nb-markdown-disclosure__body :where(.post-scroll > pre.astro-code) {
+  margin: 0;
+}
+
+.nb-markdown-disclosure__body :where(pre.astro-code > code) {
+  display: grid;
+  min-width: max-content;
+  border-radius: 0;
+  background: transparent;
+  color: var(--post-code-fg);
+  font-family: var(--font-post-mono), ui-monospace, monospace;
+  font-size: 0.875rem;
+  line-height: 1.7142857;
+  overflow-wrap: normal;
+  padding: 0;
+}
+
+.nb-markdown-disclosure__body :where(table) {
+  width: 100%;
+  border-collapse: collapse;
+  color: color-mix(in srgb, var(--post-body) 78%, transparent);
+  font-size: 0.8125rem;
+  line-height: 1.35rem;
+  text-align: left;
+}
+
+.nb-markdown-disclosure__body :where(th, td) {
+  border-bottom: 1px solid var(--post-border);
+  padding: 0.625rem 0.75rem;
+  vertical-align: top;
+}
+
+.nb-markdown-disclosure__body :where(th) {
+  background: rgb(255 255 255 / 0.04);
+  color: var(--post-heading);
+  font-weight: 600;
+}
+
+.nb-markdown-disclosure__body :where(tbody tr:last-child td) {
+  border-bottom: 0;
 }
 
 .nb-media {
@@ -804,4 +877,80 @@ textarea {
   max-width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
+}
+
+/* ---- TweetCard: react-tweet, re-themed to match the active post ---- */
+/* Import react-tweet's base layout classes, then override colors below. */
+@import "react-tweet/theme.css";
+
+.tweet-card-theme {
+  /* react-tweet maps its own theme vars to the post theme vars so the card
+     inherits each post's colorway instead of forcing Twitter's palette. */
+  --tweet-bg: transparent;
+  --tweet-border: var(--post-border);
+  --tweet-text: var(--post-body);
+  --tweet-muted: var(--post-muted);
+  --tweet-hover-bg: color-mix(in srgb, var(--post-body) 6%, transparent);
+}
+
+/* Card container: subtle surface using the post's border/background tokens */
+.tweet-card-theme .react-tweet-theme {
+  background: color-mix(in srgb, var(--post-body) 3%, transparent);
+  border: 1px solid var(--post-border);
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+}
+
+/* Author name + body text use the heading/body vars for strong contrast */
+.tweet-card-theme .react-tweet-theme a,
+.tweet-card-theme .react-tweet-theme .tweet-header_user-name {
+  color: var(--post-heading);
+}
+
+.tweet-card-theme .react-tweet-theme .tweet-header_user-handle,
+.tweet-card-theme .react-tweet-theme .tweet-header_user-follow,
+.tweet-card-theme .react-tweet-theme .tweet-replies > div {
+  color: var(--post-muted);
+}
+
+.tweet-card-theme .react-tweet-theme .tweet-body {
+  color: var(--post-body);
+}
+
+/* Inline links inside tweet body lean on the accent color */
+.tweet-card-theme .react-tweet-theme .tweet-body a {
+  color: var(--post-accent);
+}
+
+/* Media + quoted tweets sit inside a bordered box that matches the card */
+.tweet-card-theme .react-tweet-theme .tweet-media,
+.tweet-card-theme .react-tweet-theme .tweet-quoted {
+  border: 1px solid var(--post-border);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+/* Info row (date) and action icons use the muted tone */
+.tweet-card-theme .react-tweet-theme .tweet-info,
+.tweet-card-theme .react-tweet-theme .tweet-info a,
+.tweet-card-theme .react-tweet-theme .tweet-actions {
+  color: var(--post-muted);
+}
+
+.tweet-card-theme .react-tweet-theme .tweet-actions a:hover {
+  color: var(--post-accent);
+}
+
+/* Skeleton + not-found states stay legible against the themed card */
+.tweet-card-theme .react-tweet-theme.tweet-skeleton,
+.tweet-card-theme .react-tweet-theme.tweet-not-found {
+  color: var(--post-muted);
+}
+
+/* Fineprint: small muted text for asides, footnotes, and throwaway notes */
+.post-fineprint {
+  font-size: 0.8em;
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--post-muted) 85%, transparent);
+  margin-top: -0.25rem;
 }

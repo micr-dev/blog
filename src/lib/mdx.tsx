@@ -25,6 +25,7 @@ import {
 import {
   MarkdownCard,
   MarkdownCodeBlock,
+  MarkdownDisclosure,
   MarkdownFigure,
   MarkdownGrid,
   MarkdownMetric,
@@ -32,6 +33,7 @@ import {
   MarkdownQuoteCard,
 } from "@/components/mdx/markdown";
 import { Term } from "@/components/mdx/term";
+import { TweetCard } from "@/components/mdx/tweet-card";
 import { MermaidFence } from "@/components/mdx/mermaid-fence";
 import { LearningPhaseRadar } from "@/components/mdx/learning-phase-radar";
 import { PhaseHeading } from "@/components/mdx/phase-heading";
@@ -269,11 +271,20 @@ export function getMdxComponents(
   options?: MdxRenderOptions,
 ): MDXComponents {
   const components: MDXComponents = {
-    a: (props) => (
+    a: ({ className, href, ...props }) => (
       <a
         {...props}
-        target={props.href?.startsWith("/") ? undefined : "_blank"}
-        rel={props.href?.startsWith("/") ? undefined : "noopener noreferrer"}
+        href={href}
+        // Default inline links to the underlined post-link style (text color,
+        // not accent), per the project link convention. Authors can still pass a
+        // custom className to override. External links open in a new tab.
+        className={
+          href && href.startsWith("/")
+            ? className
+            : ["post-link", className].filter(Boolean).join(" ") || undefined
+        }
+        target={href?.startsWith("/") ? undefined : "_blank"}
+        rel={href?.startsWith("/") ? undefined : "noopener noreferrer"}
       />
     ),
     img: (props) => <ImageEmbed {...props} />,
@@ -294,10 +305,12 @@ export function getMdxComponents(
     MarkdownQuoteCard,
     MarkdownFigure,
     MarkdownCodeBlock,
+    MarkdownDisclosure,
     LearningPhaseRadar,
     RefugioReplayPlayer,
     RefugioScoreGraph,
     Term,
+    TweetCard,
     code: ({ className, children, ...props }) => {
       if (className?.startsWith("language-")) {
         return <code className={className} {...props}>{children}</code>;

@@ -112,6 +112,33 @@ export function MarkdownPanel({
   );
 }
 
+export function MarkdownDisclosure({
+  title,
+  description,
+  children,
+}: {
+  title: ReactNode;
+  description?: ReactNode;
+  children: ReactNode;
+}) {
+  return (
+    <details className="group not-prose my-8 overflow-hidden rounded-2xl border border-[color:var(--post-border)] bg-white/[0.03]">
+      <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 px-4 py-3 text-[color:var(--post-heading)] marker:content-none md:px-5 [&::-webkit-details-marker]:hidden">
+        <span>
+          <span className="block text-base font-medium">{title}</span>
+          {description ? (
+            <span className="mt-1 block text-sm leading-5 text-[color:var(--post-muted)]">{description}</span>
+          ) : null}
+        </span>
+        <span aria-hidden="true" className="text-xl text-[color:var(--post-muted)] transition-transform duration-150 ease-out group-open:rotate-45">+</span>
+      </summary>
+      <div className="nb-markdown-panel__body nb-markdown-disclosure__body border-t border-[color:var(--post-border)] bg-black/25 p-4 text-sm leading-6 text-[color:var(--post-body)]/80 md:p-5">
+        {children}
+      </div>
+    </details>
+  );
+}
+
 export function MarkdownGrid({
   children,
   columns = 2,

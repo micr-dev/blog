@@ -11,5 +11,12 @@ export default defineConfig({
   test: {
     environment: "node",
     include: ["src/**/*.test.ts"],
+    server: {
+      deps: {
+        // react-tweet ships CSS modules from its package entrypoint. Inline the
+        // dependency so Vite transforms those imports for Node-based MDX tests.
+        inline: ["react-tweet"],
+      },
+    },
   },
 });
