@@ -30,6 +30,14 @@ export interface PostTheme {
   fonts: PostThemeFonts;
 }
 
+export interface AiDetection {
+  verdict: "ai" | "assisted" | "human";
+  aiPercent: number;
+  assistedPercent: number;
+  segments: number;
+  model: string;
+}
+
 export interface PostFrontmatter {
   title: string;
   date: string;
@@ -38,6 +46,7 @@ export interface PostFrontmatter {
   published: boolean;
   listed: boolean;
   cover?: string;
+  aiDetection?: AiDetection;
   theme?: Partial<{
     colors: Partial<PostThemeColors>;
     fonts: Partial<Record<keyof PostThemeFonts, Partial<FontDefinition>>>;
@@ -57,6 +66,7 @@ export interface PostSummary {
 export interface BlogPost extends PostSummary {
   content: string;
   theme: PostTheme;
+  aiDetection?: AiDetection;
 }
 
 export interface TagSummary {

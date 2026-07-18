@@ -89,7 +89,11 @@ export default async function LocalizedBlogPostPage({
   );
 
   return (
-    <PostShell theme={post.theme} slug={post.slug}>
+    <PostShell
+      theme={post.theme}
+      slug={post.slug}
+      aiDetection={post.aiDetection}
+    >
       <Layout>
         <PostProgressRail>
           <article>

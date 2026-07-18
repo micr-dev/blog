@@ -202,6 +202,7 @@ export const getPostBySlug = cache(async (slug: string): Promise<BlogPost | null
       cover: frontmatter.cover,
       content,
       theme: mergeTheme(frontmatter.theme),
+      aiDetection: frontmatter.aiDetection,
     };
   } catch (cause) {
     if (isMissingFileError(cause)) {

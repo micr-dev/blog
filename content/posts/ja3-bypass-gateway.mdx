@@ -8,6 +8,12 @@ tags:
   - infrastructure
   - tls
 published: true
+aiDetection:
+  verdict: "ai"
+  aiPercent: 100
+  assistedPercent: 0
+  segments: 2
+  model: "Pangram 3.3.2"
 ---
 I wanted to reach an upstream AI API from any device through a single allowlisted VPS IP. What looked like a basic reverse-proxy task turned into a fight with cloud IP reputation, WAF header heuristics, JA3 TLS fingerprinting, IPv6 weirdness, and chunking failures.
 

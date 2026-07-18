@@ -37,6 +37,18 @@ const themeSchema = z.object({
     .optional(),
 });
 
+/** Optional, author-supplied AI detection result shown on the enhanced post. */
+const aiDetectionSchema = z.object({
+  verdict: z.enum(["ai", "assisted", "human"]),
+  aiPercent: z.number().int().min(0).max(100),
+  assistedPercent: z.number().int().min(0).max(100),
+  segments: z.number().int().min(0),
+  model: z.string().min(1),
+}).refine(
+  ({ aiPercent, assistedPercent }) => aiPercent + assistedPercent <= 100,
+  { message: "AI and assisted percentages cannot exceed 100%." },
+);
+
 /** Runtime schema for validating required and optional post frontmatter keys. */
 const frontmatterSchema = z.object({
   title: z.string().min(1),
@@ -46,6 +58,7 @@ const frontmatterSchema = z.object({
   published: z.boolean().default(true),
   listed: z.boolean().default(true),
   cover: z.string().min(1).optional(),
+  aiDetection: aiDetectionSchema.optional(),
   theme: themeSchema.optional(),
 });
 

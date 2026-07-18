@@ -75,7 +75,11 @@ export default async function BlogPostPage({
   const canonicalUrl = `https://${siteConfig.domain}/blog/${post.slug}`;
 
   return (
-    <PostShell theme={post.theme} slug={post.slug}>
+    <PostShell
+      theme={post.theme}
+      slug={post.slug}
+      aiDetection={post.aiDetection}
+    >
       <Layout>
         <PostProgressRail showPhaseSegments={showLearningPhases}>
           <article>
