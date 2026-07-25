@@ -16,6 +16,13 @@ const OG_SCYTHE_SCALE = 0.65;
 
 export const dynamic = "force-static";
 
+export const alt = "Blog post image";
+export const size = {
+  width: ogLayout.width,
+  height: ogLayout.height,
+};
+export const contentType = "image/png";
+
 export async function generateStaticParams() {
   const slugs = await getAllPostSlugs();
   return slugs.map((slug) => ({ slug }));
