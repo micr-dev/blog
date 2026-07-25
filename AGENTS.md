@@ -8,6 +8,7 @@ When asked to convert a written text into a blog, you should:
 2. Go through the whole text with multiple subagents and verify that the capitalization is fully correct.
 3. Go through the whole text with multiple subagents and verify that the person used throughout the text stays consistent.
 4. Implement any elements that you think fit, like markdown blocks, tables, quotes, etc. Available elements include standard Markdown, GitHub-flavored Markdown, and project-supported MDX components. Use the cheat sheet below when deciding what fits.
+5. Thoroughly inspect the source document (including docx relationship targets, embedded hyperlinks, notes, and external references) and verify that every single hyperlink present in the original text is preserved and embedded in the post.
 
 In this pass, make sure to maintain the original voice and don't change any text unless told to, or the text is incorrect.
 
