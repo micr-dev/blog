@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
 type ModelEntry = {
@@ -50,7 +50,7 @@ const MODELS: ModelEntry[] = [
     provider: "Moonshot",
     logo: "/media/i-made-my-first-benchmark/aa-logos/kimi_crisp.png",
     color: "#059669",
-    glmMultiplier: 1.05,
+    glmMultiplier: 1.00,
     proMultiplier: 0.51,
     ppCall: 0.0857,
     range: "0.37x-0.72x",
@@ -63,7 +63,7 @@ const MODELS: ModelEntry[] = [
     provider: "Moonshot",
     logo: "/media/i-made-my-first-benchmark/aa-logos/kimi_crisp.png",
     color: "#059669",
-    glmMultiplier: 1.00,
+    glmMultiplier: 1.07,
     proMultiplier: 0.49,
     ppCall: 0.0917,
     range: "0.34x-0.70x",
@@ -154,7 +154,7 @@ const MODELS: ModelEntry[] = [
     provider: "MiniMax",
     logo: "/media/i-made-my-first-benchmark/aa-logos/minimax_crisp.png",
     color: "#D97706",
-    glmMultiplier: 0.36,
+    glmMultiplier: 0.31,
     proMultiplier: 0.16,
     ppCall: 0.0263,
     range: "0.11x-0.22x",
@@ -167,7 +167,7 @@ const MODELS: ModelEntry[] = [
     provider: "MiniMax",
     logo: "/media/i-made-my-first-benchmark/aa-logos/minimax_crisp.png",
     color: "#D97706",
-    glmMultiplier: 0.33,
+    glmMultiplier: 0.32,
     proMultiplier: 0.15,
     ppCall: 0.0278,
     range: "0.11x-0.22x",
@@ -217,13 +217,104 @@ const MODELS: ModelEntry[] = [
 
 const fontStyle = { fontFamily: "var(--font-sans), Inter, system-ui, -apple-system, sans-serif" };
 
+function AnimatedColumn({
+  cx,
+  barX,
+  barWidth,
+  chartHeight,
+  marginTop,
+  maxVal,
+  targetMult,
+  color,
+  isBaseline,
+}: {
+  cx: number;
+  barX: number;
+  barWidth: number;
+  chartHeight: number;
+  marginTop: number;
+  maxVal: number;
+  targetMult: number;
+  color: string;
+  isBaseline: boolean;
+}) {
+  const targetBarH = Math.max(4, (targetMult / maxVal) * chartHeight);
+  const targetBarY = marginTop + chartHeight - targetBarH;
+
+  const [current, setCurrent] = useState({
+    barH: targetBarH,
+    barY: targetBarY,
+    mult: targetMult,
+  });
+
+  const startRef = useRef({ barH: targetBarH, barY: targetBarY, mult: targetMult });
+  const startTimeRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    startRef.current = { barH: current.barH, barY: current.barY, mult: current.mult };
+    startTimeRef.current = performance.now();
+    let frameId: number;
+
+    const animate = (now: number) => {
+      if (!startTimeRef.current) startTimeRef.current = now;
+      const elapsed = now - startTimeRef.current;
+      const progress = Math.min(1, elapsed / 300);
+      const eased = 1 - Math.pow(1 - progress, 3);
+
+      const nextH = startRef.current.barH + (targetBarH - startRef.current.barH) * eased;
+      const nextY = startRef.current.barY + (targetBarY - startRef.current.barY) * eased;
+      const nextMult = startRef.current.mult + (targetMult - startRef.current.mult) * eased;
+
+      setCurrent({ barH: nextH, barY: nextY, mult: nextMult });
+
+      if (progress < 1) {
+        frameId = requestAnimationFrame(animate);
+      }
+    };
+
+    frameId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frameId);
+  }, [targetBarH, targetBarY, targetMult]);
+
+  return (
+    <>
+      {/* Value Label above Bar: 100% frame-locked to barY - 8 as it moves up or down */}
+      <text
+        x={cx}
+        y={current.barY - 8}
+        textAnchor="middle"
+        style={fontStyle}
+        className="text-xs font-bold fill-[color:var(--post-heading)]"
+      >
+        {current.mult.toFixed(2)}x
+      </text>
+
+      {/* Vertical Column Bar */}
+      <rect
+        x={barX}
+        y={current.barY}
+        width={barWidth}
+        height={current.barH}
+        fill={color}
+        rx={2}
+        style={{
+          opacity: isBaseline ? 1 : 0.85,
+          filter: isBaseline ? "brightness(1.15)" : "none",
+        }}
+      />
+    </>
+  );
+}
+
 /** Interactive Graph 1: Relative Quota Multipliers Vertical Column Chart */
 export function OllamaMultipliersGraph({ className }: { className?: string }) {
-  const [baselineId, setBaselineId] = useState<string>("glm-5.1");
-  const [hovered, setHovered] = useState<ModelEntry | null>(null);
+  const [hoveredBaselineId, setHoveredBaselineId] = useState<string | null>(null);
+  const [selectedBaselineId, setSelectedBaselineId] = useState<string>("glm-5.1");
+
+  const activeBaselineId = hoveredBaselineId || selectedBaselineId || "glm-5.1";
 
   const selectedBaseline =
-    MODELS.find((m) => m.id === baselineId) ||
+    MODELS.find((m) => m.id === activeBaselineId) ||
     MODELS.find((m) => m.id === "glm-5.1")!;
 
   const getMultiplier = (m: ModelEntry) => {
@@ -231,11 +322,10 @@ export function OllamaMultipliersGraph({ className }: { className?: string }) {
     return m.ppCall / selectedBaseline.ppCall;
   };
 
-  // Sorted by calculated multiplier ascending
-  const sorted = [...MODELS].sort((a, b) => getMultiplier(a) - getMultiplier(b));
+  // Strictly sorted by ppCall ascending so bars always ascend from low to high left-to-right
+  const sorted = [...MODELS].sort((a, b) => a.ppCall - b.ppCall);
 
   const maxValRaw = Math.max(...MODELS.map(getMultiplier));
-  // Round maxVal up to nearest clean step for graph scaling
   const maxVal = maxValRaw <= 2.2 ? 2.5 : Math.ceil(maxValRaw * 1.25);
 
   // Generate dynamic Y ticks
@@ -259,11 +349,13 @@ export function OllamaMultipliersGraph({ className }: { className?: string }) {
   const colWidth = chartWidth / sorted.length;
   const barWidth = colWidth * 0.52;
 
-  const isDefaultBaseline = selectedBaseline.id === "glm-5.1";
   const baselineCleanName = selectedBaseline.name.replace(" (Baseline)", "");
 
   return (
-    <div className={cn("not-prose my-10 w-full", className)}>
+    <div
+      className={cn("not-prose my-10 w-full", className)}
+      onMouseLeave={() => setHoveredBaselineId(null)}
+    >
       <svg
         viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
         className="w-full h-auto overflow-visible select-none"
@@ -278,41 +370,17 @@ export function OllamaMultipliersGraph({ className }: { className?: string }) {
         >
           Relative Quota Multipliers
         </text>
-        <g>
-          <text
-            x={marginLeft}
-            y={46}
-            style={fontStyle}
-            className="text-xs fill-[color:var(--post-muted)]"
-          >
-            Baseline: <tspan className="font-semibold fill-[color:var(--post-heading)]">{baselineCleanName}</tspan> = 1.00x — click any model bar to set as baseline
-          </text>
-          {!isDefaultBaseline && (
-            <g
-              onClick={() => setBaselineId("glm-5.1")}
-              className="cursor-pointer group"
-            >
-              <rect
-                x={marginLeft + 440}
-                y={33}
-                width={130}
-                height={18}
-                rx={4}
-                fill="var(--post-border)"
-                className="transition-colors group-hover:fill-[color:var(--post-heading)]"
-              />
-              <text
-                x={marginLeft + 505}
-                y={45}
-                textAnchor="middle"
-                style={fontStyle}
-                className="text-[10px] font-medium fill-[color:var(--post-heading)] group-hover:fill-white"
-              >
-                Reset to GLM-5.1
-              </text>
-            </g>
-          )}
-        </g>
+        <text
+          x={marginLeft}
+          y={46}
+          style={{
+            ...fontStyle,
+            transition: "all 300ms cubic-bezier(0.4, 0, 0.2, 1)",
+          }}
+          className="text-xs fill-[color:var(--post-muted)]"
+        >
+          Baseline {baselineCleanName} = 1.00x
+        </text>
 
         {/* Horizontal Gridlines & Y-Axis Labels */}
         {yTicks.map((tick) => {
@@ -328,12 +396,18 @@ export function OllamaMultipliersGraph({ className }: { className?: string }) {
                 stroke="var(--post-border)"
                 strokeDasharray="4 4"
                 strokeOpacity={0.5}
+                style={{
+                  transition: "all 300ms cubic-bezier(0.4, 0, 0.2, 1)",
+                }}
               />
               <text
                 x={marginLeft - 12}
                 y={yPos + 4}
                 textAnchor="end"
-                style={fontStyle}
+                style={{
+                  ...fontStyle,
+                  transition: "all 300ms cubic-bezier(0.4, 0, 0.2, 1)",
+                }}
                 className="text-xs font-medium fill-[color:var(--post-muted)]"
               >
                 {tick.toFixed(1)}x
@@ -366,66 +440,30 @@ export function OllamaMultipliersGraph({ className }: { className?: string }) {
         {sorted.map((m, i) => {
           const cx = marginLeft + i * colWidth + colWidth / 2;
           const mult = getMultiplier(m);
-          const barH = Math.max(4, (mult / maxVal) * chartHeight);
-          const barY = marginTop + chartHeight - barH;
           const barX = cx - barWidth / 2;
-
           const isBaseline = m.id === selectedBaseline.id;
-          const isHovered = hovered?.id === m.id;
-          const isDimmed = hovered !== null && !isHovered;
 
           return (
             <g
               key={m.id}
-              className="cursor-pointer transition-opacity duration-200"
-              onClick={() => setBaselineId(m.id)}
-              onMouseEnter={() => setHovered(m)}
-              onMouseLeave={() => setHovered(null)}
-              style={{ opacity: isDimmed ? 0.35 : 1 }}
+              className="cursor-pointer"
+              onMouseEnter={() => setHoveredBaselineId(m.id)}
+              onMouseLeave={() => setHoveredBaselineId(null)}
+              onClick={() => {
+                setSelectedBaselineId(m.id);
+                setHoveredBaselineId(m.id);
+              }}
             >
-              {/* Value Label above Bar */}
-              <text
-                x={cx}
-                y={barY - (isBaseline ? 16 : 8)}
-                textAnchor="middle"
-                style={fontStyle}
-                className={cn(
-                  "text-xs font-bold transition-all duration-300",
-                  isBaseline
-                    ? "fill-[color:var(--post-heading)] text-[13px]"
-                    : "fill-[color:var(--post-heading)]"
-                )}
-              >
-                {mult.toFixed(2)}x
-              </text>
-
-              {/* Baseline indicator tag */}
-              {isBaseline && (
-                <text
-                  x={cx}
-                  y={barY - 4}
-                  textAnchor="middle"
-                  style={fontStyle}
-                  className="text-[9px] font-semibold uppercase fill-[color:var(--post-muted)] tracking-wider"
-                >
-                  Baseline
-                </text>
-              )}
-
-              {/* Vertical Column Bar */}
-              <rect
-                x={barX}
-                y={barY}
-                width={barWidth}
-                height={barH}
-                fill={m.color}
-                rx={2}
-                stroke={isBaseline ? "var(--post-heading)" : "none"}
-                strokeWidth={isBaseline ? 2 : 0}
-                className="transition-all duration-300 ease-out"
-                style={{
-                  filter: isHovered ? "brightness(1.15)" : "none",
-                }}
+              <AnimatedColumn
+                cx={cx}
+                barX={barX}
+                barWidth={barWidth}
+                chartHeight={chartHeight}
+                marginTop={marginTop}
+                maxVal={maxVal}
+                targetMult={mult}
+                color={m.color}
+                isBaseline={isBaseline}
               />
 
               {/* Crisp Official Provider Logo under Baseline Y=0 */}
@@ -445,10 +483,7 @@ export function OllamaMultipliersGraph({ className }: { className?: string }) {
                 textAnchor="end"
                 transform={`rotate(-60, ${cx - 4}, ${marginTop + chartHeight + 42})`}
                 style={fontStyle}
-                className={cn(
-                  "text-[11px] font-bold fill-[color:var(--post-heading)] transition-all duration-200",
-                  isBaseline && "underline"
-                )}
+                className="text-[11px] font-bold fill-[color:var(--post-heading)]"
               >
                 {m.name.replace(" (Baseline)", "")}
               </text>
