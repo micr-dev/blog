@@ -1,0 +1,114 @@
+---
+title: "I made my first benchmark"
+date: "2026-07-24"
+excerpt: "Evaluating Ollama model quota consumption after Z.AI unexpectedly changed GLM plan limits."
+tags:
+  - ai
+  - benchmark
+  - ollama
+  - evaluation
+published: true
+aiDetection:
+  verdict: "human"
+  aiPercent: 0
+  assistedPercent: 0
+  segments: 0
+  model: "Pangram 3.3.2"
+theme:
+  colors:
+    background: "#ffffff"
+    body: "#171717"
+    heading: "#171717"
+    accent: "#171717"
+    accentSecondary: "#2563eb"
+    accentTertiary: "#171717"
+    muted: "#737373"
+    border: "#e5e7eb"
+    codeBackground: "#f5f5f5"
+    codeForeground: "#171717"
+  fonts:
+    heading:
+      family: "Inter"
+      source: "google"
+      value: "Inter:wght@400;500;600;700"
+    body:
+      family: "Inter"
+      source: "google"
+      value: "Inter:wght@400;500;600;700"
+---
+
+## Introduction
+
+After 7 months on the GLM Coding Plan, Z.AI suddenly changed how my plan's quota worked: I went from having only a 5h quota window, to out of nowhere also having a weekly cap*. I used GLM 5.2 mostly on Hermes Agent, so I didn't think this change would affect me much, since I don't use it for heavy coding tasks or work… But within 24h I had, somehow, used my full weekly quota.
+
+I needed a subscription that wasn't my main Codex one, so I decided to go for Ollama since I had heard good things about their limits, and the subscription was really cheap (~9€ from the gray-market). I plugged it into Hermes Agent and was indecisive as to what model was *good enough* but wouldn't instantly drain my quota, so I chose Deepseek V4 Pro, since my thought process was that *cheap API = small usage*.
+
+*wrong buzzer sound effect*
+
+<TweetCard id="2080008069157691403" />
+
+For some weird reason, Deepseek V4 Pro was **REALLY expensive** to use. Don't ask me how or why. After talking with [@theblazehen](https://x.com/theblazehen) about it, as seen in the thread above, they gave me a rough estimate on how much quota a few models used. So, the question that gave place to this eval formed in my head: *can't I just test all models myself?*
+
+<p className="post-fineprint">*If I'm not wrong, this is something they changed a while ago, but they had offered legacy users to extend their plans, telling them they would maintain the old quotas until their sub expired.</p>
+
+## How
+
+My initial idea before doing any research was simple: make a model-agnostic task that consumed the same amount of tokens every time, and then observe how much the quota changed per model. After doing some research and asking my agent, it seems like I was on the right track. "The simplest solution is often the best one" or something like that.
+
+Then I tasked GPT 5.6 Sol with setting everything up and coming up with this deterministic task we would use. I also gave it a way to autonomously check the session usage (since, for some reason, that is not an API endpoint that they offer) through browser automation and cookie usage (`__Secure-session`).
+
+The models were tasked with performing the **"copy-2048"** workload, which was designed for 1:1 pure token rate measurement. Every model receives the exact same 5,000-word text generated from a deterministic seed, and is subsequently tasked with copying it word-for-word (without summarizing, explaining, or adding extra text). The API generation limit is set to exactly 2,048 tokens; and if any model goes over or under that exact number, that run is discarded.
+
+The pipeline designed around it was pretty simple, it works in 4 steps:
+
+### Step 1
+
+It fetches requests in batches (with sizes of 2, 4, 8, 16, or 32 calls) until the meter moves at least half a percentage point away from its value on the dashboard.
+
+### Step 2
+
+Once a batch of calls is complete, the automated scraper in `quota.py` will poll [ollama.com/settings](https://ollama.com/settings) until it reads 6 consecutive identical percentage readings. This is done to account for the lag from the Ollama Cloud dashboard before taking a reading. The 6 consecutive identical readings represent 30 seconds of quiet.
+
+### Step 3
+
+The absolute quota cost per request is:
+
+<div className="text-center my-6">
+
+$$\text{Quota \% per Request} = \frac{\Delta \text{Session Quota \%}}{\text{Number of Successful Calls}}$$
+
+</div>
+
+### Step 4
+
+Cloud load fluctuates over time, so to prevent server load from distorting the results, it performs baseline anchoring.
+
+This means that before, between, and after each set of three candidate models we run a baseline model. Then we divide the candidate's token rate by an interpolated value of the baseline anchors around it.
+
+<div className="text-center my-6">
+
+$$\text{Relative Multiplier} = \frac{\text{Candidate Quota Delta}}{\text{Baseline Quota Delta}}$$
+
+</div>
+
+A multiplier of `0.50` would mean Model X consumed only half as much quota as the baseline model to generate the same 2,048 tokens.
+
+## TL;DR
+
+We are giving every model the exact same prompt, forcing them to generate exactly 2,048 tokens and then polling the quota to compare each model's cost.
+
+## Results
+
+After a few hours of testing, I got the results.
+
+<OllamaMultipliersGraph />
+
+<OllamaQuotaPctGraph />
+
+Funnily enough, the model that I decided to use at first was the **most expensive** that Ollama offers. For the eval, I decided to choose **GLM-5.1** as a baseline since it was the most in-the-middle model. What this means is that **Deepseek V4 Pro** uses double the amount of quota that GLM-5.1 does, **Kimi K2.7 Code** uses the exact same, and **Mistral Large 3 675b** uses half of it.
+
+Out of curiosity, I also decided to compare the results against [artificialanalysis.ai](https://artificialanalysis.ai/) Intelligence Index, in order to see if there was any correlation between quota usage and intelligence of the model being used. But as you can see: no, not really.
+
+<OllamaIntelligenceGraph />
+
+If you want to look into the eval's code, or want to do a run yourself, I have good news: it is [open source](https://github.com/Microck/ollama-quota-bench)! It's really easy to run and barely uses your weekly quota, in case you're worried about that. Feel free to send any results that you obtain as a PR.

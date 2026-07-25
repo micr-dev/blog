@@ -1128,6 +1128,8 @@ textarea {
   --tweet-text: var(--post-body);
   --tweet-muted: var(--post-muted);
   --tweet-hover-bg: color-mix(in srgb, var(--post-body) 6%, transparent);
+  --tweet-color-blue-secondary: var(--post-heading);
+  --tweet-color-blue-secondary-hover: var(--post-heading);
 }
 
 /* Card container: subtle surface using the post's border/background tokens */
@@ -1136,27 +1138,34 @@ textarea {
   border: 1px solid var(--post-border);
   border-radius: 0.75rem;
   padding: 0.75rem 1rem;
+  color: var(--post-body);
 }
 
 /* Author name + body text use the heading/body vars for strong contrast */
 .tweet-card-theme .react-tweet-theme a,
-.tweet-card-theme .react-tweet-theme .tweet-header_user-name {
-  color: var(--post-heading);
+.tweet-card-theme .react-tweet-theme .tweet-header_user-name,
+.tweet-card-theme .react-tweet-theme [class*="tweet-text"] {
+  color: var(--post-heading) !important;
+}
+
+.tweet-card-theme .react-tweet-theme a:hover {
+  color: var(--post-heading) !important;
 }
 
 .tweet-card-theme .react-tweet-theme .tweet-header_user-handle,
 .tweet-card-theme .react-tweet-theme .tweet-header_user-follow,
 .tweet-card-theme .react-tweet-theme .tweet-replies > div {
-  color: var(--post-muted);
+  color: var(--post-muted) !important;
 }
 
-.tweet-card-theme .react-tweet-theme .tweet-body {
-  color: var(--post-body);
+.tweet-card-theme .react-tweet-theme .tweet-body,
+.tweet-card-theme .react-tweet-theme p {
+  color: var(--post-body) !important;
 }
 
 /* Inline links inside tweet body lean on the accent color */
 .tweet-card-theme .react-tweet-theme .tweet-body a {
-  color: var(--post-accent);
+  color: var(--post-heading) !important;
 }
 
 /* Media + quoted tweets sit inside a bordered box that matches the card */
@@ -1171,17 +1180,17 @@ textarea {
 .tweet-card-theme .react-tweet-theme .tweet-info,
 .tweet-card-theme .react-tweet-theme .tweet-info a,
 .tweet-card-theme .react-tweet-theme .tweet-actions {
-  color: var(--post-muted);
+  color: var(--post-muted) !important;
 }
 
 .tweet-card-theme .react-tweet-theme .tweet-actions a:hover {
-  color: var(--post-accent);
+  color: var(--post-heading) !important;
 }
 
 /* Skeleton + not-found states stay legible against the themed card */
 .tweet-card-theme .react-tweet-theme.tweet-skeleton,
 .tweet-card-theme .react-tweet-theme.tweet-not-found {
-  color: var(--post-muted);
+  color: var(--post-muted) !important;
 }
 
 /* Fineprint: small muted text for asides, footnotes, and throwaway notes */
@@ -1191,3 +1200,14 @@ textarea {
   color: color-mix(in srgb, var(--post-muted) 85%, transparent);
   margin-top: -0.25rem;
 }
+
+/* Center KaTeX display math blocks */
+.katex-display {
+  display: flex !important;
+  justify-content: center !important;
+  text-align: center !important;
+  margin-top: 1.5rem !important;
+  margin-bottom: 1.5rem !important;
+  overflow-x: auto;
+}
+

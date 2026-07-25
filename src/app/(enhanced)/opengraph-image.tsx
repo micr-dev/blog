@@ -34,7 +34,10 @@ export default async function Image() {
     fs.readFile(path.join(process.cwd(), "public", "brand", "scythe.svg"), "utf8"),
   ]);
 
-  const scytheScale = 1.51;
+  // Matches the blog-post OG generator (blog/[slug]/opengraph-image.tsx).
+  // Note: this is a frame *dimension* multiplier, NOT the CSS scale transform
+  // used by the /og-preview dev tool (DEFAULT_SCYTHE_SCALE in og.tsx).
+  const scytheScale = 0.65;
   const scytheViewBox = { width: 8276, height: 3015 };
   const scale = Math.max(
     ogLayout.rightPanelWidth / scytheViewBox.height,
