@@ -55,7 +55,7 @@ For some weird reason, Deepseek V4 Pro was **REALLY expensive** to use. Don't as
 
 My initial idea before doing any research was simple: make a model-agnostic task that consumed the same amount of tokens every time, and then observe how much the quota changed per model. After doing some research and asking my agent, it seems like I was on the right track. "The simplest solution is often the best one" or something like that.
 
-Then I tasked GPT 5.6 Sol with setting everything up and coming up with this deterministic task we would use. I also gave it a way to autonomously check the session usage (since, for some reason, that is not an API endpoint that they offer) through browser automation and cookie usage (`__Secure-session`).
+Then I tasked GPT 5.6 Sol with setting everything up and coming up with this deterministic task we would use. I also gave it a way to autonomously check the session usage (since, for some reason, [that is not an API endpoint that they offer](https://github.com/ollama/ollama/issues/12532)) through browser automation and cookie usage (`__Secure-session`).
 
 The models were tasked with performing the **"copy-2048"** workload, which was designed for 1:1 pure <Term tip="The number of text tokens processed or generated per unit of time by an AI model">token rate</Term> measurement. Every model receives the exact same 5,000-word text generated from a deterministic seed, and is subsequently tasked with copying it word-for-word (without summarizing, explaining, or adding extra text). The API generation limit is set to exactly 2,048 tokens; and if any model goes over or under that exact number, that run is discarded.
 
