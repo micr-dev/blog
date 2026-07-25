@@ -40,9 +40,9 @@ import { PhaseHeading } from "@/components/mdx/phase-heading";
 import { RefugioReplayPlayer } from "@/components/mdx/refugio-replay-player";
 import { RefugioScoreGraph } from "@/components/mdx/refugio-score-graph";
 import {
+  OllamaIntelligenceGraph,
   OllamaMultipliersGraph,
   OllamaQuotaPctGraph,
-  OllamaIntelligenceGraph,
 } from "@/components/mdx/ollama-quota-graph";
 import { renderMermaidAscii } from "@/lib/mermaid-ascii";
 import type { PostTheme } from "@/types/post";
@@ -314,6 +314,9 @@ export function getMdxComponents(
     LearningPhaseRadar,
     RefugioReplayPlayer,
     RefugioScoreGraph,
+    OllamaMultipliersGraph,
+    OllamaQuotaPctGraph,
+    OllamaIntelligenceGraph,
     Term,
     TweetCard,
     code: ({ className, children, ...props }) => {
@@ -388,9 +391,6 @@ export function getMdxComponents(
         />
       );
     },
-    OllamaMultipliersGraph,
-    OllamaQuotaPctGraph,
-    OllamaIntelligenceGraph,
   };
 
   if (options?.enablePhaseHeading) {

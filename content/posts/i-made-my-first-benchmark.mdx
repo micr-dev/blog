@@ -39,63 +39,63 @@ theme:
 
 ## Introduction
 
-After 7 months on the GLM Coding Plan, Z.AI suddenly changed how my plan's quota worked: I went from having only a 5h quota window, to out of nowhere also having a weekly cap*. I used GLM 5.2 mostly on Hermes Agent, so I didn't think this change would affect me much, since I don't use it for heavy coding tasks or work… But within 24h I had, somehow, used my full weekly quota.
+After 7 months on the **GLM Coding Plan**, Z.AI suddenly changed how my plan's quota worked: I went from having only a 5h quota window, to out of nowhere also having a weekly cap*. I used GLM 5.2 mostly on Hermes Agent, so I didn't think this change would affect me much, since I don't use it for heavy coding tasks or work… But within 24h I had, somehow, used my full weekly quota.
 
-I needed a subscription that wasn't my main Codex one, so I decided to go for Ollama since I had heard good things about their limits, and the subscription was really cheap (~9€ from the <Term tip="An unofficial market where goods or services are bought and sold outside authorized distribution channels.">gray-market</Term>). I plugged it into Hermes Agent and was indecisive as to what model was *good enough* but wouldn't instantly drain my quota, so I chose DeepSeek V4 Pro, since my thought process was that *cheap API = small usage*.
+I needed a subscription that wasn't my main Codex one, so I decided to go for Ollama since I had heard good things about their limits, and the subscription was really cheap (~9€ from the <Term tip="An unofficial distribution channel where products or subscriptions are resold outside authorized networks">gray-market</Term>). I plugged it into Hermes Agent and was indecisive as to what model was *good enough* but wouldn't instantly drain my quota, so I chose **Deepseek V4 Pro**, since my thought process was that *cheap API = small usage*.
 
 *wrong buzzer sound effect*
 
 <TweetCard id="2080008069157691403" />
 
-For some weird reason, DeepSeek V4 Pro was really expensive to use. Don't ask me how or why. After talking with [@theblazehen](https://x.com/theblazehen) about it, as seen in the thread above, they gave me a rough estimate on how much quota a few models used. So, the question that gave place to this eval formed in my head: 
-
-> *Can't I just test all models myself?*
+For some weird reason, Deepseek V4 Pro was **REALLY expensive** to use. Don't ask me how or why. After talking with [@theblazehen](https://x.com/theblazehen) about it, as seen in the thread above, they gave me a rough estimate on how much quota a few models used. So, the question that gave place to this eval formed in my head: *can't I just test all models myself?*
 
 <p className="post-fineprint">*If I'm not wrong, this is something they changed a while ago, but they had offered legacy users to extend their plans, telling them they would maintain the old quotas until their sub expired.</p>
 
 ## How
 
-My initial idea before doing any research was simple: make a model-agnostic task that consumed the same amount of tokens every time, and then observe how much the quota changed per model. After doing some research and asking my agent, it seems like I was on the right track. 
-
-> *"The simplest solution is often the best one"* — or something like that.
+My initial idea before doing any research was simple: make a model-agnostic task that consumed the same amount of tokens every time, and then observe how much the quota changed per model. After doing some research and asking my agent, it seems like I was on the right track. "The simplest solution is often the best one" or something like that.
 
 Then I tasked GPT 5.6 Sol with setting everything up and coming up with this deterministic task we would use. I also gave it a way to autonomously check the session usage (since, for some reason, that is not an API endpoint that they offer) through browser automation and cookie usage (`__Secure-session`).
 
-The models were tasked with performing the "copy-2048" workload, which was designed for 1:1 pure token rate measurement. Every model receives the exact same 5,000-word text generated from a deterministic seed, and is subsequently tasked with copying it word-for-word (without summarizing, explaining, or adding extra text). The API generation limit is set to exactly `2,048` tokens; and if any model goes over or under that exact number, that run is discarded.
+The models were tasked with performing the **"copy-2048"** workload, which was designed for 1:1 pure <Term tip="The number of text tokens processed or generated per unit of time by an AI model">token rate</Term> measurement. Every model receives the exact same 5,000-word text generated from a deterministic seed, and is subsequently tasked with copying it word-for-word (without summarizing, explaining, or adding extra text). The API generation limit is set to exactly 2,048 tokens; and if any model goes over or under that exact number, that run is discarded.
 
-The pipeline designed around it was pretty simple. It works in 4 steps:
+The pipeline designed around it was pretty simple, it works in 4 steps:
 
-<MarkdownGrid columns={2}>
-  <MarkdownCard title="Step 1: Batch Polling">
-    It fetches requests in batches (with sizes of `2`, `4`, `8`, `16`, or `32` calls) until the meter moves at least half a percentage point away from its value on the dashboard.
-  </MarkdownCard>
-  
-  <MarkdownCard title="Step 2: Stability Checks">
-    Once a batch of calls is complete, the automated scraper in `quota.py` will poll [ollama.com/settings](https://ollama.com/settings) until it reads 6 consecutive identical percentage readings. This is done to account for the lag from the Ollama Cloud dashboard before taking a reading. The 6 consecutive identical readings represent 30 seconds of quiet.
-  </MarkdownCard>
-  
-  <MarkdownCard title="Step 3: Cost Calculation">
-    The absolute quota cost per request is:
-    
-    $$\text{Quota \% per Request} = \frac{\Delta \text{Session Quota \%}}{\text{Number of Successful Calls}}$$
-  </MarkdownCard>
-  
-  <MarkdownCard title="Step 4: Baseline Anchoring">
-    Cloud load fluctuates over time, so to prevent server load from distorting the results, it performs <Term tip="A benchmarking technique that normalizes metrics against a control baseline to eliminate external environmental noise.">baseline anchoring</Term>.
-    
-    This means that before, between, and after each set of three candidate models we run a baseline model. Then we divide the candidate's token rate by an <Term tip="Estimating unknown intermediate values between known data points based on surrounding measurements.">interpolated</Term> value of the baseline anchors around it.
-    
-    $$\text{Relative Multiplier} = \frac{\text{Candidate Quota Delta}}{\text{Baseline Quota Delta}}$$
-    
-    A multiplier of `0.50` would mean Model X consumed only half as much quota as the baseline model to generate the same 2,048 tokens.
-  </MarkdownCard>
-</MarkdownGrid>
+### Step 1
+
+It fetches requests in batches (with sizes of 2, 4, 8, 16, or 32 calls) until the meter moves at least half a percentage point away from its value on the dashboard.
+
+### Step 2
+
+Once a batch of calls is complete, the automated scraper in `quota.py` will poll [ollama.com/settings](https://ollama.com/settings) until it reads 6 consecutive identical percentage readings. This is done to account for the lag from the Ollama Cloud dashboard before taking a reading. The 6 consecutive identical readings represent 30 seconds of quiet.
+
+### Step 3
+
+The absolute quota cost per request is:
+
+<div className="text-center my-6">
+
+$$\text{Quota \% per Request} = \frac{\Delta \text{Session Quota \%}}{\text{Number of Successful Calls}}$$
+
+</div>
+
+### Step 4
+
+Cloud load fluctuates over time, so to prevent server load from distorting the results, it performs **baseline anchoring**.
+
+This means that before, between, and after each set of three candidate models we run a baseline model. Then we divide the candidate's token rate by an interpolated value of the baseline anchors around it.
+
+<div className="text-center my-6">
+
+$$\text{Relative Multiplier} = \frac{\text{Candidate Quota Delta}}{\text{Baseline Quota Delta}}$$
+
+</div>
+
+A multiplier of `0.50` would mean Model X consumed only half as much quota as the baseline model to generate the same 2,048 tokens.
 
 ## TL;DR
 
-<MarkdownPanel title="The Gist">
-  We are giving every model the exact same prompt, forcing them to generate exactly `2,048` tokens and then polling the quota to compare each model's cost.
-</MarkdownPanel>
+We are giving every model the exact same prompt, forcing them to generate exactly 2,048 tokens and then polling the quota to compare each model's cost.
 
 ## Results
 
@@ -105,9 +105,9 @@ After a few hours of testing, I got the results.
 
 <OllamaQuotaPctGraph />
 
-Funnily enough, the model that I decided to use at first was the most expensive that Ollama offers. For the eval, I decided to choose GLM-5.1 as a baseline since it was the most in-the-middle model. What this means is that DeepSeek V4 Pro uses double the amount of quota that GLM-5.1 does, Kimi K2.7 Code uses the exact same, and Mistral Large 3 (675B) uses half of it.
+Funnily enough, the model that I decided to use at first was the *most expensive* that Ollama offers. For the eval, I decided to choose **GLM-5.1** as a baseline since it was the most in-the-middle model. What this means is that **Deepseek V4 Pro** uses double the amount of quota that GLM-5.1 does, **Kimi K2.7 Code** uses the exact same, and **Mistral Large 3 675b** uses half of it.
 
-Out of curiosity, I also decided to compare the results against [artificialanalysis.ai](https://artificialanalysis.ai/) Intelligence Index, in order to see if there was any <Term tip="A statistical measure expressing the extent to which two variables linearly change together.">correlation</Term> between quota usage and intelligence of the model being used. But as you can see: no, not really.
+Out of curiosity, I also decided to compare the results against [artificialanalysis.ai](https://artificialanalysis.ai/) Intelligence Index, in order to see if there was any correlation between quota usage and intelligence of the model being used. But as you can see: *no, not really*.
 
 <OllamaIntelligenceGraph />
 

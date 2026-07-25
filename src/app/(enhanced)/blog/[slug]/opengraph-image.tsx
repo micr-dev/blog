@@ -38,7 +38,7 @@ function svgToDataUri(svg: string) {
   return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
 }
 
-async function loadOgHeadingFont(font: FontDefinition): Promise<Buffer> {
+async function loadOgHeadingFont(font: FontDefinition) {
   let fontPath: string | null = null;
 
   if (font.source === "local") {
@@ -49,15 +49,11 @@ async function loadOgHeadingFont(font: FontDefinition): Promise<Buffer> {
     fontPath = path.join(process.cwd(), "public", "fonts", "space-grotesk-400.ttf");
   }
 
-  if (fontPath) {
-    try {
-      return await fs.readFile(fontPath);
-    } catch {
-      // Ignore and fallback below
-    }
+  if (!fontPath) {
+    return null;
   }
 
-  return fs.readFile(path.join(process.cwd(), "public", "fonts", "space-grotesk-400.ttf"));
+  return fs.readFile(fontPath);
 }
 
 export default async function Image({ params }: { params: Promise<{ slug: string }> }) {
@@ -173,14 +169,14 @@ export default async function Image({ params }: { params: Promise<{ slug: string
     {
       width: ogLayout.width,
       height: ogLayout.height,
-      fonts: [
+      fonts: fontData ? [
         {
-          name: headingFont.family || "Space Grotesk",
+          name: headingFont.family,
           data: fontData,
           style: "normal",
           weight: 400,
         },
-      ],
+      ] : [],
     }
   );
 }
