@@ -219,10 +219,31 @@ const fontStyle = { fontFamily: "var(--font-sans), Inter, system-ui, -apple-syst
 
 /** Interactive Graph 1: Relative Quota Multipliers Vertical Column Chart */
 export function OllamaMultipliersGraph({ className }: { className?: string }) {
+  const [baselineId, setBaselineId] = useState<string>("glm-5.1");
   const [hovered, setHovered] = useState<ModelEntry | null>(null);
 
-  // Sorted by multiplier ascending
-  const sorted = [...MODELS].sort((a, b) => a.glmMultiplier - b.glmMultiplier);
+  const selectedBaseline =
+    MODELS.find((m) => m.id === baselineId) ||
+    MODELS.find((m) => m.id === "glm-5.1")!;
+
+  const getMultiplier = (m: ModelEntry) => {
+    if (m.id === selectedBaseline.id) return 1.0;
+    return m.ppCall / selectedBaseline.ppCall;
+  };
+
+  // Sorted by calculated multiplier ascending
+  const sorted = [...MODELS].sort((a, b) => getMultiplier(a) - getMultiplier(b));
+
+  const maxValRaw = Math.max(...MODELS.map(getMultiplier));
+  // Round maxVal up to nearest clean step for graph scaling
+  const maxVal = maxValRaw <= 2.2 ? 2.5 : Math.ceil(maxValRaw * 1.25);
+
+  // Generate dynamic Y ticks
+  const step = maxVal <= 3 ? 0.5 : maxVal <= 6 ? 1.0 : maxVal <= 12 ? 2.0 : 5.0;
+  const yTicks: number[] = [];
+  for (let t = 0; t <= maxVal; t += step) {
+    yTicks.push(Number(t.toFixed(1)));
+  }
 
   const viewBoxWidth = 1000;
   const viewBoxHeight = 560;
@@ -235,11 +256,11 @@ export function OllamaMultipliersGraph({ className }: { className?: string }) {
   const chartWidth = viewBoxWidth - marginLeft - marginRight;
   const chartHeight = viewBoxHeight - marginTop - marginBottom;
 
-  const maxVal = 2.2;
-  const yTicks = [0.0, 0.5, 1.0, 1.5, 2.0];
-
   const colWidth = chartWidth / sorted.length;
   const barWidth = colWidth * 0.52;
+
+  const isDefaultBaseline = selectedBaseline.id === "glm-5.1";
+  const baselineCleanName = selectedBaseline.name.replace(" (Baseline)", "");
 
   return (
     <div className={cn("not-prose my-10 w-full", className)}>
@@ -257,18 +278,46 @@ export function OllamaMultipliersGraph({ className }: { className?: string }) {
         >
           Relative Quota Multipliers
         </text>
-        <text
-          x={marginLeft}
-          y={46}
-          style={fontStyle}
-          className="text-xs fill-[color:var(--post-muted)]"
-        >
-          Baseline GLM-5.1 = 1.00x
-        </text>
+        <g>
+          <text
+            x={marginLeft}
+            y={46}
+            style={fontStyle}
+            className="text-xs fill-[color:var(--post-muted)]"
+          >
+            Baseline: <tspan className="font-semibold fill-[color:var(--post-heading)]">{baselineCleanName}</tspan> = 1.00x — click any model bar to set as baseline
+          </text>
+          {!isDefaultBaseline && (
+            <g
+              onClick={() => setBaselineId("glm-5.1")}
+              className="cursor-pointer group"
+            >
+              <rect
+                x={marginLeft + 440}
+                y={33}
+                width={130}
+                height={18}
+                rx={4}
+                fill="var(--post-border)"
+                className="transition-colors group-hover:fill-[color:var(--post-heading)]"
+              />
+              <text
+                x={marginLeft + 505}
+                y={45}
+                textAnchor="middle"
+                style={fontStyle}
+                className="text-[10px] font-medium fill-[color:var(--post-heading)] group-hover:fill-white"
+              >
+                Reset to GLM-5.1
+              </text>
+            </g>
+          )}
+        </g>
 
         {/* Horizontal Gridlines & Y-Axis Labels */}
         {yTicks.map((tick) => {
           const yPos = marginTop + chartHeight - (tick / maxVal) * chartHeight;
+          if (yPos < marginTop - 5) return null;
           return (
             <g key={tick}>
               <line
@@ -303,12 +352,12 @@ export function OllamaMultipliersGraph({ className }: { className?: string }) {
           strokeWidth={1.5}
         />
 
-        {/* Left Spine bounded [0, 2.0] */}
+        {/* Left Spine */}
         <line
           x1={marginLeft}
           y1={marginTop + chartHeight}
           x2={marginLeft}
-          y2={marginTop + chartHeight - (2.0 / maxVal) * chartHeight}
+          y2={marginTop}
           stroke="#CBD5E1"
           strokeWidth={1.5}
         />
@@ -316,10 +365,12 @@ export function OllamaMultipliersGraph({ className }: { className?: string }) {
         {/* Vertical Bars & Labels */}
         {sorted.map((m, i) => {
           const cx = marginLeft + i * colWidth + colWidth / 2;
-          const barH = (m.glmMultiplier / maxVal) * chartHeight;
+          const mult = getMultiplier(m);
+          const barH = Math.max(4, (mult / maxVal) * chartHeight);
           const barY = marginTop + chartHeight - barH;
           const barX = cx - barWidth / 2;
 
+          const isBaseline = m.id === selectedBaseline.id;
           const isHovered = hovered?.id === m.id;
           const isDimmed = hovered !== null && !isHovered;
 
@@ -327,6 +378,7 @@ export function OllamaMultipliersGraph({ className }: { className?: string }) {
             <g
               key={m.id}
               className="cursor-pointer transition-opacity duration-200"
+              onClick={() => setBaselineId(m.id)}
               onMouseEnter={() => setHovered(m)}
               onMouseLeave={() => setHovered(null)}
               style={{ opacity: isDimmed ? 0.35 : 1 }}
@@ -334,13 +386,31 @@ export function OllamaMultipliersGraph({ className }: { className?: string }) {
               {/* Value Label above Bar */}
               <text
                 x={cx}
-                y={barY - 8}
+                y={barY - (isBaseline ? 16 : 8)}
                 textAnchor="middle"
                 style={fontStyle}
-                className="text-xs font-bold fill-[color:var(--post-heading)]"
+                className={cn(
+                  "text-xs font-bold transition-all duration-300",
+                  isBaseline
+                    ? "fill-[color:var(--post-heading)] text-[13px]"
+                    : "fill-[color:var(--post-heading)]"
+                )}
               >
-                {m.glmMultiplier.toFixed(2)}x
+                {mult.toFixed(2)}x
               </text>
+
+              {/* Baseline indicator tag */}
+              {isBaseline && (
+                <text
+                  x={cx}
+                  y={barY - 4}
+                  textAnchor="middle"
+                  style={fontStyle}
+                  className="text-[9px] font-semibold uppercase fill-[color:var(--post-muted)] tracking-wider"
+                >
+                  Baseline
+                </text>
+              )}
 
               {/* Vertical Column Bar */}
               <rect
@@ -350,9 +420,11 @@ export function OllamaMultipliersGraph({ className }: { className?: string }) {
                 height={barH}
                 fill={m.color}
                 rx={2}
-                className="transition-all duration-200"
+                stroke={isBaseline ? "var(--post-heading)" : "none"}
+                strokeWidth={isBaseline ? 2 : 0}
+                className="transition-all duration-300 ease-out"
                 style={{
-                  filter: isHovered ? "brightness(1.1)" : "none",
+                  filter: isHovered ? "brightness(1.15)" : "none",
                 }}
               />
 
@@ -373,9 +445,12 @@ export function OllamaMultipliersGraph({ className }: { className?: string }) {
                 textAnchor="end"
                 transform={`rotate(-60, ${cx - 4}, ${marginTop + chartHeight + 42})`}
                 style={fontStyle}
-                className="text-[11px] font-bold fill-[color:var(--post-heading)]"
+                className={cn(
+                  "text-[11px] font-bold fill-[color:var(--post-heading)] transition-all duration-200",
+                  isBaseline && "underline"
+                )}
               >
-                {m.name}
+                {m.name.replace(" (Baseline)", "")}
               </text>
             </g>
           );
