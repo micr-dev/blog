@@ -182,6 +182,58 @@ textarea {
     border-color var(--page-fade-ms) ease;
 }
 
+.websearch-chart-mark {
+  transition:
+    opacity 150ms cubic-bezier(0.23, 1, 0.32, 1),
+    transform 150ms cubic-bezier(0.23, 1, 0.32, 1);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.websearch-chart-tooltip {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 160ms cubic-bezier(0.23, 1, 0.32, 1),
+    transform 160ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .websearch-chart-mark[data-active="true"] {
+    transform: translateY(-2px);
+  }
+}
+
+.websearch-chart-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+  margin-block: 2.5rem;
+}
+
+.websearch-chart-pair .websearch-chart {
+  min-width: 0;
+  margin-block: 0;
+}
+
+@media (max-width: 900px) {
+  .websearch-chart-pair {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .websearch-chart-mark {
+    transition: none;
+    transform: none;
+  }
+
+  .websearch-chart-tooltip {
+    transition: none;
+    transform: none;
+  }
+}
+
 .ai-detection-popup {
   --ai-detection-ai: oklch(0.69 0.22 35);
   --ai-detection-assisted: oklch(0.82 0.15 88);
@@ -1210,4 +1262,3 @@ textarea {
   margin-bottom: 1.5rem !important;
   overflow-x: auto;
 }
-

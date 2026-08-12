@@ -44,6 +44,23 @@ import {
   OllamaMultipliersGraph,
   OllamaQuotaPctGraph,
 } from "@/components/mdx/ollama-quota-graph";
+import { WebSearchConclusion3D } from "@/components/mdx/websearch-conclusion-3d";
+import {
+  WebSearchAgreementHeatmap,
+  WebSearchCostGraph,
+  WebSearchDepthGraph,
+  WebSearchHitHeatmap,
+  WebSearchLatencyDistributionGraph,
+  WebSearchLatencySummaryGraph,
+  WebSearchPairwiseGraph,
+  WebSearchQualityCostGraph,
+  WebSearchQualityHeatmap,
+  WebSearchRelevanceRankGraph,
+  WebSearchRetrievalLatencyGraph,
+  WebSearchRetrievalSuccessGraph,
+  WebSearchShortListGraph,
+  WebSearchSourceEcologyGraph,
+} from "@/components/mdx/websearch-bench-graphs";
 import { renderMermaidAscii } from "@/lib/mermaid-ascii";
 import type { PostTheme } from "@/types/post";
 
@@ -317,6 +334,21 @@ export function getMdxComponents(
     OllamaMultipliersGraph,
     OllamaQuotaPctGraph,
     OllamaIntelligenceGraph,
+    WebSearchConclusion3D,
+    WebSearchAgreementHeatmap,
+    WebSearchCostGraph,
+    WebSearchDepthGraph,
+    WebSearchHitHeatmap,
+    WebSearchLatencyDistributionGraph,
+    WebSearchLatencySummaryGraph,
+    WebSearchPairwiseGraph,
+    WebSearchQualityCostGraph,
+    WebSearchQualityHeatmap,
+    WebSearchRelevanceRankGraph,
+    WebSearchRetrievalLatencyGraph,
+    WebSearchRetrievalSuccessGraph,
+    WebSearchShortListGraph,
+    WebSearchSourceEcologyGraph,
     Term,
     TweetCard,
     code: ({ className, children, ...props }) => {

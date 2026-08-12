@@ -73,19 +73,6 @@ Supported font sources in v1:
 - **Plain reading mode** - Alternate low-friction reading experience at `/read`, `/read/[slug]`, `/read/tags`, and `/read/tags/[slug]`
 - **robots.txt & sitemap** - Auto-generated via `src/app/robots.ts` and `src/app/sitemap.ts`
 
-## Agentation Integration (Development Only)
-
-The app mounts Agentation only in development.
-
-Recommended MCP setup:
-
-```bash
-npx add-mcp "npx -y agentation-mcp server"
-npx agentation-mcp doctor
-```
-
-If you want to remove Agentation later, delete `src/components/agentation-root.tsx` and the dev-only import block in `src/app/layout.tsx`.
-
 ## License
 
 Private - all rights reserved.

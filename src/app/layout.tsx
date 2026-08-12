@@ -44,13 +44,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  let devTools: React.ReactNode = null;
-
-  if (process.env.NODE_ENV === "development") {
-    const { AgentationRoot } = await import("@/components/agentation-root");
-    devTools = <AgentationRoot />;
-  }
-
   return (
     <html lang="en" className="dark scroll-smooth">
       <body className={`${spaceGrotesk.variable} font-sans antialiased`}>
@@ -58,7 +51,6 @@ export default async function RootLayout({
           Skip to content
         </a>
         {children}
-        {devTools}
       </body>
     </html>
   );

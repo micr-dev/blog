@@ -1,0 +1,470 @@
+---
+title: "I tested the best agentic web search tools in the market"
+date: "2026-08-12"
+excerpt: "Which web search tool gives agents the best answers? I made my own benchmark to test it out."
+tags:
+  - ai
+  - benchmark
+  - search
+  - tooling
+published: true
+aiDetection:
+  verdict: "human"
+  aiPercent: 0
+  assistedPercent: 0
+  segments: 0
+  model: "Pangram 3.3.2"
+---
+
+## Introduction
+
+I have been using custom web search tools since around March, when I wired up
+Kagi to my <Term tip="Related to software agents that carry out tasks.">agentic</Term>
+setup. It's been super neat. But Kagi is human-first, not
+<Term tip="Designed for software agents to use directly, without a person operating the interface.">agent-first</Term>,
+which led me to think: am I using the best tool available for this? Would
+switching to a specialized web search tool be a substantial upgrade?
+
+After I saw [this](https://x.com/WilliamBryk/status/2084321018546704624?s=20)
+tweet from Exa in my feed, it only reinforced this thought. So, as with any
+thought that stays in the back of my mind for a while, I decided to see what I
+could do to satisfy my curiosity. Consequently, I made
+[websearch-bench](https://github.com/Microck/websearch-bench) in order to
+objectively test all of the most famous tools and see which one was the best
+and why. In this blog I will talk about how it works and the results that I
+obtained after testing eight of the most popular choices for agentic web
+search: Brave, Context, Exa, Kagi, Octen, Parallel, Perplexity, and Tavily.
+
+## Baselines
+
+All providers were tested through their respective APIs from 05/08/2026 to
+08/08/2026. I originally only tested four of these and
+slowly incorporated more.
+
+Furthermore, all prices were taken and all tests were run with the most basic
+and plain Web Search option that each provider has, in order to make it as fair
+and equal as possible. For example, if a provider has Web Search Basic, Web
+Search Fast, Web Search Deep, and Web Search Extra, Web Search Basic will be the
+one used.
+
+All calls requested 10 results, no more, no less. Some other stuff was
+collected as well, like latency and costs. All of the data that will be shown
+is [public](https://github.com/Microck/websearch-bench/tree/main/results/rep-1-20260805).
+
+## Tasks
+
+What is the easiest way to test if a model is good at querying? You guessed it:
+doing queries. Multiple of them.
+
+<MarkdownDisclosure
+  title="Show the full benchmark query set"
+>
+
+### 1. Known Item (KI): Finding a specific canonical document
+
+| ID   | Exact Query Text                                                                                | Success Criteria                                                        |
+| ---- | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| KI01 | official RFC for HTTP semantics published as 9110                                               | Finds the canonical RFC 9110 on rfc-editor.org.                         |
+| KI02 | Python proposal to make the global interpreter lock optional PEP                                | Finds PEP 703 on the official Python PEP site.                          |
+| KI03 | Rich Sutton essay arguing general methods that scale with computation beat hand-built knowledge | Finds Rich Sutton's essay The Bitter Lesson on incompleteideas.net.     |
+| KI04 | SQLite documentation explaining isolation between separate database connections                 | Finds SQLite's canonical isolation documentation on sqlite.org.         |
+| KI05 | W3C Web Content Accessibility Guidelines 2.2 recommendation                                     | Finds the W3C Recommendation for WCAG 2.2 on w3.org.                    |
+| KI06 | BurntSushi ripgrep source repository                                                            | Finds the canonical ripgrep GitHub repository owned by BurntSushi.      |
+| KI07 | Google site reliability engineering book chapter about handling overload                        | Finds the Handling Overload chapter of Google's SRE book on sre.google. |
+| KI08 | NIST AI Risk Management Framework 1.0 PDF                                                       | Finds the official NIST AI RMF 1.0 publication or canonical PDF.        |
+
+### 2. Primary Source (PS): Official government & institutional documents
+
+| ID   | Exact Query Text                                                      | Success Criteria                                                                   |
+| ---- | --------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| PS01 | European Union AI Act Regulation 2024/1689 official journal full text | Returns official EU legal text for Regulation (EU) 2024/1689 on eur-lex.europa.eu. |
+| PS02 | CISA known exploited vulnerabilities catalog official                 | Returns CISA's official Known Exploited Vulnerabilities Catalog.                   |
+| PS03 | FDA cybersecurity in medical devices final guidance 2023              | Returns the official FDA final guidance document issued in 2023.                   |
+| PS04 | WHO guideline on non-sugar sweeteners 2023                            | Returns the official WHO guideline publication page on who.int.                    |
+| PS05 | SEC NVIDIA 2025 annual report 10-K                                    | Returns NVIDIA's official SEC 10-K filing for fiscal year 2025.                    |
+| PS06 | Federal Reserve March 2024 FOMC meeting minutes                       | Returns official Federal Reserve minutes for the March 2024 FOMC meeting.          |
+| PS07 | NASA Artemis II mission official overview                             | Returns NASA's official Artemis II mission page.                                   |
+| PS08 | EDPB Opinion 08/2024 consent or pay large online platforms            | Returns European Data Protection Board's official Opinion 08/2024.                 |
+
+### 3. Technical Exact (TE): Exact error messages & troubleshooting
+
+| ID   | Exact Query Text                                                                               | Success Criteria                                                                         |
+| ---- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| TE01 | Python "TypeError: unhashable type: 'dict'"                                                    | Finds pages that accurately explain and resolve this exact Python error.                 |
+| TE02 | PostgreSQL SQLSTATE 40001 serialization_failure                                                | Finds authoritative documentation/troubleshooting for PostgreSQL serialization failures. |
+| TE03 | Rust E0502 cannot borrow as mutable because it is also borrowed as immutable                   | Finds the official Rust error explanation (E0502) or an accurate equivalent.             |
+| TE04 | OpenSSL error:0A00010B SSL routines wrong version number                                       | Finds technically accurate explanations and fixes for this exact OpenSSL error.          |
+| TE05 | Kubernetes ImagePullBackOff ErrImagePull difference                                            | Accurately distinguishes between the two K8s states and gives diagnostic steps.          |
+| TE06 | React "Hydration failed because the initial UI does not match what was rendered on the server" | Finds directly relevant React or Next.js hydration mismatch troubleshooting.             |
+| TE07 | Python asyncio "Task exception was never retrieved"                                            | Finds directly relevant explanations and corrective patterns for this asyncio warning.   |
+| TE08 | Git "fatal: refusing to merge unrelated histories"                                             | Finds accurate troubleshooting for this exact Git merge error.                           |
+
+### 4. Semantic Long-Tail (SM): Concept descriptions without technical names
+
+| ID   | Exact Query Text                                                                                     | Success Criteria                                                     |
+| ---- | ---------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| SM01 | browser API that reports when an element enters or leaves the viewport                               | Identifies and substantively explains Intersection Observer API.     |
+| SM02 | Linux mechanism for receiving filesystem change notifications without polling                        | Identifies and explains inotify.                                     |
+| SM03 | PostgreSQL command that runs a query and reports the actual execution plan and timing                | Identifies and explains EXPLAIN ANALYZE.                             |
+| SM04 | HTTP feature for resuming a download from a specific byte offset                                     | Identifies and explains HTTP Range requests (Range / Content-Range). |
+| SM05 | CSS grid pattern that automatically fits as many equal-width cards as possible without media queries | Identifies repeat(auto-fit, minmax(...)).                            |
+| SM06 | safe file update technique that writes a temporary file and renames it over the original             | Identifies atomic file replacement (write-fsync-rename).             |
+| SM07 | retry strategy that adds randomness to exponential delays to prevent synchronized clients            | Identifies exponential backoff with jitter.                          |
+| SM08 | browser security policy that limits which origins may load scripts images and frames                 | Identifies Content Security Policy (CSP).                            |
+
+### 5. Niche / Small Web (NW): Personal blogs & specialist write-ups
+
+| ID   | Exact Query Text                                                                                      | Success Criteria                                                                     |
+| ---- | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| NW01 | personal blog measuring keyboard input latency across computers and keyboards                         | Finds Dan Luu's independent keyboard latency measurements (danluu.com).              |
+| NW02 | reverse engineering the Intel 8087 floating point chip from microscope die photographs                | Finds Ken Shirriff's detailed chip die reverse engineering write-ups (righto.com).   |
+| NW03 | blog post implementing an arena allocator in C with alignment and out-of-memory handling              | Finds Skeeto's detailed C arena allocator tutorial (nullprogram.com).                |
+| NW04 | write-up building a tiny debugger with ptrace in C                                                    | Finds detailed independent tutorials/projects using Linux ptrace.                    |
+| NW05 | detailed amateur radio guide decoding NOAA APT weather satellite images with a cheap SDR              | Finds first-hand amateur radio decoding setup guides with hardware/software steps.   |
+| NW06 | personal project restoring a Sun SPARCstation IPX power supply and NVRAM                              | Finds detailed hardware restoration write-ups covering both PSU and NVRAM.           |
+| NW07 | graphics programming blog explaining image downsampling aliasing and the limits of bilinear filtering | Finds deep graphics/signal-processing articles (e.g. Bart Wronski).                  |
+| NW08 | homebrew 6502 computer build log memory map and address decoding                                      | Finds personal build logs detailing 6502 memory mapping and address decoder designs. |
+
+### 6. Multi-Constraint (MC): Queries with 4+ strict required criteria
+
+| ID   | Exact Query Text                                                                       | Success Criteria                                                        |
+| ---- | -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| MC01 | open source vector database written in Rust Apache 2.0 HNSW                            | Finds projects matching all 4 constraints (e.g., Qdrant).               |
+| MC02 | self-hosted web analytics AGPL cookieless PostgreSQL                                   | Finds products matching all 4 constraints (e.g., Plausible Analytics).  |
+| MC03 | embedded columnar OLAP database SQL reads Parquet without a server                     | Finds databases matching all constraints (e.g., DuckDB).                |
+| MC04 | static site generator written in Go multilingual taxonomies Apache 2.0                 | Finds static site generators matching all constraints (e.g., Hugo).     |
+| MC05 | open source Kubernetes-native workflow engine written in Go supports DAGs and a web UI | Finds workflow engines matching all constraints (e.g., Argo Workflows). |
+| MC06 | Python ASGI framework dependency injection OpenAPI type hints                          | Finds Python frameworks matching all constraints (e.g., FastAPI).       |
+| MC07 | open source feature flag service written in Go self-hosted PostgreSQL                  | Finds feature flag platforms matching all constraints (e.g., Flipt).    |
+| MC08 | low-profile split wireless mechanical keyboard open source ZMK firmware                | Finds keyboard projects/guides matching all constraints.                |
+
+### 7. Exploratory Diversity (EX): Multi-subtopic coverage
+
+| ID   | Exact Query Text                                                 | Subtopics It Tests For                                                                       |
+| ---- | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| EX01 | approaches to zero-downtime PostgreSQL schema migrations         | Covers expand-contract, online index creation, backfill, dual-write, and lock avoidance.     |
+| EX02 | ways to model hierarchical data in SQL                           | Covers adjacency lists, nested sets, materialized paths, closure tables, and recursive CTEs. |
+| EX03 | distributed API rate limiting algorithms                         | Covers fixed window, sliding window, token bucket, leaky bucket, and distributed counters.   |
+| EX04 | strategies for handling out-of-order events in stream processing | Covers event time, watermarks, buffering, retractions/corrections, and idempotency.          |
+| EX05 | monorepo versus polyrepo tradeoffs                               | Covers dependency management, CI performance, ownership, access control, and tooling.        |
+| EX06 | offline-first web app synchronization approaches                 | Covers CRDTs, operational transformation, local-first architecture, and service worker sync. |
+| EX07 | database change data capture approaches                          | Covers transaction log tailing, triggers, timestamp polling, snapshots, and Debezium.        |
+| EX08 | methods for preventing cache stampede                            | Covers locking, request coalescing, stale-while-revalidate, early expiration, and jitter.    |
+
+### 8. Multilingual / Regional (ML): Non-English official information
+
+| ID   | Exact Query Text                                                               | Language   | Success Criteria                                                                    |
+| ---- | ------------------------------------------------------------------------------ | ---------- | ----------------------------------------------------------------------------------- |
+| ML01 | cómo solicitar el certificado digital de persona física FNMT                   | Spanish    | Official Spanish FNMT digital certificate procedure.                                |
+| ML02 | factura electrónica obligatoria empresas ley crea y crece requisitos oficiales | Spanish    | Official Spanish e-invoicing requirements under the Crea y Crece law.               |
+| ML03 | rupture conventionnelle délai de rétractation site officiel                    | French     | Official French mutual termination agreement withdrawal period.                     |
+| ML04 | Bundesurlaubsgesetz Mindesturlaub Vollzeit offizielle Fassung                  | German     | Official German Federal Leave Act text on statutory minimum leave.                  |
+| ML05 | Portal das Finanças pedir certidão de dívida e não dívida                      | Portuguese | Official Portuguese tax portal procedure for tax clearance certificates.            |
+| ML06 | マイナンバーカード 電子証明書 有効期限 公式                                                        | Japanese   | Official Japanese source for My Number Card electronic certificate validity period. |
+| ML07 | Rijksoverheid vakantiegeld wanneer uitbetalen                                  | Dutch      | Official Dutch government explanation of holiday allowance payout timing.           |
+| ML08 | com donar-se d'alta a l'idCAT Mòbil requisits oficials                         | Catalan    | Official Catalan registration requirements for idCAT Mòbil.                         |
+
+### 9. Robustness / Noisy (RB) & Reference Queries: Typos & colloquial noise
+
+Measures quality degradation by comparing noisy queries against their clean reference counterparts:
+
+| ID   | Noisy Query                                                                       | Clean Reference Query                                        | Degradation                                                         |
+| ---- | --------------------------------------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------- |
+| RB01 | pyhton dataclass frozen hash not work mutable field                               | Python frozen dataclass hash mutable field                   | Misspellings ("pyhton") & missing grammar.                          |
+| RB02 | ngnix 502 bad gateway upstream prematurely closed connection                      | nginx 502 Bad Gateway upstream prematurely closed connection | Misspelled technology name ("ngnix").                               |
+| RB03 | kuberentes pod stuck terminatting finalizer remove safely                         | Kubernetes pod stuck terminating safely remove finalizer     | Multiple misspellings ("kuberentes", "terminatting").               |
+| RB04 | postgres index for json not full text exact key value                             | PostgreSQL index JSONB exact key value queries               | Informal phrasing & explicit negative constraint ("not full text"). |
+| RB05 | css cards same hight grid without javascript                                      | CSS Grid equal-height cards without JavaScript               | Common typos ("hight").                                             |
+| RB06 | git undo last commit keep changes dont delete files                               | Git undo last commit keep changes                            | Verbose, conversational search phrasing.                            |
+| RB07 | whats the thing in http where browser asks server if cached file changed etag 304 | HTTP conditional request ETag 304 Not Modified               | Conversational "what's the thing" queries.                          |
+| RB08 | rust cant move out borrowed content option take                                   | Rust cannot move out of borrowed content Option::take        | Shorthand syntax without punctuation.                               |
+
+### 10. Freshness / Rolling (FR): Time-sensitive official releases
+
+| ID   | Exact Query Text                                                 | Success Criteria                                                    |
+| ---- | ---------------------------------------------------------------- | ------------------------------------------------------------------- |
+| FR01 | latest stable Rust release notes official                        | Surfaces the newest stable Rust release notes (blog.rust-lang.org). |
+| FR02 | latest Python security release official announcement             | Surfaces the newest official Python security release announcement.  |
+| FR03 | latest Kubernetes release notes official                         | Surfaces the newest official stable K8s release notes.              |
+| FR04 | latest Mozilla Firefox release notes official                    | Surfaces the newest official Firefox release notes.                 |
+| FR05 | latest PostgreSQL minor release announcement official            | Surfaces the newest official PostgreSQL minor release announcement. |
+| FR06 | latest CISA known exploited vulnerabilities additions official   | Surfaces the newest official CISA KEV update notice.                |
+| FR07 | latest European Commission Digital Markets Act decision official | Surfaces the newest official EC decision or action under the DMA.   |
+| FR08 | latest GitHub Actions runner release                             | Surfaces the newest release from github.com/actions/runner.         |
+
+</MarkdownDisclosure>
+
+## Results
+
+### Cost
+
+<WebSearchCostGraph />
+
+Let's be honest here: price is one of, if not the most important factor for any
+service, especially those that offer pay-per-usage. You probably wouldn't pay a
+$100 monthly sub solely for an agentic web search service.
+
+The prices shown are calculated by taking each provider's pricing per search at
+the time of testing and just multiplying it by 96. Pretty simple, though we can
+already see some interesting data: Octen is the cheapest alongside Context,
+while Kagi takes the top spot, being ~12x more expensive. All of the other
+providers sit roughly the same, between 40 and 70 cents.
+
+By this logic, Kagi should give the best results and Octen the worst, right?
+Let's look deeper into it.
+
+### Response latency
+
+<WebSearchLatencySummaryGraph />
+
+<WebSearchLatencyDistributionGraph />
+
+The latency distribution is an
+<Term tip="Empirical Cumulative Distribution Function. A function that shows the share of measurements at or below each value.">ECDF</Term>.
+
+Seemingly unimportant at first glance, but bear with me. Let's take the
+difference between Context and Brave's median latency
+(<Term tip="The median value in a set of measurements.">p50</Term>) as a
+reference: 1,973 ms. 1.97 seconds. As per my personal usage, let's say the
+average power user does 3,500 monthly queries:
+
+If User A uses Context and User B uses Brave, User A would spend 115.09 minutes
+just waiting. Every month. 23.02 hours every year. Almost a full day just
+waiting.
+
+It doesn't seem like much, because let's be real: in the grand scheme of things
+it's not. But would you like to spend 23.02 hours a year just staring at a
+wall?
+
+### Depth
+
+<div className="websearch-chart-pair">
+  <WebSearchDepthGraph compact />
+  <WebSearchShortListGraph compact />
+</div>
+
+More results don't necessarily mean more value, but they mean you're letting
+the web search tool filter what *it* thinks might be important, instead of your
+<Term tip="A leading AI model with high capabilities.">frontier model</Term>.
+
+As seen, Context is the primary offender, followed by Tavily. Respectively,
+on 64.6% and 31.2% of the 96 queries, they returned less than the 10 results
+the benchmark asked for. This seems more severe than it actually is, though,
+since they both have over 9 mean results per request, meaning they returned at
+least 9 results on each query.
+
+### Quality
+
+<WebSearchQualityHeatmap mode="heuristic" />
+
+<Term tip="Normalized Discounted Cumulative Gain at rank 10. A score from 0 to 1 for ranking quality. It gives more weight to relevant results near the top and compares the ranking with the best possible order.">nDCG@10</Term>
+measures how well each provider orders its top 10 results. I do this by judging
+whether the perfect answer is present and where it appears, or whether a result
+contains the required target keywords.
+
+The system grades each of the top 10 links and adds all the points together
+into one total score, and it then divides the total score by the highest
+possible score. This turns the final score into a simple number between 0.0
+(no useful links were found in the top 10) and 1.0 (a perfect search result
+list, with the best links at the top).
+
+Parallel, Brave, and Kagi perform the best across the categories, being the
+only ones above an average nDCG@10 of 0.6. They are followed by Perplexity,
+Context, Tavily, and Exa, where they rank with an average ~0.55; though Octen
+falls short of the 0.5 barrier by scoring 0.495.
+
+But this is 2026. We have AI agents now, right? Let's use them.
+
+<WebSearchQualityHeatmap mode="ai" />
+
+This follows the same logic, but instead of being graded by a
+<Term tip="Producing the same output for the same input.">deterministic</Term>
+system, it was graded by a blind AI judge. This judge reads the search question
+and the title and summary text of each result link. It does not know which
+search engine provided the link, so it doesn't have any biases. A page about
+"Urlaubstage" (German for vacation days) might get grade 0 from the
+<Term tip="A rule-based method that uses selected signals to make an estimate.">heuristic</Term>
+if the query uses different words, but grade 1 from the AI because it knows they
+mean the same thing.
+
+The results were judged by GPT 5.6 Luna Max, in the Codex harness, with the
+following prompt:
+
+> "Judge each result independently for the supplied query. Use only the query
+> and result card. Do not search the web. Do not infer the provider or rank.
+> Grade 3 = directly satisfies the query; 2 = relevant and useful; 1 = partial
+> or weak match; 0 = irrelevant, wrong intent, spam, misleading, or clearly
+> broken. Return one JSON object per result with `result_id`, grade, and a short
+> reason."
+
+For the evaluation I used a scale from 0-3 in order to be able to get a more
+gray and detailed answer. This is not exclusive to the AI judging; the
+heuristic scoring did this too. Each grade is converted to a "gain" via
+`2^grade - 1` (so 0 -> 0, 1 -> 1, 2 -> 3, 3 -> 7), then each gain is divided by
+a positional discount that shrinks the further down the list the result sits,
+and all ten discounted gains are summed into a single number called
+<Term tip="Discounted Cumulative Gain. A ranking score that gives more weight to useful results near the top.">DCG</Term>.
+That number on its own is meaningless, so it gets divided by the
+<Term tip="The highest possible DCG for a query, used to scale ranking scores.">ideal DCG</Term>,
+the DCG you would get if you took every result any provider found for that
+query and arranged them in the best possible order.
+
+Each search result gets a score from 0 to 3, so the evaluation isn't black or
+white, since there are grays. Both the AI judge and the heuristic scorer use
+this scale. The score is changed into points using `2^grade - 1`, so grades 0,
+1, 2, and 3 become 0, 1, 3, and 7 points. Results near the top of the list
+count more than results near the bottom, so the points for all ten results are
+reduced by a
+<Term tip="A reduction applied to results farther down a ranked list.">positional discount</Term>
+and then added together to make DCG.
+
+DCG is not useful by itself because queries with more good results naturally
+get higher scores, so it is compared with the ideal DCG, the score produced by
+taking every result found by every provider and putting the best results first.
+The provider's DCG is divided by this ideal DCG to show how close its list is to
+the best possible list.
+
+<WebSearchQualityHeatmap mode="delta" />
+
+Positive means the AI score was higher, negative means the metadata score was
+higher.
+
+So why is there such a big difference? Simply because the deterministic way
+might miss some stuff, just as I said earlier. It cannot reason and it cannot
+understand intent. This doesn't mean the AI judging is flawless either. Because
+<Term tip="Large language models. Systems trained to generate and analyze text.">LLMs</Term>
+are not deterministic, they can produce different results even if the exact
+same input is going in and the same exact model is being used. But I think it's
+good enough for this benchmark.
+
+### Cost vs. quality
+
+<WebSearchQualityCostGraph mode="heuristic" />
+
+<WebSearchQualityCostGraph mode="ai" />
+
+All of this data is cool, but you probably just want an answer on which one to
+use. I wish I had a concrete answer, but I'm going to have to go with the good
+ol' *it depends*. Objectively, Perplexity seems to be the best one as per the
+AI judgment, being replaced by Parallel on the heuristic one. Brave doesn't
+quite manage to get the top spot on either, but it's up there in a solid second
+place, so perhaps by the average position Brave would be the best one. I don't
+know. Anyhow, these three share the main spot.
+
+On the other hand, top quality isn't necessarily always the best for everyone.
+Perhaps you just need something affordable, in which case Octen and Context
+seem preferable, with the latter being the only one crossing the illustrative
+target region barrier.
+
+Much to my surprise, Exa and Kagi don't take any of the top spots, neither in
+quality nor affordability; I expected both of them to be on the podium. We don't
+talk about Tavily.
+
+But despite all of this, this still doesn't give us an objective best provider.
+Not Perplexity, not Brave, not Parallel. So, how can you choose which one to go
+for, with so many options on the table?
+
+### Conclusion
+
+<WebSearchConclusion3D />
+
+Each provider has its pros and cons, and not only that, but most if not all of
+these have more features available than their simplest Web Search tool used for
+this benchmark. Some have deep research, if you have patience and want the best
+results. Some have fast mode, if you're in a hurry and value speed. Some have
+extraction capabilities and better
+<Term tip="Methods that help software access websites that block automated requests.">bot bypasses</Term>,
+so you can actually read the content of your results.
+
+I did not test any of these features, and they are unique to each provider, so I
+would say: test yourself. Yes, that's the conclusion of a blog full of tests.
+You should look into each and see which one works best for your workflow, since
+I can't tell you which one would.
+
+#### Provider results
+
+| Provider | p50 | p95 | Mean results | Short lists | Cost / 96 | Metadata-heuristic nDCG@10 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Brave | 427 ms | 820 ms | 10.00 | 0 / 96 (0%) | $0.480 | 0.659 |
+| Context | 2,400 ms | 3,854 ms | 9.22 | 62 / 96 (64.6%) | $0.144 | 0.569 |
+| Exa | 1,102 ms | 1,792 ms | 9.99 | 1 / 96 (1.0%) | $0.672 | 0.523 |
+| Kagi | 1,272 ms | 1,640 ms | 10.00 | 0 / 96 (0%) | $1.152 | 0.634 |
+| Octen | 359 ms | 941 ms | 10.00 | 0 / 96 (0%) | $0.096 | 0.496 |
+| Parallel | 974 ms | 1,755 ms | 9.99 | 1 / 96 (1.0%) | $0.485 | 0.675 |
+| Perplexity | 815 ms | 1,224 ms | 9.99 | 1 / 96 (1.0%) | $0.485 | 0.577 |
+| Tavily | 1,296 ms | 2,564 ms | 9.54 | 30 / 96 (31.3%) | $0.768 | 0.557 |
+
+I would also like to note that none of the providers paid for any of the
+results shown in this benchmark. All of these, except Kagi, were either covered
+by free credits or paid for out of my own pocket. Two of these companies (Exa
+and Octen), in fact, have made and published their own benchmarks: Exa's
+benchmark was really expensive to run, so I decided to pass on it, but Octen's...
+
+## Wait, There's More?
+
+I know, I know... A conclusion is supposed to be where a blog finishes. But
+pacing and structuring are hard, okay? I'd be surprised if anyone has read this
+far and hasn't just scrolled to the conclusion to see the results (guilty).
+
+Getting back to the topic, I decided to run Octen's own benchmark with the
+spare free credits that I had left, since I had everything set up and it
+wouldn't be much work.
+
+<WebSearchRetrievalSuccessGraph />
+
+First off, that's funny: Octen scoring the least on their own benchmark. At
+least we know they don't <Term tip="Improving a benchmark score without improving general performance.">benchmaxx</Term>.
+
+The rest of the providers score roughly the same, with one major exception:
+Context. Somehow, they managed to score third place? Let's look slightly
+deeper into it.
+
+It works similarly to my own benchmark, which I'm happy about since it means I
+didn't just make some BS. I discovered the Exa and Octen benchmarks afterwards.
+They use an
+<Term tip="A fixed set of queries with known correct pages used to test retrieval.">anchor set</Term>
+with a
+<Term tip="The URL expected to be the correct answer for a query.">gold URL</Term>
+for each query, which is the expected correct page.
+
+<Term tip="A measure of whether the correct page appeared as the first result.">hit@1</Term>
+means the correct page was the first result, while
+<Term tip="A measure of whether the correct page appeared in the first ten results.">hit@10</Term>
+means it appeared somewhere in the first ten results. The best result was Exa,
+achieving 82% at rank 1 and 100% in the top 10. This means that from 56 queries
+tested, it got the gold URL in its first result 82% of the time and 100% within
+the top 10.
+
+<WebSearchRetrievalLatencyGraph />
+
+Latency wasn't a one-time issue for Context, as we can clearly see in their
+<Term tip="The slower end of a response-time distribution, often measured with p95.">tail latency</Term>,
+measured here with
+<Term tip="The value at or below which 95 percent of measurements fall.">p95</Term>
+latency, while most of the other providers sit in the top-left corner, the
+optimal place to be.
+
+If you're interested in each one's success on a specific category, feel free to
+look at the heatmaps below. I won't go into depth on each category since it's
+open source and you can just take a look at it yourself.
+
+<WebSearchHitHeatmap rank={1} />
+
+<WebSearchHitHeatmap rank={10} />
+
+## Extra
+
+Yes. That's all, don't worry. You can leave now. But if you like data, here are
+some extra graphs that I couldn't narratively fit anywhere nicely.
+
+<WebSearchRelevanceRankGraph />
+
+The agreement graph uses
+<Term tip="A similarity score equal to shared items divided by total unique items.">Jaccard overlap</Term>
+to compare how many top-ten URLs providers share.
+
+<WebSearchAgreementHeatmap />
+
+<WebSearchSourceEcologyGraph />
+
+<WebSearchPairwiseGraph />
