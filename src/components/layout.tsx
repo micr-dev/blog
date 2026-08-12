@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
+import { NewsletterPopup } from "@/components/newsletter";
 
 export function Layout({ children }: { children: ReactNode }) {
   return (
@@ -12,6 +13,9 @@ export function Layout({ children }: { children: ReactNode }) {
         </main>
         <Footer />
       </div>
+      {/* Bottom-left, so it never collides with the bottom-right AI detection
+          popup on posts that show both. */}
+      <NewsletterPopup />
     </section>
   );
 }

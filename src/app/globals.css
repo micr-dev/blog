@@ -1262,3 +1262,240 @@ textarea {
   margin-bottom: 1.5rem !important;
   overflow-x: auto;
 }
+
+/* --- Newsletter -------------------------------------------------------- */
+
+/*
+ * Shared form styling for both surfaces. The popup mirrors the geometry of
+ * .ai-detection-popup so the two never look like they came from different
+ * sites when a post shows both.
+ */
+.newsletter-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.newsletter-field {
+  display: flex;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+.newsletter-form[data-variant="footer"] .newsletter-field {
+  max-width: 26rem;
+}
+
+.newsletter-input {
+  min-width: 0;
+  flex: 1;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: color-mix(in srgb, var(--background) 88%, var(--foreground));
+  padding: 0.5rem 0.75rem;
+  color: var(--foreground);
+  font-family: inherit;
+  font-size: 0.875rem;
+  transition: border-color 150ms cubic-bezier(0.175, 0.885, 0.32, 1.1);
+}
+
+.newsletter-input::placeholder {
+  color: color-mix(in srgb, var(--muted) 80%, transparent);
+}
+
+.newsletter-input:focus-visible {
+  border-color: var(--accent);
+  outline: 2px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  outline-offset: 1px;
+}
+
+.newsletter-input:disabled {
+  opacity: 0.6;
+}
+
+.newsletter-submit {
+  flex: none;
+  cursor: pointer;
+  border: 1px solid var(--accent);
+  border-radius: 0.5rem;
+  background: var(--accent);
+  padding: 0.5rem 1rem;
+  color: var(--background);
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition-property: opacity, transform;
+  transition-duration: 150ms;
+  transition-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .newsletter-submit:hover:not(:disabled) {
+    opacity: 0.88;
+  }
+}
+
+.newsletter-submit:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.newsletter-submit:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+/*
+ * Off-screen rather than display:none. Some bots skip hidden inputs, and
+ * aria-hidden plus tabindex="-1" already keep it away from real users.
+ */
+.newsletter-honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.newsletter-status {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.newsletter-status[data-tone="success"] {
+  color: var(--accent);
+}
+
+.newsletter-status[data-tone="error"] {
+  color: oklch(0.72 0.19 25);
+}
+
+/* --- Footer surface --- */
+
+.newsletter-footer {
+  margin-top: 4rem;
+  border-top: 1px solid var(--border);
+  padding-top: 2rem;
+}
+
+.newsletter-footer-heading {
+  margin: 0 0 0.375rem;
+  color: var(--foreground);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.newsletter-footer-copy {
+  margin: 0 0 1rem;
+  max-width: 34rem;
+  color: var(--muted);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+/* --- Popup surface --- */
+
+.newsletter-popup {
+  position: fixed;
+  left: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 60;
+  width: min(22rem, calc(100vw - 1.5rem));
+  border: 1px solid color-mix(in srgb, var(--border) 82%, var(--foreground));
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--background) 94%, var(--foreground));
+  padding: 0.875rem;
+  color: var(--foreground);
+  box-shadow: 0 18px 40px -24px rgb(0 0 0 / 0.9);
+}
+
+.newsletter-popup-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.newsletter-popup-icon {
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex: none;
+  place-items: center;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 17%, var(--background));
+  color: var(--accent);
+}
+
+.newsletter-popup-eyebrow {
+  display: block;
+  color: var(--muted);
+  font-size: 0.6875rem;
+  font-weight: 500;
+}
+
+.newsletter-popup-title {
+  display: block;
+  overflow: hidden;
+  color: var(--foreground);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.newsletter-close {
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex: none;
+  cursor: pointer;
+  place-items: center;
+  border: 0;
+  border-radius: 999px;
+  padding: 0;
+  background: transparent;
+  color: var(--muted);
+  transition-property: background-color, transform;
+  transition-duration: 150ms;
+  transition-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .newsletter-close:hover {
+    background: color-mix(in srgb, var(--accent) 8%, transparent);
+    color: var(--foreground);
+  }
+}
+
+.newsletter-close:active {
+  transform: scale(0.96);
+}
+
+.newsletter-popup-body {
+  margin: 0.75rem 0;
+  color: var(--muted);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 640px) {
+  .newsletter-popup {
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    width: auto;
+  }
+
+  .newsletter-field {
+    flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .newsletter-input,
+  .newsletter-submit,
+  .newsletter-close {
+    transition-duration: 0ms;
+  }
+}

@@ -1,4 +1,5 @@
 import { Link } from "next-view-transitions";
+import { FooterSubscribe } from "@/components/newsletter";
 import { siteConfig } from "@/lib/site-config";
 
 const footerLinks = [
@@ -9,7 +10,9 @@ const footerLinks = [
 export function Footer() {
   return (
     <footer className="mt-16">
-      <div className="mb-8 flex flex-col items-center">
+      <FooterSubscribe />
+
+      <div className="mt-10 mb-8 flex flex-col items-center">
         <div className="mb-2 flex flex-wrap items-center justify-center gap-x-2 text-sm text-[color:var(--muted)]">
           <Link className="transition-opacity hover:opacity-80" href="/">
             {siteConfig.domain}
