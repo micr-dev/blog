@@ -5,7 +5,6 @@ import { Layout } from "@/components/layout";
 import { PlainVersionCallout } from "@/components/plain-version-callout";
 import { PostProgressRail } from "@/components/post-progress-rail";
 import { PostShareButton } from "@/components/post-share-button";
-import { FooterSubscribe } from "@/components/newsletter";
 import { PostSignature } from "@/components/post-signature";
 import { PostShell } from "@/components/post-shell";
 import { siteConfig } from "@/lib/site-config";
@@ -188,7 +187,6 @@ export default async function BlogPostPage({
                     </div>
 
                   </div>
-                  <FooterSubscribe />
                 </footer>
               </div>
             </div>

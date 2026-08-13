@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
-import { NewsletterPopup } from "@/components/newsletter";
+import { FooterSubscribe, NewsletterPopup } from "@/components/newsletter";
 
 export function Layout({ children }: { children: ReactNode }) {
   return (
@@ -11,6 +11,7 @@ export function Layout({ children }: { children: ReactNode }) {
         <main id="main-content" className="mb-auto" tabIndex={-1}>
           {children}
         </main>
+        <FooterSubscribe />
         <Footer />
       </div>
       {/* Bottom-left, so it never collides with the bottom-right AI detection

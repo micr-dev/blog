@@ -8,8 +8,8 @@ const footerLinks = [
 
 export function Footer() {
   return (
-    <footer className="mt-16">
-      <div className="mt-10 mb-8 flex flex-col items-center">
+    <footer className="mt-4">
+      <div className="mt-4 mb-8 flex flex-col items-center">
         <div className="mb-2 flex flex-wrap items-center justify-center gap-x-2 text-sm text-[color:var(--muted)]">
           <Link className="transition-opacity hover:opacity-80" href="/">
             {siteConfig.domain}
