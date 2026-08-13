@@ -1376,6 +1376,7 @@ textarea {
 .newsletter-footer {
   padding-top: 2rem;
   padding-bottom: 0.5rem;
+  text-align: center;
 }
 
 .newsletter-footer-heading {
@@ -1386,11 +1387,15 @@ textarea {
 }
 
 .newsletter-footer-copy {
-  margin: 0 0 1rem;
+  margin: 0 auto 1rem;
   max-width: 34rem;
   color: var(--muted);
   font-size: 0.875rem;
   line-height: 1.5;
+}
+
+.newsletter-footer .newsletter-field {
+  justify-content: center;
 }
 
 /* --- Popup surface --- */
