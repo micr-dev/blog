@@ -2,6 +2,12 @@
 
 This is Microck's personal blog. You must help him add, make, or edit any blogs.
 
+## Publishing and Email Notifications
+
+- Publishing a blog post and notifying subscribers are separate actions.
+- Before sending, scheduling, or triggering an email notification for a published post, you MUST ask Microck for explicit confirmation.
+- Treat a post marked as published as insufficient consent to notify subscribers. Posts may be published as drafts, for testing, or without an email notification.
+
 When asked to convert a written text into a blog, you should:
 
 1. Go through the whole text with multiple subagents and verify that the grammar is fully correct.
