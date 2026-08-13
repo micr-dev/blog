@@ -1,26 +1,32 @@
 import { Link } from "next-view-transitions";
 import { siteConfig } from "@/lib/site-config";
 
-const footerLinks = [
-  { href: "/blog", label: "blog" },
-  { href: "/tags", label: "tags" },
+const socialLinks = [
+  { href: "https://github.com/Microck", label: "github" },
+  { href: "https://x.com/JustMicrock", label: "x" },
+  { href: "https://www.youtube.com/@Microck", label: "youtube" },
 ];
 
 export function Footer() {
   return (
-    <footer className="mt-4">
+    <footer className="site-footer mt-4">
       <div className="mt-4 mb-8 flex flex-col items-center">
-        <div className="mb-2 flex flex-wrap items-center justify-center gap-x-2 text-sm text-[color:var(--muted)]">
+        <div className="mb-2 flex flex-wrap items-center justify-center gap-x-2 text-sm">
           <Link className="transition-opacity hover:opacity-80" href="/">
             {siteConfig.domain}
           </Link>
           <span aria-hidden="true">•</span>
-          {footerLinks.map((link, index) => (
+          {socialLinks.map((link, index) => (
             <span key={link.href} className="inline-flex items-center gap-2">
               {index > 0 ? <span aria-hidden="true">•</span> : null}
-              <Link className="transition-opacity hover:opacity-80" href={link.href}>
+              <a
+                className="transition-opacity hover:opacity-80"
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 {link.label}
-              </Link>
+              </a>
             </span>
           ))}
           <span aria-hidden="true">•</span>

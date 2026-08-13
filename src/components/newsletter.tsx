@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useState, type FormEvent } from "react";
+import { useEffect, useId, useRef, useState, type FormEvent } from "react";
 import { usePathname } from "next/navigation";
 import { Mail, X } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
@@ -162,6 +162,7 @@ function setFlag(key: string) {
 
 export function NewsletterPopup() {
   const [visible, setVisible] = useState(false);
+  const footerReachedRef = useRef(false);
   const reducedMotion = useReducedMotion();
   // /newsletter already is a signup page, and after a confirmation it says so.
   // Popping up a second ask on top of that reads as broken.
@@ -176,8 +177,36 @@ export function NewsletterPopup() {
       return;
     }
 
-    const timer = window.setTimeout(() => setVisible(true), 2500);
+    const timer = window.setTimeout(() => {
+      if (!footerReachedRef.current) {
+        setVisible(true);
+      }
+    }, 2500);
     return () => window.clearTimeout(timer);
+  }, [onNewsletterPage]);
+
+  // The footer form is the permanent signup surface. Once it enters the
+  // viewport, hide the floating prompt so it cannot cover the form on narrow
+  // screens or compete with it on long posts.
+  useEffect(() => {
+    if (onNewsletterPage) {
+      return;
+    }
+
+    const footerForm = document.querySelector(".newsletter-footer");
+    if (!footerForm) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry?.isIntersecting) {
+        footerReachedRef.current = true;
+        setVisible(false);
+      }
+    }, { threshold: 0.1 });
+
+    observer.observe(footerForm);
+    return () => observer.disconnect();
   }, [onNewsletterPage]);
 
   function dismiss() {
@@ -225,7 +254,7 @@ export function NewsletterPopup() {
           </header>
 
           <p className="newsletter-popup-body">
-            I'll send you one email when something new goes up. No spam,
+            {"I'll"} send you one email when something new goes up. No spam,
             no tracking, unsubscribe whenever.
           </p>
 
@@ -243,8 +272,8 @@ export function FooterSubscribe() {
         Get new posts by email
       </h2>
       <p className="newsletter-footer-copy">
-        Writeups, notes, and whatever I'm experimenting with. Only when
-        there's something new.
+        Writeups, notes, and whatever {"I'm"} experimenting with. Only when
+        {"there's"} something new.
       </p>
       <SubscribeForm variant="footer" />
     </section>

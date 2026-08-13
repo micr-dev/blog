@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ComponentType } from "react";
+import { useEffect, useState, type ComponentType } from "react";
 import {
   Bot,
   Sparkles,
@@ -72,6 +72,25 @@ function PangramMark() {
 export function AiDetectionPopup({ detection }: { detection: AiDetection }) {
   const [visible, setVisible] = useState(true);
   const reducedMotion = useReducedMotion();
+
+  // The footer signup is a permanent action. Do not let this transient panel
+  // cover it when the reader reaches the end of a post on a small screen.
+  useEffect(() => {
+    const footerForm = document.querySelector(".newsletter-footer");
+    if (!footerForm) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry?.isIntersecting) {
+        setVisible(false);
+      }
+    }, { threshold: 0.1 });
+
+    observer.observe(footerForm);
+    return () => observer.disconnect();
+  }, []);
+
   const humanPercent = 100 - detection.aiPercent - detection.assistedPercent;
   const basePresentation = VERDICT_PRESENTATION[detection.verdict];
   const presentation = detection.verdict === "ai" && detection.aiPercent === 100
