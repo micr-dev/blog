@@ -20,9 +20,6 @@ const EASE_OUT = [0.23, 1, 0.32, 1] as const;
 const DISMISSED_KEY = "newsletter:dismissed";
 const SUBSCRIBED_KEY = "newsletter:subscribed";
 
-/** Fraction of the page that must be scrolled before the popup appears. */
-const SCROLL_TRIGGER_RATIO = 0.4;
-
 type FormState =
   | { kind: "idle" }
   | { kind: "submitting" }
@@ -170,31 +167,17 @@ export function NewsletterPopup() {
   // Popping up a second ask on top of that reads as broken.
   const onNewsletterPage = usePathname() === "/newsletter";
 
-  // Genuine external-system sync: the decision to show depends on
-  // localStorage and on scroll position, neither of which exists during
-  // render or on the server. Rendering nothing until this runs is also what
-  // keeps the popup out of the server HTML, so it cannot flash before the
-  // dismissal flag has been read.
+  // Show after a short delay unless the reader already dismissed or
+  // subscribed. The popup stays visible across page navigations because
+  // Layout keeps it mounted; only an explicit close sets the localStorage
+  // flag and hides it for good.
   useEffect(() => {
     if (onNewsletterPage || hasFlag(DISMISSED_KEY) || hasFlag(SUBSCRIBED_KEY)) {
       return;
     }
 
-    function checkScroll() {
-      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
-
-      // Pages too short to scroll would never reach the threshold, so treat
-      // them as qualifying immediately.
-      if (scrollable <= 0 || window.scrollY / scrollable >= SCROLL_TRIGGER_RATIO) {
-        setVisible(true);
-        window.removeEventListener("scroll", checkScroll);
-      }
-    }
-
-    window.addEventListener("scroll", checkScroll, { passive: true });
-    checkScroll();
-
-    return () => window.removeEventListener("scroll", checkScroll);
+    const timer = window.setTimeout(() => setVisible(true), 2500);
+    return () => window.clearTimeout(timer);
   }, [onNewsletterPage]);
 
   function dismiss() {
@@ -229,7 +212,7 @@ export function NewsletterPopup() {
             </span>
             <span className="min-w-0 flex-1">
               <span className="newsletter-popup-eyebrow">Newsletter</span>
-              <span className="newsletter-popup-title">New posts, in your inbox</span>
+              <span className="newsletter-popup-title">Wanna be the first one to read these?</span>
             </span>
             <button
               type="button"
@@ -242,8 +225,8 @@ export function NewsletterPopup() {
           </header>
 
           <p className="newsletter-popup-body">
-            One email when something new goes up. No tracking, no spam,
-            unsubscribe in one click.
+            I'll send you one email when something new goes up. No spam,
+            no tracking, unsubscribe whenever.
           </p>
 
           <SubscribeForm variant="popup" onSubscribed={handleSubscribed} />
@@ -260,8 +243,8 @@ export function FooterSubscribe() {
         Get new posts by email
       </h2>
       <p className="newsletter-footer-copy">
-        Writeups, notes, and experiments. Sent when there is something new,
-        never otherwise.
+        Writeups, notes, and whatever I'm experimenting with. Only when
+        there's something new.
       </p>
       <SubscribeForm variant="footer" />
     </section>
