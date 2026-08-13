@@ -1375,7 +1375,7 @@ textarea {
 /* --- Footer surface --- */
 
 .newsletter-footer {
-  padding-top: 2rem;
+  padding-top: 0.5rem;
   padding-bottom: 0.5rem;
   text-align: center;
 }
