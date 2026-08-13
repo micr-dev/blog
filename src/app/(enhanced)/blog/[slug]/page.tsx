@@ -121,8 +121,6 @@ export default async function BlogPostPage({
                   <PostSignature name={siteConfig.author} />
                 </div>
 
-                <FooterSubscribe />
-
                 <footer className="pt-10">
                   <div className="space-y-8 text-sm font-medium leading-5">
                     <div className="space-y-3">
@@ -188,6 +186,8 @@ export default async function BlogPostPage({
                         ← Back to the blog
                       </Link>
                     </div>
+
+                    <FooterSubscribe />
                   </div>
                 </footer>
               </div>

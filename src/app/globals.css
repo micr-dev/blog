@@ -1285,6 +1285,7 @@ textarea {
 
 .newsletter-form[data-variant="footer"] .newsletter-field {
   max-width: 26rem;
+  margin: 0 auto;
 }
 
 .newsletter-input {
@@ -1394,9 +1395,6 @@ textarea {
   line-height: 1.5;
 }
 
-.newsletter-footer .newsletter-field {
-  justify-content: center;
-}
 
 /* --- Popup surface --- */
 
