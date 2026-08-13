@@ -272,7 +272,7 @@ export function FooterSubscribe() {
         Get new posts by email
       </h2>
       <p className="newsletter-footer-copy">
-        Writeups, notes, and whatever {"I'm"} experimenting with. Only when
+        Writeups, notes, and whatever {"I'm"} experimenting with. Only when{" "}
         {"there's"} something new.
       </p>
       <SubscribeForm variant="footer" />
