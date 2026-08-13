@@ -309,21 +309,6 @@ That number on its own is meaningless, so it gets divided by the
 the DCG you would get if you took every result any provider found for that
 query and arranged them in the best possible order.
 
-Each search result gets a score from 0 to 3, so the evaluation isn't black or
-white, since there are grays. Both the AI judge and the heuristic scorer use
-this scale. The score is changed into points using `2^grade - 1`, so grades 0,
-1, 2, and 3 become 0, 1, 3, and 7 points. Results near the top of the list
-count more than results near the bottom, so the points for all ten results are
-reduced by a
-<Term tip="A reduction applied to results farther down a ranked list.">positional discount</Term>
-and then added together to make DCG.
-
-DCG is not useful by itself because queries with more good results naturally
-get higher scores, so it is compared with the ideal DCG, the score produced by
-taking every result found by every provider and putting the best results first.
-The provider's DCG is divided by this ideal DCG to show how close its list is to
-the best possible list.
-
 <WebSearchQualityHeatmap mode="delta" />
 
 Positive means the AI score was higher, negative means the metadata score was
@@ -406,7 +391,8 @@ I know, I know... A conclusion is supposed to be where a blog finishes. But
 pacing and structuring are hard, okay? I'd be surprised if anyone has read this
 far and hasn't just scrolled to the conclusion to see the results (guilty).
 
-Getting back to the topic, I decided to run Octen's own benchmark with the
+Getting back to the topic, I decided to run
+[Octen's](https://github.com/Octen-Team/benchmark) own benchmark with the
 spare free credits that I had left, since I had everything set up and it
 wouldn't be much work.
 
