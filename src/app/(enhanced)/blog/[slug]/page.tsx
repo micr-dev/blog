@@ -187,8 +187,8 @@ export default async function BlogPostPage({
                       </Link>
                     </div>
 
-                    <FooterSubscribe />
                   </div>
+                  <FooterSubscribe />
                 </footer>
               </div>
             </div>
