@@ -36,7 +36,7 @@ export function PostList({
                 </dd>
                 {showMeta && post.cover ? (
                   <dd>
-                    <Link href={`/blog/${post.slug}`} aria-label={`Open "${post.title}"`}>
+                    <Link prefetch={false} href={`/blog/${post.slug}`} aria-label={`Open "${post.title}"`}>
                       <div className="relative aspect-video w-full overflow-hidden rounded-md border border-[color:var(--border)] bg-[color:var(--card)]">
                         <Image
                           src={post.cover}
@@ -56,6 +56,7 @@ export function PostList({
                   <div>
                     <h2 className="text-2xl font-bold leading-8 tracking-tight">
                       <Link
+                        prefetch={false}
                         href={`/blog/${post.slug}`}
                         className="text-[color:var(--foreground)] transition-opacity hover:opacity-80"
                       >
@@ -66,6 +67,7 @@ export function PostList({
                       <div className="mt-2 flex flex-wrap">
                         {post.tags.map((tag) => (
                           <Link
+                            prefetch={false}
                             key={tag}
                             href={`/tags/${slugifyTag(tag)}`}
                             className="mr-3 text-sm font-medium uppercase text-[color:var(--accent)] transition-opacity hover:opacity-80"
@@ -82,6 +84,7 @@ export function PostList({
                 {showMeta ? (
                   <div className="text-base font-medium leading-6">
                     <Link
+                      prefetch={false}
                       href={`/blog/${post.slug}`}
                       className="text-[color:var(--accent)] transition-opacity hover:opacity-80"
                       aria-label={`Read "${post.title}"`}
