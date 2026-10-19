@@ -518,6 +518,17 @@ textarea {
     border-color var(--page-fade-ms) ease;
 }
 
+.post-body.prose {
+  --post-reading-size: clamp(1.125rem, calc(1.05rem + 0.15vw), 1.25rem);
+}
+
+.post-body.prose :where(p, li, blockquote):not(
+    :where([class~="not-prose"], [class~="not-prose"] *)
+  ) {
+  font-size: var(--post-reading-size);
+  line-height: 1.65;
+}
+
 .post-body .post-link {
   color: inherit;
   text-decoration-line: underline;
